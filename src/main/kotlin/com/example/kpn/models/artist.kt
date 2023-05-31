@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
@@ -29,6 +30,11 @@ class ArtistController(val service: ArtistService) {
 
   @PostMapping("/artists")
   fun post(@RequestBody artist: Artist) {
+    service.save(artist)
+  }
+
+  @PutMapping("artists/{id}")
+  fun update(@RequestBody artist: Artist) {
     service.save(artist)
   }
 

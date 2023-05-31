@@ -1,3 +1,5 @@
+
+### Post
 POST http://localhost:8080/items
 Content-Type: application/json
 
@@ -10,16 +12,17 @@ Content-Type: application/json
   "price": "30"
 }
 
-POST http://localhost:8080/items
+### Update
+PUT http://localhost:8080/items/cf379bec-6490-41aa-a7d8-6909f6f31bc9
 Content-Type: application/json
 
 {
-  "gid": "837950d6-9557-4184-a5d6-20459236d8ca",
+  "gid": "924915c5-6401-48da-b800-7164f064bf86",
   "category": "Album",
-  "name": "Map of the Soul",
-  "version": "7",
-  "released": "2020",
-  "price": "30"
+  "name": "Unforgiven",
+  "version": "1",
+  "released": "2023",
+  "price": "40"
 }
 
 ### Get all the messages
