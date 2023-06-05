@@ -812,3 +812,18 @@ INSERT INTO "ITEMS" ("CATEGORY", "GID", "NAME", "PRICE", "RELEASED", "VERSION") 
 2023-05-30 17:16:03 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DROP TABLE items [*]CREATE TABLE IF NOT EXISTS artists ( id VARCHAR(60) DEFAULT RANDOM_UUID() PRIMARY KEY, name VARCHAR NOT NULL )"; SQL statement:
 DROP TABLE items CREATE TABLE IF NOT EXISTS artists ( id VARCHAR(60) DEFAULT RANDOM_UUID() PRIMARY KEY, name VARCHAR NOT NULL ) [42000-214]
+2023-06-01 11:00:41 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ALBUMS" not found; SQL statement:
+DROP TABLE albums [42102-214]
+2023-06-01 11:02:58 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE IF NOT EXISTS albums ( id VARCHAR(60) DEFAULT RANDOM_UUID() PRIMARY KEY, artist VARCHAR(60), [*]NOT NULL, type VARCHAR NOT NULL, name VARCHAR NOT NULL, version VARCHAR, variation VARCHAR, color VARCHAR, extras VARCHAR, released VARCHAR NOT NULL, price VARCHAR NOT NULL, barcode VARCHAR )"; expected "identifier"; SQL statement:
+CREATE TABLE IF NOT EXISTS albums ( id VARCHAR(60) DEFAULT RANDOM_UUID() PRIMARY KEY, artist VARCHAR(60), NOT NULL, type VARCHAR NOT NULL, name VARCHAR NOT NULL, version VARCHAR, variation VARCHAR, color VARCHAR, extras VARCHAR, released VARCHAR NOT NULL, price VARCHAR NOT NULL, barcode VARCHAR ) [42001-214]
+2023-06-01 11:07:53 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ALBUMS" not found; SQL statement:
+DROP TABLE albums [42102-214]
+2023-06-01 11:08:28 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ALBUMS" not found; SQL statement:
+DROP TABLE albums [42102-214]
+2023-06-02 12:34:57 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ALBUMS" not found; SQL statement:
+DROP TABLE albums [42102-214]

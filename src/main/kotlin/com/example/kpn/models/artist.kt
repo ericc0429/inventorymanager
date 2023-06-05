@@ -1,9 +1,10 @@
 package com.example.kpn
 
+import jakarta.persistence.*
 import java.util.Optional
-import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,12 +14,32 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-@Table("ARTISTS")
-data class Artist(
-    @Id var id: String?,
-    val name: String,
-)
+enum class GenderTypes {
+  GIRL,
+  BOY,
+  NONE
+}
 
+@Entity
+data class Artist(
+        @ElementCollection
+        val groups: Set<String>, // Use a set in case of artist being in a group and its subunits
+        val name: String,
+        val debut: String,
+        val label: String,
+        val gender: GenderTypes,
+        val birthday: String,
+        @ElementCollection
+        var assets: Set<String>, // List of associated products UUIDs
+
+        @Id @GeneratedValue(strategy= GenerationType.AUTO)
+        var id: Long = -1 // Unique identifier
+) {
+  constructor() : this(emptySet(),"","","",GenderTypes.NONE,"",emptySet())
+
+}
+
+@Repository
 interface ArtistRepo : CrudRepository<Artist, String>
 
 @RestController
