@@ -2,16 +2,10 @@ package com.example.kpn
 
 import jakarta.persistence.*
 import java.util.Optional
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 enum class GroupTypes {
   GROUP,
@@ -20,46 +14,43 @@ enum class GroupTypes {
 }
 
 @Entity
-@Table(name="\"Group\"")
+@Table(name = "\"Group\"")
 data class Group(
     val name: String,
     val type: GroupTypes,
-    @ElementCollection
-    var members: Set<String>, // List of UUID of members
-
-    @Id @GeneratedValue(strategy= GenerationType.AUTO)
-    var id: Long = -1 // Unique identifier
+    @ElementCollection var members: Set<String>, // List of UUID of members
+    @Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long = -1 // Unique identifier
 ) {
-  constructor() : this("",GroupTypes.NONE, emptySet())
+  constructor() : this("", GroupTypes.NONE, emptySet())
 }
 
-@Repository
-interface GroupRepo : CrudRepository<Group, String>
+@Repository interface GroupRepo : JpaRepository<Group, String>
 
 @RestController
+@RequestMapping("/api")
 class GroupController(val service: GroupService) {
-  @GetMapping("/groups") fun index(): List<Group> = service.findGroups()
+  @GetMapping("/groups") fun groups(): List<Group> = service.findGroups()
 
-  @GetMapping("/groups/{id}")
-  fun index(@PathVariable id: String): List<Group> = service.findGroupById(id)
+  @GetMapping("/group/{id}")
+  fun getGroup(@PathVariable id: String): List<Group> = service.findGroupById(id)
 
   @PostMapping("/groups")
-  fun post(@RequestBody group: Group) {
+  fun postGroup(@RequestBody group: Group) {
     service.save(group)
   }
 
-  @PutMapping("groups/{id}")
-  fun update(@RequestBody group: Group) {
+  @PutMapping("group/{id}")
+  fun updateGroup(@RequestBody group: Group) {
     service.save(group)
   }
 
   @DeleteMapping("/groups")
-  fun delete() {
+  fun deleteGroups() {
     service.deleteGroups()
   }
 
-  @DeleteMapping("/groups/{id}")
-  fun delete(@PathVariable id: String) {
+  @DeleteMapping("/group/{id}")
+  fun deleteGroup(@PathVariable id: String) {
     service.deleteGroupById(id)
   }
 }

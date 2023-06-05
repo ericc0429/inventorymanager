@@ -2,17 +2,10 @@ package com.example.kpn
 
 import jakarta.persistence.*
 import java.util.Optional
-import org.springframework.data.relational.core.mapping.Table
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 enum class GenderTypes {
   GIRL,
@@ -22,50 +15,46 @@ enum class GenderTypes {
 
 @Entity
 data class Artist(
-        @ElementCollection
-        val groups: Set<String>, // Use a set in case of artist being in a group and its subunits
-        val name: String,
-        val debut: String,
-        val label: String,
-        val gender: GenderTypes,
-        val birthday: String,
-        @ElementCollection
-        var assets: Set<String>, // List of associated products UUIDs
-
-        @Id @GeneratedValue(strategy= GenerationType.AUTO)
-        var id: Long = -1 // Unique identifier
+    @ElementCollection
+    val groups: Set<String>, // Use a set in case of artist being in a group and its subunits
+    val name: String,
+    val debut: String,
+    val label: String,
+    val gender: GenderTypes,
+    val birthday: String,
+    @ElementCollection var assets: Set<String>, // List of associated products UUIDs
+    @Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long = -1 // Unique identifier
 ) {
-  constructor() : this(emptySet(),"","","",GenderTypes.NONE,"",emptySet())
-
+  constructor() : this(emptySet(), "", "", "", GenderTypes.NONE, "", emptySet())
 }
 
-@Repository
-interface ArtistRepo : CrudRepository<Artist, String>
+@Repository interface ArtistRepo : JpaRepository<Artist, String>
 
 @RestController
+@RequestMapping("/api")
 class ArtistController(val service: ArtistService) {
-  @GetMapping("/artists") fun index(): List<Artist> = service.findArtists()
+  @GetMapping("/artists") fun artists(): List<Artist> = service.findArtists()
 
-  @GetMapping("/artists/{id}")
-  fun index(@PathVariable id: String): List<Artist> = service.findArtistById(id)
+  @GetMapping("/artist/{id}")
+  fun getArtist(@PathVariable id: String): List<Artist> = service.findArtistById(id)
 
   @PostMapping("/artists")
-  fun post(@RequestBody artist: Artist) {
+  fun postArtist(@RequestBody artist: Artist) {
     service.save(artist)
   }
 
-  @PutMapping("artists/{id}")
-  fun update(@RequestBody artist: Artist) {
+  @PutMapping("artist/{id}")
+  fun updateArtist(@RequestBody artist: Artist) {
     service.save(artist)
   }
 
   @DeleteMapping("/artists")
-  fun delete() {
+  fun deleteArtists() {
     service.deleteArtists()
   }
 
-  @DeleteMapping("/artists/{id}")
-  fun delete(@PathVariable id: String) {
+  @DeleteMapping("/artist/{id}")
+  fun deleteArtist(@PathVariable id: String) {
     service.deleteArtistById(id)
   }
 }
