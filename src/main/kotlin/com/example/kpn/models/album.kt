@@ -1,10 +1,8 @@
 package com.example.kpn
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import java.util.Optional
+import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
@@ -12,20 +10,20 @@ import org.springframework.web.bind.annotation.*
 
 @Entity
 data class Album(
-    val artist: String, // Associated artist's UUID
-    val type: String,
+    @Id @GeneratedValue(strategy = GenerationType.UUID) var id: UUID, // Unique identifier
+    @OneToMany val artist: Set<UUID>, // Associated artist's UUID
+    val discography: String?,
     val name: String,
+    val type: String?,
     val version: String?,
-    val variation: String?,
-    val color: String?, // Maybe make this enumerated too
+    val color: String?,
     val extras: String?,
     val released: String,
     val price: Double,
-    val barcode: Int,
-    @Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long = -1 // Unique identifier
+    val stock: UUID?,
 ) {
 
-  constructor() : this("", "", "", "", "", "", "", "", 1.0, 1)
+  constructor() : this("", "", "", "", "", "", "", "", 0.0, "")
 }
 
 @Repository interface AlbumRepo : JpaRepository<Album, String>

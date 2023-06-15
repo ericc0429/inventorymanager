@@ -2,6 +2,7 @@ package com.example.kpn
 
 import jakarta.persistence.*
 import java.util.Optional
+import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
@@ -16,12 +17,14 @@ enum class GroupTypes {
 @Entity
 @Table(name = "\"Group\"")
 data class Group(
+    @Id @GeneratedValue(strategy = GenerationType.UUID) var id: UUID, // Unique identifier
     val name: String,
     val type: GroupTypes,
-    @ElementCollection var members: Set<String>, // List of UUID of members
-    @Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long = -1 // Unique identifier
+    @OneToMany var members: Set<UUID>?, // List of UUID of members
+    @ManyToOne var label_id: UUID?,
+    @OneToMany var asset_ids: Set<UUID>?,
 ) {
-  constructor() : this("", GroupTypes.NONE, emptySet())
+  constructor() : this("", GroupTypes.NONE, emptySet(), "", emptySet())
 }
 
 @Repository interface GroupRepo : JpaRepository<Group, String>

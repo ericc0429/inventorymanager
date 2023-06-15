@@ -2,6 +2,7 @@ package com.example.kpn
 
 import jakarta.persistence.*
 import java.util.Optional
+import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
@@ -15,17 +16,18 @@ enum class GenderTypes {
 
 @Entity
 data class Artist(
-    @ElementCollection
-    val groups: Set<String>, // Use a set in case of artist being in a group and its subunits
+    @Id @GeneratedValue(strategy = GenerationType.UUID) var id: UUID, // Unique identifier
     val name: String,
-    val debut: String,
-    val label: String,
-    val gender: GenderTypes,
     val birthday: String,
-    @ElementCollection var assets: Set<String>, // List of associated products UUIDs
-    @Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long = -1 // Unique identifier
+    val gender: GenderTypes,
+    // Use a set in case of artist being in a group and its subunits
+    @OneToMany /* (mappedBy = "artist") */ val groups: Set<UUID>?,
+    @ManyToOne val label: UUID?,
+    val debut: String?,
+    @OneToMany /* (mappedBy = "artist") */
+    var assets: Set<UUID>?, // List of associated products UUIDs
 ) {
-  constructor() : this(emptySet(), "", "", "", GenderTypes.NONE, "", emptySet())
+  constructor() : this("", "", GenderTypes.NONE, emptySet(), "", "", emptySet())
 }
 
 @Repository interface ArtistRepo : JpaRepository<Artist, String>
