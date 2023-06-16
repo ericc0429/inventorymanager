@@ -17,7 +17,7 @@ enum class GroupTypes {
 @Entity
 @Table(name = "\"Group\"")
 data class Group(
-    @Id @GeneratedValue var id: UUID, // Unique identifier
+    @Id @GeneratedValue val id: UUID, // Unique identifier
     val name: String,
     val type: GroupTypes,
     @OneToMany var members: Set<UUID>?, // List of UUID of members
@@ -26,7 +26,7 @@ data class Group(
   constructor() : this("", GroupTypes.NONE, emptySet(), emptySet())
 }
 
-@Repository interface GroupRepo : JpaRepository<Group, String>
+@Repository interface GroupRepo : JpaRepository<Group, UUID>
 
 @RestController
 @RequestMapping("/api")
@@ -34,7 +34,7 @@ class GroupController(val service: GroupService) {
   @GetMapping("/groups") fun groups(): List<Group> = service.findGroups()
 
   @GetMapping("/group/{id}")
-  fun getGroup(@PathVariable id: String): List<Group> = service.findGroupById(id)
+  fun getGroup(@PathVariable id: UUID): List<Group> = service.findGroupById(id)
 
   @PostMapping("/groups")
   fun postGroup(@RequestBody group: Group) {
@@ -52,7 +52,7 @@ class GroupController(val service: GroupService) {
   }
 
   @DeleteMapping("/group/{id}")
-  fun deleteGroup(@PathVariable id: String) {
+  fun deleteGroup(@PathVariable id: UUID) {
     service.deleteGroupById(id)
   }
 }
@@ -61,7 +61,7 @@ class GroupController(val service: GroupService) {
 class GroupService(val db: GroupRepo) {
   fun findGroups(): List<Group> = db.findAll().toList()
 
-  fun findGroupById(id: String): List<Group> = db.findById(id).toList()
+  fun findGroupById(id: UUID): List<Group> = db.findById(id).toList()
 
   fun save(group: Group) {
     db.save(group)
@@ -71,7 +71,7 @@ class GroupService(val db: GroupRepo) {
     db.deleteAll()
   }
 
-  fun deleteGroupById(id: String) {
+  fun deleteGroupById(id: UUID) {
     db.deleteById(id)
   }
 
