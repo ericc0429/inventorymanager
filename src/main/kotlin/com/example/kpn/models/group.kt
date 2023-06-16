@@ -17,14 +17,13 @@ enum class GroupTypes {
 @Entity
 @Table(name = "\"Group\"")
 data class Group(
-    @Id @GeneratedValue(strategy = GenerationType.UUID) var id: UUID, // Unique identifier
+    @Id @GeneratedValue var id: UUID, // Unique identifier
     val name: String,
     val type: GroupTypes,
     @OneToMany var members: Set<UUID>?, // List of UUID of members
-    @ManyToOne var label_id: UUID?,
     @OneToMany var asset_ids: Set<UUID>?,
 ) {
-  constructor() : this("", GroupTypes.NONE, emptySet(), "", emptySet())
+  constructor() : this("", GroupTypes.NONE, emptySet(), emptySet())
 }
 
 @Repository interface GroupRepo : JpaRepository<Group, String>

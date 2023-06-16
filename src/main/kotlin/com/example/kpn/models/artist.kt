@@ -22,12 +22,11 @@ data class Artist(
     val gender: GenderTypes,
     // Use a set in case of artist being in a group and its subunits
     @OneToMany /* (mappedBy = "artist") */ val groups: Set<UUID>?,
-    @ManyToOne val label: UUID?,
     val debut: String?,
     @OneToMany /* (mappedBy = "artist") */
     var assets: Set<UUID>?, // List of associated products UUIDs
 ) {
-  constructor() : this("", "", GenderTypes.NONE, emptySet(), "", "", emptySet())
+  constructor() : this("", "", GenderTypes.NONE, emptySet(), "", emptySet())
 }
 
 @Repository interface ArtistRepo : JpaRepository<Artist, String>

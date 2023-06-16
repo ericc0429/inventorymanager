@@ -14,16 +14,16 @@ data class Album(
     @OneToMany val artist: Set<UUID>, // Associated artist's UUID
     val discography: String?,
     val name: String,
-    val type: String?,
+    val format: String?,
     val version: String?,
     val color: String?,
-    val extras: String?,
+    var extras: String?,
     val released: String,
-    val price: Double,
-    val stock: UUID?,
+    var price: Double,
+    @OneToMany var stock: Set<UUID>?,
 ) {
 
-  constructor() : this("", "", "", "", "", "", "", "", 0.0, "")
+  constructor() : this(emptySet(), "", "", "", "", "", "", "", 0.0, emptySet())
 }
 
 @Repository interface AlbumRepo : JpaRepository<Album, String>
