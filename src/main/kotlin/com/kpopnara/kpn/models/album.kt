@@ -1,8 +1,9 @@
-package com.example.kpn
+package com.kpopnara.kpn
 
 import jakarta.persistence.*
 import java.util.Optional
 import java.util.UUID
+import kotlin.collections.Set
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
@@ -11,7 +12,8 @@ import org.springframework.web.bind.annotation.*
 @Entity
 data class Album(
     @Id @GeneratedValue(strategy = GenerationType.UUID) var id: UUID, // Unique identifier
-    @OneToMany val artist: Set<UUID>, // Associated artist's UUID
+    @ManyToMany val artist: Set<Artist>?, // Associated artist's UUID
+    @ManyToOne val group: Group?,
     val discography: String?,
     val name: String,
     val format: String?,
@@ -20,10 +22,10 @@ data class Album(
     var extras: String?,
     val released: String,
     var price: Double,
-    @OneToMany var stock: Set<UUID>?,
+    @OneToMany(mappedBy = "asset") var stock: Set<Stock>?,
 ) {
 
-  constructor() : this(emptySet(), "", "", "", "", "", "", "", 0.0, emptySet())
+  // constructor() : this(emptySet(), "", "", "", "", "", "", "", 0.0, emptySet())
 }
 
 @Repository interface AlbumRepo : JpaRepository<Album, String>

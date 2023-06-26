@@ -1,4 +1,4 @@
-package com.example.kpn
+package com.kpopnara.kpn
 
 import jakarta.persistence.*
 import java.util.Optional
@@ -21,12 +21,17 @@ data class Artist(
     val birthday: String,
     val gender: GenderTypes,
     // Use a set in case of artist being in a group and its subunits
-    @OneToMany /* (mappedBy = "artist") */ val groups: Set<UUID>?,
+    @ManyToOne @JoinColumn(name = "group_id") val group: Group?,
     val debut: String?,
-    @OneToMany /* (mappedBy = "artist") */
-    var assets: Set<UUID>?, // List of associated products UUIDs
+    @ManyToMany
+    @JoinTable(
+        name = "artists_jt",
+        joinColumns = [JoinColumn(name = "artist_id")],
+        inverseJoinColumns = [JoinColumn(name = "asset_id")]
+    )
+    var assets: Set<Album>?, // List of associated products UUIDs
 ) {
-  constructor() : this("", "", GenderTypes.NONE, emptySet(), "", emptySet())
+  // constructor() : this("", "", GenderTypes.NONE, emptySet(), "", emptySet())
 }
 
 @Repository interface ArtistRepo : JpaRepository<Artist, String>

@@ -1,4 +1,4 @@
-package com.example.kpn
+package com.kpopnara.kpn
 
 import jakarta.persistence.*
 import java.util.Optional
@@ -18,15 +18,19 @@ enum class Location {
 
 @Entity
 data class Stock(
-    @Id @GeneratedValue(strategy = GenerationType.UUID) var id: UUID, // Unique identifier
+    @Id
+    @Column(name = "id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    var id: UUID, // Unique identifier
     val location: Location,
-    var count: UInt?,
-    var restock_threshold: UInt?,
+    var count: Int?,
+    var restock_threshold: Int?,
     var ordered: Boolean?,
     var arrival: String?,
+    @ManyToOne @JoinColumn(name = "album_id") var asset: Album
 ) {
 
-  constructor() : this(Location.NONE, 0, 0, false, "")
+  // constructor() : this(Location.NONE, 0, 0, false, "")
 }
 
 @Repository interface StockRepo : JpaRepository<Stock, String>

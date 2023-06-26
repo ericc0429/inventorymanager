@@ -1,8 +1,9 @@
-package com.example.kpn
+package com.kpopnara.kpn
 
 import jakarta.persistence.*
 import java.util.Optional
 import java.util.UUID
+import kotlin.collections.Set
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
@@ -15,15 +16,15 @@ enum class GroupTypes {
 }
 
 @Entity
-@Table(name = "\"Group\"")
+// @Table(name = "groups")
 data class Group(
     @Id @GeneratedValue val id: UUID, // Unique identifier
     val name: String,
     val type: GroupTypes,
-    @OneToMany var members: Set<UUID>?, // List of UUID of members
-    @OneToMany var asset_ids: Set<UUID>?,
+    @OneToMany(mappedBy = "group") var members: Set<Artist>?, // List of UUID of members
+    @OneToMany(mappedBy = "group") var asset_ids: Set<Album>?,
 ) {
-  constructor() : this("", GroupTypes.NONE, emptySet(), emptySet())
+  // constructor() : this("", GroupTypes.NONE, emptySet(), emptySet())
 }
 
 @Repository interface GroupRepo : JpaRepository<Group, UUID>
