@@ -1,10 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # gradle
-/.gradle
+.gradle
+**/build/
+!src/**/build/
 
 # production
-/build/*
 /bin/*
 
 # misc
@@ -15,5 +16,7 @@
 .env*.local
 
 # IDEs
-/.vscode
-/.idea
+**/.vscode/
+**/.idea/
+!src/**/.idea/
+
