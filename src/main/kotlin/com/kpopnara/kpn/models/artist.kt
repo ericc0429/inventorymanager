@@ -11,18 +11,22 @@ import org.springframework.web.bind.annotation.*
 enum class GenderTypes {
   GIRL,
   BOY,
+  NONBINARY,
   NONE
 }
 
 @Entity
+@Table(name = "artists")
 data class Artist(
-    @Id @GeneratedValue(strategy = GenerationType.UUID) var id: UUID, // Unique identifier
-    val name: String,
-    val birthday: String,
-    val gender: GenderTypes,
+    @Id //
+    @GeneratedValue(strategy = GenerationType.UUID)
+    val id: UUID, // Unique identifier
+    var name: String,
+    var birthday: String,
+    @Enumerated(EnumType.ORDINAL) var gender: GenderTypes,
     // Use a set in case of artist being in a group and its subunits
-    @ManyToOne @JoinColumn(name = "group_id") val group: Group?,
-    val debut: String?,
+    @ManyToMany var group: Set<Group>,
+    var debut: String,
     @ManyToMany
     @JoinTable(
         name = "artists_jt",
@@ -31,7 +35,7 @@ data class Artist(
     )
     var assets: Set<Album>?, // List of associated products UUIDs
 ) {
-  // constructor() : this("", "", GenderTypes.NONE, emptySet(), "", emptySet())
+  // constructor() : this(UUID.randomUUID(), "", "", GenderTypes.NONE, , "", emptySet())
 }
 
 @Repository interface ArtistRepo : JpaRepository<Artist, String>

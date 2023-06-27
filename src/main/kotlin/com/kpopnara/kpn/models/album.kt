@@ -10,19 +10,20 @@ import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
 @Entity
+@Table(name = "albums")
 data class Album(
     @Id @GeneratedValue(strategy = GenerationType.UUID) var id: UUID, // Unique identifier
-    @ManyToMany val artist: Set<Artist>?, // Associated artist's UUID
-    @ManyToOne val group: Group?,
-    val discography: String?,
-    val name: String,
-    val format: String?,
-    val version: String?,
-    val color: String?,
-    var extras: String?,
-    val released: String,
+    @ManyToMany var artist: Set<Artist>, // Associated artist's UUID
+    @ManyToOne var group: Group,
+    var discography: String,
+    var name: String,
+    var format: String,
+    var version: String,
+    var color: String,
+    var extras: String,
+    var released: String,
     var price: Double,
-    @OneToMany(mappedBy = "asset") var stock: Set<Stock>?,
+    @OneToMany(mappedBy = "asset") var stock: Set<Stock>,
 ) {
 
   // constructor() : this(emptySet(), "", "", "", "", "", "", "", 0.0, emptySet())

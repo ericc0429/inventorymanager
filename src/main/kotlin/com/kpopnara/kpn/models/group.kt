@@ -16,13 +16,19 @@ enum class GroupTypes {
 }
 
 @Entity
-// @Table(name = "groups")
+@Table(name = "groups")
 data class Group(
     @Id @GeneratedValue val id: UUID, // Unique identifier
-    val name: String,
-    val type: GroupTypes,
-    @OneToMany(mappedBy = "group") var members: Set<Artist>?, // List of UUID of members
-    @OneToMany(mappedBy = "group") var asset_ids: Set<Album>?,
+    var name: String,
+    @Enumerated(EnumType.ORDINAL) var type: GroupTypes,
+    @ManyToMany
+    @JoinTable(
+        name = "groups_jt",
+        joinColumns = [JoinColumn(name = "group_id")],
+        inverseJoinColumns = [JoinColumn(name = "artist_id")]
+    )
+    var members: Set<Artist>, // List of UUID of members
+    @OneToMany(mappedBy = "group") var asset_ids: Set<Album>,
 ) {
   // constructor() : this("", GroupTypes.NONE, emptySet(), emptySet())
 }

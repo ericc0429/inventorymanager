@@ -17,17 +17,18 @@ enum class Location {
 }
 
 @Entity
+@Table(name = "stock")
 data class Stock(
     @Id
-    @Column(name = "id", unique = true, nullable = false)
+    // @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID, // Unique identifier
-    val location: Location,
-    var count: Int?,
-    var restock_threshold: Int?,
-    var ordered: Boolean?,
-    var arrival: String?,
-    @ManyToOne @JoinColumn(name = "album_id") var asset: Album
+    val id: UUID, // Unique identifier
+    @Enumerated(EnumType.ORDINAL) val location: Location,
+    @ManyToOne @JoinColumn(name = "album_id") val asset: Album,
+    var count: Int,
+    var restock_threshold: Int,
+    var ordered: Boolean,
+    var arrival: String,
 ) {
 
   // constructor() : this(Location.NONE, 0, 0, false, "")
