@@ -5,12 +5,17 @@ import com.squareup.square.Environment
 import com.squareup.square.SquareClient
 import com.squareup.square.exceptions.ApiException
 import com.squareup.square.models.BatchRetrieveInventoryCountsRequest
+import com.squareup.square.models.BatchRetrieveInventoryCountsResponse
+import com.squareup.square.models.InventoryCount
 import com.sun.net.httpserver.HttpServer
 import java.io.IOException
 import java.net.InetSocketAddress
 
 class SquareService {
     var client: SquareClient? = null
+
+    private val SQUARE_ACCESS_TOKEN_ENV_VAR = "EAAAEIOxkk52IQLldHyQFElLSXSpuGolxuAtGQ_7QxYPfrRng_I2fywYQUDOWgOu"
+
     fun authorize() {
         try {
             val portNumber = 8000
@@ -29,7 +34,7 @@ class SquareService {
     fun connectToSquareClient() {
         client = SquareClient.Builder()
             .environment(Environment.SANDBOX)
-            .accessToken("ACCESS_TOKEN")
+            .accessToken(SQUARE_ACCESS_TOKEN_ENV_VAR)
             .build()
     }
 
@@ -37,18 +42,27 @@ class SquareService {
     fun batchRetrieveInventory() {
         val catalogIds: List<String> = ArrayList()
         val locationIds: List<String> = ArrayList()
-        val batchRetrieveInventoryCountsRequest = BatchRetrieveInventoryCountsRequest.Builder()
+        val body = BatchRetrieveInventoryCountsRequest.Builder()
             .build()
         val inventoryApi = client?.inventoryApi
-//        val response = inventoryApi.batchRetrieveInventoryCounts(batchRetrieveInventoryCountsRequest)
-        //        inventoryApi.batchRetrieveInventoryCountsAsync(body)
-//                .thenAccept(result -> {
-//                    System.out.println("Success!");
-//                })
-//                .exceptionally(exception -> {
-//                    System.out.println("Failed to make the request");
-//                    System.out.println(String.format("Exception: %s", exception.getMessage()));
-//                    return null;
-//                });
+        var counts = emptyList<InventoryCount>()
+        if (inventoryApi != null) {
+            inventoryApi.batchRetrieveInventoryCountsAsync(body)
+                .thenAccept{result: BatchRetrieveInventoryCountsResponse? ->
+                    if (result != null) {
+                        println("Success!");
+                        counts = result.counts
+                    }
+                }
+                .exceptionally{ exception: Throwable ->
+                    println("Failed to make the request")
+                    println(exception.toString())
+                    null
+                }
+        }
+
+        for (count in counts) {
+            println("${count.catalogObjectId}: ${count.quantity}")
+        }
     }
 }
