@@ -14,7 +14,7 @@ import java.net.InetSocketAddress
 class SquareService {
     var client: SquareClient? = null
 
-    private val SQUARE_ACCESS_TOKEN_ENV_VAR = "EAAAEIOxkk52IQLldHyQFElLSXSpuGolxuAtGQ_7QxYPfrRng_I2fywYQUDOWgOu"
+    private val SQUARE_ACCESS_TOKEN_ENV_VAR = "EAAAEAMXjxAjK42SK99tHgpCJDIuqLEt9lP0QCGCiXz81QFWEM3_4e4HqXSDjjld"
 
     fun authorize() {
         try {
@@ -43,25 +43,32 @@ class SquareService {
         val catalogIds: List<String> = ArrayList()
         val locationIds: List<String> = ArrayList()
         val body = BatchRetrieveInventoryCountsRequest.Builder()
+            .limit(1000)
             .build()
         val inventoryApi = client?.inventoryApi
-        var counts = emptyList<InventoryCount>()
+        var countsList = mutableListOf<InventoryCount>()
+        var cursor: String?
         if (inventoryApi != null) {
-            inventoryApi.batchRetrieveInventoryCountsAsync(body)
-                .thenAccept{result: BatchRetrieveInventoryCountsResponse? ->
-                    if (result != null) {
-                        println("Success!");
-                        counts = result.counts
-                    }
-                }
-                .exceptionally{ exception: Throwable ->
-                    println("Failed to make the request")
-                    println(exception.toString())
-                    null
-                }
+            var result = inventoryApi.batchRetrieveInventoryCounts(body)
+            if (result != null) {
+                countsList.addAll(result.counts)
+                cursor = result.cursor
+                do {
+                    val newBody = BatchRetrieveInventoryCountsRequest.Builder()
+                        .cursor(cursor)
+                        .limit(1000)
+                        .build()
+                    result = inventoryApi.batchRetrieveInventoryCounts(newBody)
+                    countsList.addAll(result.counts)
+                    cursor = result.cursor
+                } while (cursor != null)
+            } else {
+                println("Empty result!")
+            }
         }
 
-        for (count in counts) {
+        println("PRINTING INVENTORY LIST with size of ${countsList.size}" )
+        for (count in countsList) {
             println("${count.catalogObjectId}: ${count.quantity}")
         }
     }
