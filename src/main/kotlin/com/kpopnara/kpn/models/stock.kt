@@ -1,5 +1,6 @@
 package com.kpopnara.kpn
 
+// import org.springframework.data.relational.core.mapping.Table
 import jakarta.persistence.*
 import java.util.Optional
 import java.util.UUID
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
-enum class Location {
+enum class LocationType {
   SOUTHFIELD_MI,
   KTOWN_NYC,
   SOUTHLOOP_CHI,
@@ -16,25 +17,25 @@ enum class Location {
   NONE
 }
 
-@Entity
-@Table(name = "stock")
-data class Stock(
+@Entity(name = "Stock")
+// @Table(name = "stock")
+class Stock(
     @Id
-    // @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", unique = true, nullable = false)
     val id: UUID, // Unique identifier
-    @Enumerated(EnumType.ORDINAL) val location: Location,
-    @ManyToOne @JoinColumn(name = "album_id") val asset: Album,
-    var count: Int,
-    var restock_threshold: Int,
-    var ordered: Boolean,
-    var arrival: String,
+    @Column @Enumerated(EnumType.ORDINAL) val location: LocationType,
+    @ManyToOne @JoinColumn(name = "asset_id") var item: Item,
+    @Column var count: Int,
+    @Column var restock_threshold: Int,
+    @Column var ordered: Boolean,
+    @Column var arrival: String,
 ) {
 
   // constructor() : this(Location.NONE, 0, 0, false, "")
 }
 
-@Repository interface StockRepo : JpaRepository<Stock, String>
+@Repository interface StockRepo : JpaRepository<Stock, UUID>
 
 @RestController
 @RequestMapping("/api")
@@ -42,7 +43,7 @@ class StockController(val service: StockService) {
   @GetMapping("/stocks") fun stocks(): List<Stock> = service.findStocks()
 
   @GetMapping("/stock/{id}")
-  fun getStock(@PathVariable id: String): List<Stock> = service.findStockById(id)
+  fun getStock(@PathVariable id: UUID): List<Stock> = service.findStockById(id)
 
   @PostMapping("/stocks")
   fun postStock(@RequestBody stock: Stock) {
@@ -60,7 +61,7 @@ class StockController(val service: StockService) {
   }
 
   @DeleteMapping("/stock/{id}")
-  fun deleteStock(@PathVariable id: String) {
+  fun deleteStock(@PathVariable id: UUID) {
     service.deleteStockById(id)
   }
 }
@@ -69,7 +70,7 @@ class StockController(val service: StockService) {
 class StockService(val db: StockRepo) {
   fun findStocks(): List<Stock> = db.findAll().toList()
 
-  fun findStockById(id: String): List<Stock> = db.findById(id).toList()
+  fun findStockById(id: UUID): List<Stock> = db.findById(id).toList()
 
   fun save(stock: Stock) {
     db.save(stock)
@@ -79,7 +80,7 @@ class StockService(val db: StockRepo) {
     db.deleteAll()
   }
 
-  fun deleteStockById(id: String) {
+  fun deleteStockById(id: UUID) {
     db.deleteById(id)
   }
 

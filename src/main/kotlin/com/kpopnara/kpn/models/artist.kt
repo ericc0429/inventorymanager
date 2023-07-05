@@ -1,44 +1,78 @@
 package com.kpopnara.kpn
 
+// import org.springframework.data.relational.core.mapping.Table
 import jakarta.persistence.*
 import java.util.Optional
 import java.util.UUID
+import kotlin.collections.Set
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
-enum class GenderTypes {
-  GIRL,
-  BOY,
+enum class GenderType {
+  MALE,
+  FEMALE,
   NONBINARY,
   NONE
 }
 
+enum class GroupGenderType {
+  GIRL,
+  BOY,
+  COED,
+  NONE
+}
+
+enum class GroupType {
+  GROUPP,
+  SUBUNIT,
+  SOLO,
+  NONE
+}
+
 @Entity
-@Table(name = "artists")
-data class Artist(
-    @Id //
+class Artist(
+    @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", updatable = false, nullable = false)
     val id: UUID, // Unique identifier
-    var name: String,
-    var birthday: String,
-    @Enumerated(EnumType.ORDINAL) var gender: GenderTypes,
-    // Use a set in case of artist being in a group and its subunits
-    @ManyToMany var group: Set<Group>,
-    var debut: String,
+    @Column var name: String,
+    @Column var debut: String,
+    @Column var group_type: GroupType,
+    // Artist-Only:
+    @Column var birthday: String?,
+    @Column var gender: GenderType?,
+    @ManyToMany var group: Set<Artist?>?,
+
+    // Group-Only:
+    @Column var group_gender: GroupGenderType?,
     @ManyToMany
     @JoinTable(
-        name = "artists_jt",
+        name = "group_person_jt",
+        joinColumns = [JoinColumn(name = "group_id")],
+        inverseJoinColumns = [JoinColumn(name = "person_id")]
+    )
+    var members: Set<Artist?>?, // List of UUID of members
+    // Albums
+    @ManyToMany
+    @JoinTable(
+        name = "artist_album_jt",
+        joinColumns = [JoinColumn(name = "artist_id")],
+        inverseJoinColumns = [JoinColumn(name = "album_id")]
+    )
+    var albums: Set<Album>,
+    // Other Assets
+    @ManyToMany
+    @JoinTable(
+        name = "artist_asset_jt",
         joinColumns = [JoinColumn(name = "artist_id")],
         inverseJoinColumns = [JoinColumn(name = "asset_id")]
     )
-    var assets: Set<Album>?, // List of associated products UUIDs
-) {
-  // constructor() : this(UUID.randomUUID(), "", "", GenderTypes.NONE, , "", emptySet())
-}
+    var assets: Set<Asset>,
+)
 
-@Repository interface ArtistRepo : JpaRepository<Artist, String>
+@Repository interface ArtistRepo : JpaRepository<Artist, UUID>
 
 @RestController
 @RequestMapping("/api")
@@ -46,7 +80,7 @@ class ArtistController(val service: ArtistService) {
   @GetMapping("/artists") fun artists(): List<Artist> = service.findArtists()
 
   @GetMapping("/artist/{id}")
-  fun getArtist(@PathVariable id: String): List<Artist> = service.findArtistById(id)
+  fun getArtist(@PathVariable id: UUID): List<Artist> = service.findArtistById(id)
 
   @PostMapping("/artists")
   fun postArtist(@RequestBody artist: Artist) {
@@ -64,7 +98,7 @@ class ArtistController(val service: ArtistService) {
   }
 
   @DeleteMapping("/artist/{id}")
-  fun deleteArtist(@PathVariable id: String) {
+  fun deleteArtist(@PathVariable id: UUID) {
     service.deleteArtistById(id)
   }
 }
@@ -73,7 +107,7 @@ class ArtistController(val service: ArtistService) {
 class ArtistService(val db: ArtistRepo) {
   fun findArtists(): List<Artist> = db.findAll().toList()
 
-  fun findArtistById(id: String): List<Artist> = db.findById(id).toList()
+  fun findArtistById(id: UUID): List<Artist> = db.findById(id).toList()
 
   fun save(artist: Artist) {
     db.save(artist)
@@ -83,7 +117,7 @@ class ArtistService(val db: ArtistRepo) {
     db.deleteAll()
   }
 
-  fun deleteArtistById(id: String) {
+  fun deleteArtistById(id: UUID) {
     db.deleteById(id)
   }
 

@@ -10,13 +10,13 @@ import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
-/* ENTITY -- Item -- Album
-This represents albums associated with either a group or a solo artist.
+/* ENTITY -- Item -- Asset
+This represents assets that are associated with an artist, but are NOT albums. (think lightsticks, posters, etc.)
 */
-@Entity(name = "Album")
-@Table(name = "albums")
-class Album(
-    // Inherited from IAsset
+@Entity
+// @Table(name = "assets")
+class Asset(
+    // Inherited from Item
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
@@ -26,75 +26,74 @@ class Album(
     @Column override var price: Double,
     @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>,
 
-    // Inherited from IArtistAsset
+    // Inherited from IAsset Interface
     @Column @ManyToMany override var artist: Set<Artist>, // Associated artist's UUID
     @Column override var version: String,
     // Join Table mapping extras that come with product
-    /*
-    @Column
+    /* @Column
     @ManyToMany
     @JoinTable(
         name = "artistasset_extras_jt",
         joinColumns = [JoinColumn(name = "artistasset_id")],
         inverseJoinColumns = [JoinColumn(name = "asset_id")]
     )
-    override var extras: Set<Asset>,
-    */
+    override var extras: Set<Asset>, */
     @Column override var extras: String,
     @Column override var released: String,
 
-    // Album-Specific Fields
-    @Column var discography: String,
-    @Column var format: String,
-    @Column var color: String,
-) : Item(id, name, gtin, price, stock), IAsset {}
+    // Asset-Specific Fields
+    // @Column var group: Group,
+    @Column var brand: String,
+) : Item(id, name, gtin, price, stock), IAsset {
+  // constructor() : this(emptySet(), "", "", "", "", "", "", "", 0.0, emptySet())
+}
 
-@Repository interface AlbumRepo : JpaRepository<Album, UUID>
+@Repository interface AssetRepo : JpaRepository<Asset, UUID>
 
 @RestController
 @RequestMapping("/api")
-class AlbumController(val service: AlbumService) {
-  @GetMapping("/albums") fun albums(): List<Album> = service.findAlbums()
+class AssetController(val service: AssetService) {
+  @GetMapping("/assets") fun assets(): List<Asset> = service.findAssets()
 
-  @GetMapping("/album/{id}")
-  fun getAlbum(@PathVariable id: UUID): List<Album> = service.findAlbumById(id)
+  @GetMapping("/asset/{id}")
+  fun getAsset(@PathVariable id: UUID): List<Asset> = service.findAssetById(id)
 
-  @PostMapping("/albums")
-  fun postAlbum(@RequestBody album: Album) {
-    service.save(album)
+  @PostMapping("/assets")
+  fun postAsset(@RequestBody asset: Asset) {
+    service.save(asset)
   }
 
-  @PutMapping("album/{id}")
-  fun updateAlbum(@RequestBody album: Album) {
-    service.save(album)
+  @PutMapping("asset/{id}")
+  fun updateAsset(@RequestBody asset: Asset) {
+    service.save(asset)
   }
 
-  @DeleteMapping("/albums")
-  fun deleteAlbums() {
-    service.deleteAlbums()
+  @DeleteMapping("/assets")
+  fun deleteAssets() {
+    service.deleteAssets()
   }
 
-  @DeleteMapping("/album/{id}")
-  fun deleteAlbum(@PathVariable id: UUID) {
-    service.deleteAlbumById(id)
+  @DeleteMapping("/asset/{id}")
+  fun deleteAsset(@PathVariable id: UUID) {
+    service.deleteAssetById(id)
   }
 }
 
 @Service
-class AlbumService(val db: AlbumRepo) {
-  fun findAlbums(): List<Album> = db.findAll().toList()
+class AssetService(val db: AssetRepo) {
+  fun findAssets(): List<Asset> = db.findAll().toList()
 
-  fun findAlbumById(id: UUID): List<Album> = db.findById(id).toList()
+  fun findAssetById(id: UUID): List<Asset> = db.findById(id).toList()
 
-  fun save(album: Album) {
-    db.save(album)
+  fun save(asset: Asset) {
+    db.save(asset)
   }
 
-  fun deleteAlbums() {
+  fun deleteAssets() {
     db.deleteAll()
   }
 
-  fun deleteAlbumById(id: UUID) {
+  fun deleteAssetById(id: UUID) {
     db.deleteById(id)
   }
 
