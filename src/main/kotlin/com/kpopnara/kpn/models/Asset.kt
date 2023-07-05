@@ -30,23 +30,21 @@ class Asset(
     @Column @ManyToMany override var artist: Set<Artist>, // Associated artist's UUID
     @Column override var version: String,
     // Join Table mapping extras that come with product
-    /* @Column
-    @ManyToMany
+    @Column
+    @ManyToMany(targetEntity = Item::class)
     @JoinTable(
-        name = "artistasset_extras_jt",
-        joinColumns = [JoinColumn(name = "artistasset_id")],
-        inverseJoinColumns = [JoinColumn(name = "asset_id")]
+        name = "asset_extras_jt",
+        joinColumns = [JoinColumn(name = "asset_id")],
+        inverseJoinColumns = [JoinColumn(name = "item_id")]
     )
-    override var extras: Set<Asset>, */
-    @Column override var extras: String,
+    override var extras: Set<Item>,
+    // @Column override var extras: String,
     @Column override var released: String,
 
     // Asset-Specific Fields
     // @Column var group: Group,
     @Column var brand: String,
-) : Item(id, name, gtin, price, stock), IAsset {
-  // constructor() : this(emptySet(), "", "", "", "", "", "", "", 0.0, emptySet())
-}
+) : Item(id, name, gtin, price, stock), IAsset {}
 
 @Repository interface AssetRepo : JpaRepository<Asset, UUID>
 

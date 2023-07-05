@@ -23,6 +23,6 @@ abstract class Item(
 interface IAsset {
   var artist: Set<Artist>
   var version: String
-  var extras: String
+  var extras: Set<Item>
   var released: String
 }
