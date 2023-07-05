@@ -28,12 +28,15 @@ class Stock(
     @ManyToOne @JoinColumn(name = "asset_id") var item: Item,
     @Column var count: Int,
     @Column var restock_threshold: Int,
+    // Last date item went out of stock -- to help prevent accidental double-orders.
+    @Column var oos_date: String,
+    // We should have a manual clear button on front-end to set this to false.
     @Column var ordered: Boolean,
-    @Column var arrival: String,
-) {
-
-  // constructor() : this(Location.NONE, 0, 0, false, "")
-}
+    // Date last restock shipment was ordered.
+    @Column var order_date: String,
+    // Tracking number
+    @Column var tracking: String?,
+) {}
 
 @Repository interface StockRepo : JpaRepository<Stock, UUID>
 
