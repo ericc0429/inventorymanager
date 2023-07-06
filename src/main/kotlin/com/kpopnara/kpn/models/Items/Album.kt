@@ -27,7 +27,9 @@ class Album(
     @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>,
 
     // Inherited from IArtistAsset
-    @Column @ManyToMany override var artist: Set<Artist>, // Associated artist's UUID
+    @Column
+    @ManyToMany(targetEntity = Artist::class)
+    override var artist: Set<Artist>, // Associated artist's UUID
     @Column override var version: String,
     // Join Table mapping extras that come with product
     @ManyToMany(targetEntity = Item::class)

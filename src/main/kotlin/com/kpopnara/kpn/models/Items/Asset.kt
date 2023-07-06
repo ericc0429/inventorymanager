@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 This represents assets that are associated with an artist, but are NOT albums. (think lightsticks, posters, etc.)
 */
 @Entity
-// @Table(name = "assets")
+@Table(name = "assets")
 class Asset(
     // Inherited from Item
     @Id
@@ -27,7 +27,9 @@ class Asset(
     @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>,
 
     // Inherited from IAsset Interface
-    @Column @ManyToMany override var artist: Set<Artist>, // Associated artist's UUID
+    @Column
+    @ManyToMany(targetEntity = Artist::class)
+    override var artist: Set<Artist>, // Associated artist's UUID
     @Column override var version: String,
     // Join Table mapping extras that come with product
     @Column

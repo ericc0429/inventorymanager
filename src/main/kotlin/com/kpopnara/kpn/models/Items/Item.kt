@@ -7,7 +7,7 @@ import kotlin.collections.Set
 import org.springframework.web.bind.annotation.*
 
 @Entity
-@Table(name = "item")
+@Table(name = "items")
 @Inheritance(strategy = InheritanceType.JOINED)
 abstract class Item(
     @Id
