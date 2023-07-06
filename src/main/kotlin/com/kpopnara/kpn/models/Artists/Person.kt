@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*
 This represents a solo person or a member of a group.
 */
 @Entity
-@Table(name = "persons")
 @DiscriminatorValue("Person")
 class Person(
     // Inherited

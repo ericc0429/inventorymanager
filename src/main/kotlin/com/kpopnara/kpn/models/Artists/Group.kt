@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*
 This represents groups that also contain members of type Person.
 */
 @Entity
-@Table(name = "groups")
 @DiscriminatorValue("Group")
 class Group(
     // Inherited
