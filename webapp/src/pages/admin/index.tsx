@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import AdminPanel from "components/Admin";
 import Layout from "components/Layout/Layout";
 
-export default function Admin() {
+/* export default function Admin() {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -32,4 +32,7 @@ export default function Admin() {
       ))}
     </Layout>
   );
+} */
+export default function Admin() {
+  return <AdminPanel />;
 }
