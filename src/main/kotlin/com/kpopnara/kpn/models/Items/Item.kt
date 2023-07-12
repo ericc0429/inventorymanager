@@ -1,6 +1,7 @@
-package com.kpopnara.kpn
+package com.kpopnara.kpn.models
 
 // import org.springframework.data.relational.core.mapping.Table
+
 import jakarta.persistence.*
 import java.util.UUID
 import kotlin.collections.Set

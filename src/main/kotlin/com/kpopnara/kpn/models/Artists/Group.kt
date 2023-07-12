@@ -1,4 +1,4 @@
-package com.kpopnara.kpn
+package com.kpopnara.kpn.models
 
 import jakarta.persistence.*
 import java.util.Optional
@@ -57,7 +57,7 @@ class Group(
 @Repository interface GroupRepo : JpaRepository<Group, UUID>
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("groups")
 class GroupController(val service: GroupService) {
   @GetMapping("/groups") fun groups(): List<Group> = service.findGroups()
 
@@ -90,6 +90,8 @@ class GroupService(val db: GroupRepo) {
   fun findGroups(): List<Group> = db.findAll().toList()
 
   fun findGroupById(id: UUID): List<Group> = db.findById(id).toList()
+
+  fun findGroupByName(name: String): List<Group> = db.findGroupByName(name).toList()
 
   fun save(group: Group) {
     db.save(group)
