@@ -19,7 +19,7 @@ class Group(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false, nullable = false)
-    override val id: UUID, // Unique identifier
+    override val id: UUID?, // Unique identifier
     @Column override var name: String,
     @Column override var debut: String,
     // Albums
@@ -54,13 +54,31 @@ class Group(
   // constructor() : this("", GroupTypes.NONE, emptySet(), emptySet())
 }
 
+data class GroupDTO(
+    val id: UUID?,
+    var name: String,
+    var debut: String,
+    var albums: Set<Album>,
+    var assets: Set<Asset>,
+    var type: GroupType?,
+    var group_gender: GroupGenderType?,
+    var members: Set<Person>?
+)
+
+data class NewGroup(val name: String)
+
+fun Group.toView() = GroupDTO(id, name, debut, albums, assets, type, group_gender, members)
+
 @Repository interface GroupRepo : JpaRepository<Group, UUID>
 
 @RestController
-@RequestMapping("groups")
+@RequestMapping("/groups")
 class GroupController(val service: GroupService) {
-  @GetMapping("/groups") fun groups(): List<Group> = service.findGroups()
+  @GetMapping fun groups(): Iterable<GroupDTO> = service.findAll()
 
+  @PostMapping fun postGroup(@RequestBody newGroup: NewGroup) = service.save(newGroup)
+
+  /*
   @GetMapping("/group/{id}")
   fun getGroup(@PathVariable id: UUID): List<Group> = service.findGroupById(id)
 
@@ -83,13 +101,28 @@ class GroupController(val service: GroupService) {
   fun deleteGroup(@PathVariable id: UUID) {
     service.deleteGroupById(id)
   }
+  */
 }
 
 @Service
 class GroupService(val db: GroupRepo) {
-  fun findGroups(): List<Group> = db.findAll().toList()
+  fun findAll(): Iterable<GroupDTO> = db.findAll().map { it.toView() }
 
-  fun findGroupById(id: UUID): List<Group> = db.findById(id).toList()
+  fun save(newGroup: NewGroup) =
+      db.save(
+          Group(
+              id = null,
+              name = newGroup.name,
+              debut = "",
+              albums = emptySet(),
+              assets = emptySet(),
+              type = GroupType.NONE,
+              group_gender = GroupGenderType.NONE,
+              members = emptySet()
+          )
+      )
+
+  /*   fun findGroupById(id: UUID): List<Group> = db.findById(id).toList()
 
   fun findGroupByName(name: String): List<Group> = db.findGroupByName(name).toList()
 
@@ -103,7 +136,7 @@ class GroupService(val db: GroupRepo) {
 
   fun deleteGroupById(id: UUID) {
     db.deleteById(id)
-  }
+  } */
 
   fun <T : Any> Optional<out T>.toList(): List<T> = if (isPresent) listOf(get()) else emptyList()
 }

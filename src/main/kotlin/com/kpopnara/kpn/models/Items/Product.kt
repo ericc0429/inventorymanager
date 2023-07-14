@@ -2,12 +2,10 @@ package com.kpopnara.kpn.models
 
 // import org.springframework.data.relational.core.mapping.Table
 import jakarta.persistence.*
-import java.util.Optional
 import java.util.UUID
 import kotlin.collections.Set
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
-import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
 /* ENTITY -- Item -- Product
@@ -34,7 +32,7 @@ class Product(
 }
 
 @Repository interface ProductRepo : JpaRepository<Product, UUID>
-
+/*
 @RestController
 @RequestMapping("/api")
 class ProductController(val service: ProductService) {
@@ -84,3 +82,4 @@ class ProductService(val db: ProductRepo) {
 
   fun <T : Any> Optional<out T>.toList(): List<T> = if (isPresent) listOf(get()) else emptyList()
 }
+ */

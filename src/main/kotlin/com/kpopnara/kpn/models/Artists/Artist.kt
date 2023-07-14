@@ -34,7 +34,7 @@ abstract class Artist(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
-    open val id: UUID, // Unique identifier
+    open val id: UUID?, // Unique identifier
     @Column open var name: String,
     @Column open var debut: String,
     // Albums

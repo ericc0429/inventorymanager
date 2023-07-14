@@ -1,4 +1,4 @@
-package com.kpopnara.kpn
+/* package com.kpopnara.kpn
 
 import com.kpopnara.kpn.models.Group;
 import com.kpopnara.kpn.models.GroupRepo;
@@ -20,4 +20,4 @@ class Initializer : CommandLineRunner {
   override fun run(vararg strings: String) {
     Stream.of("BTS", "TWICE", "BlackPink").forEach({name -> repo.save(Group(name))})
   }
-}
+} */

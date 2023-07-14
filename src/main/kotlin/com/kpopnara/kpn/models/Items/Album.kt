@@ -2,12 +2,10 @@ package com.kpopnara.kpn.models
 
 // import org.springframework.data.relational.core.mapping.Table
 import jakarta.persistence.*
-import java.util.Optional
 import java.util.UUID
 import kotlin.collections.Set
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
-import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
 /* ENTITY -- Item -- Album
@@ -51,6 +49,7 @@ class Album(
 
 @Repository interface AlbumRepo : JpaRepository<Album, UUID>
 
+/*
 @RestController
 @RequestMapping("/api")
 class AlbumController(val service: AlbumService) {
@@ -100,3 +99,4 @@ class AlbumService(val db: AlbumRepo) {
 
   fun <T : Any> Optional<out T>.toList(): List<T> = if (isPresent) listOf(get()) else emptyList()
 }
+ */

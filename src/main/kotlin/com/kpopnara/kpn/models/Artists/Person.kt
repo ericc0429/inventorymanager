@@ -2,11 +2,9 @@ package com.kpopnara.kpn.models
 
 // import org.springframework.data.relational.core.mapping.Table
 import jakarta.persistence.*
-import java.util.Optional
 import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
-import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
 /* ENTITY -- Artist -- Person
@@ -19,7 +17,7 @@ class Person(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
-    override val id: UUID, // Unique identifier
+    override val id: UUID?, // Unique identifier
     @Column override var name: String,
     @Column override var debut: String,
     // Albums
@@ -48,6 +46,7 @@ class Person(
 
 @Repository interface ArtistRepo : JpaRepository<Person, UUID>
 
+/*
 @RestController
 @RequestMapping("/api")
 class ArtistController(val service: ArtistService) {
@@ -97,3 +96,4 @@ class ArtistService(val db: ArtistRepo) {
 
   fun <T : Any> Optional<out T>.toList(): List<T> = if (isPresent) listOf(get()) else emptyList()
 }
+ */
