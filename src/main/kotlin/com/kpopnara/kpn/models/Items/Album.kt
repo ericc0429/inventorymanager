@@ -6,6 +6,7 @@ import java.util.UUID
 import kotlin.collections.Set
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
 /* ENTITY -- Item -- Album
@@ -18,7 +19,7 @@ class Album(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
-    override val id: UUID, // Unique identifier
+    override val id: UUID?, // Unique identifier
     @Column override var name: String,
     @Column override var gtin: String,
     @Column override var price: Double,
@@ -47,7 +48,75 @@ class Album(
     @Column var color: String,
 ) : Item(id, name, gtin, price, stock), IAsset {}
 
+// Data Object
+data class AlbumDTO(
+    val id: UUID?,
+    var name: String,
+    var gtin: String,
+    var price: Double,
+    var stock: Set<Stock>,
+    var artist: Set<Artist>,
+    var version: String,
+    var extras: Set<Item>,
+    var released: String,
+    var discography: String,
+    var format: String,
+    var color: String,
+)
+
+// Entity to Data Object Conversion Function
+fun Album.toView() =
+    AlbumDTO(
+        id,
+        name,
+        gtin,
+        price,
+        stock,
+        artist,
+        version,
+        extras,
+        released,
+        discography,
+        format,
+        color
+    )
+
+// Class for holding POST data
+data class NewAlbum(var name: String)
+
 @Repository interface AlbumRepo : JpaRepository<Album, UUID>
+
+@RestController
+@RequestMapping("/albums")
+class AlbumController(val service: AlbumService) {
+  @GetMapping fun albums(): Iterable<AlbumDTO> = service.findAll()
+
+  @PostMapping fun addAlbum(@RequestBody newAlbum: NewAlbum) = service.save(newAlbum)
+}
+
+@Service
+class AlbumService(val db: AlbumRepo) {
+  fun findAll(): Iterable<AlbumDTO> = db.findAll().map { it.toView() }
+
+  fun save(newAlbum: NewAlbum): AlbumDTO =
+      db.save(
+              Album(
+                  id = null,
+                  name = newAlbum.name,
+                  gtin = "unknown",
+                  price = 0.0,
+                  stock = emptySet(),
+                  artist = emptySet(),
+                  version = "unknown",
+                  extras = emptySet(),
+                  released = "unknown",
+                  discography = "unknown",
+                  format = "unknown",
+                  color = "unknown",
+              )
+          )
+          .toView()
+}
 
 /*
 @RestController

@@ -6,6 +6,7 @@ import java.util.UUID
 import kotlin.collections.Set
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
 /* ENTITY -- Item -- Product
@@ -18,7 +19,7 @@ class Product(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
-    override val id: UUID, // Unique identifier
+    override val id: UUID?, // Unique identifier
     @Column override var name: String,
     @Column override var gtin: String,
     @Column override var price: Double,
@@ -26,12 +27,49 @@ class Product(
 
     // Product Specific
     @Column var description: String,
-) : Item(id, name, gtin, price, stock) {
+) : Item(id, name, gtin, price, stock) {}
 
-  // constructor() : this(emptySet(), "", "", "", "", "", "", "", 0.0, emptySet())
-}
+data class ProductDTO(
+    val id: UUID?,
+    var name: String,
+    var gtin: String,
+    var price: Double,
+    var stock: Set<Stock>,
+    var description: String,
+)
+
+fun Product.toView() = ProductDTO(id, name, gtin, price, stock, description)
+
+data class NewProduct(var name: String)
 
 @Repository interface ProductRepo : JpaRepository<Product, UUID>
+
+@RestController
+@RequestMapping("/products")
+class ProductController(val service: ProductService) {
+  @GetMapping fun products(): Iterable<ProductDTO> = service.findAll()
+
+  @PostMapping fun addProduct(@RequestBody newProduct: NewProduct) = service.save(newProduct)
+}
+
+@Service
+class ProductService(val db: ProductRepo) {
+  fun findAll(): Iterable<ProductDTO> = db.findAll().map { it.toView() }
+
+  fun save(newProduct: NewProduct): ProductDTO =
+      db.save(
+              Product(
+                  id = null,
+                  name = newProduct.name,
+                  gtin = "unknown",
+                  price = 0.0,
+                  stock = emptySet(),
+                  description = "Test Product"
+              )
+          )
+          .toView()
+}
+
 /*
 @RestController
 @RequestMapping("/api")

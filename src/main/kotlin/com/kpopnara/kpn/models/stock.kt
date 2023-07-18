@@ -2,7 +2,6 @@ package com.kpopnara.kpn.models
 
 // import org.springframework.data.relational.core.mapping.Table
 import jakarta.persistence.*
-import java.util.Optional
 import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
@@ -23,7 +22,7 @@ class Stock(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", unique = true, nullable = false)
-    val id: UUID, // Unique identifier
+    val id: UUID?, // Unique identifier
     @Column @Enumerated(EnumType.ORDINAL) val location: LocationType,
     @ManyToOne @JoinColumn(name = "asset_id") var item: Item,
     @Column var count: Int,
@@ -38,54 +37,52 @@ class Stock(
     @Column var tracking: String?,
 ) {}
 
+data class StockDTO(
+    val id: UUID?,
+    val location: LocationType,
+    var item: Item,
+    var count: Int,
+    var restock_threshold: Int,
+    var oos_date: String,
+    var ordered: Boolean,
+    var order_date: String,
+    var tracking: String?,
+)
+
+fun Stock.toView() =
+    StockDTO(id, location, item, count, restock_threshold, oos_date, ordered, order_date, tracking)
+
+data class NewStock(var location: LocationType, var item: Item)
+
 @Repository interface StockRepo : JpaRepository<Stock, UUID>
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/stock")
 class StockController(val service: StockService) {
-  @GetMapping("/stocks") fun stocks(): List<Stock> = service.findStocks()
+  @GetMapping fun stocks(): Iterable<StockDTO> = service.findAll()
 
-  @GetMapping("/stock/{id}")
-  fun getStock(@PathVariable id: UUID): List<Stock> = service.findStockById(id)
-
-  @PostMapping("/stocks")
-  fun postStock(@RequestBody stock: Stock) {
-    service.save(stock)
-  }
-
-  @PutMapping("stock/{id}")
-  fun updateStock(@RequestBody stock: Stock) {
-    service.save(stock)
-  }
-
-  @DeleteMapping("/stocks")
-  fun deleteStocks() {
-    service.deleteStocks()
-  }
-
-  @DeleteMapping("/stock/{id}")
-  fun deleteStock(@PathVariable id: UUID) {
-    service.deleteStockById(id)
-  }
+  @PostMapping fun addStock(@RequestBody newStock: NewStock) = service.save(newStock)
 }
 
 @Service
 class StockService(val db: StockRepo) {
-  fun findStocks(): List<Stock> = db.findAll().toList()
+  fun findAll(): Iterable<StockDTO> = db.findAll().map { it.toView() }
 
-  fun findStockById(id: UUID): List<Stock> = db.findById(id).toList()
+  fun save(newStock: NewStock): StockDTO =
+      db.save(
+              Stock(
+                  id = null,
+                  location = newStock.location,
+                  item = newStock.item,
+                  count = 0,
+                  restock_threshold = 25,
+                  oos_date = "unknown",
+                  ordered = false,
+                  order_date = "unknown",
+                  tracking = "unknown"
+              )
+          )
+          .toView()
 
-  fun save(stock: Stock) {
-    db.save(stock)
-  }
-
-  fun deleteStocks() {
-    db.deleteAll()
-  }
-
-  fun deleteStockById(id: UUID) {
-    db.deleteById(id)
-  }
-
-  fun <T : Any> Optional<out T>.toList(): List<T> = if (isPresent) listOf(get()) else emptyList()
+  // fun <T : Any> Optional<out T>.toList(): List<T> = if (isPresent) listOf(get()) else emptyList()
 }

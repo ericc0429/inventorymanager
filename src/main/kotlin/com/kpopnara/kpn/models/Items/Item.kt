@@ -14,7 +14,7 @@ abstract class Item(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
-    open val id: UUID, // Unique identifier
+    open val id: UUID?, // Unique identifier
     @Column open var name: String,
     @Column open var gtin: String,
     @Column open var price: Double,
