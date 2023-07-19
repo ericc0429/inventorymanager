@@ -21,6 +21,9 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
+  implementation("com.squareup:square:22.0.0.20220720")
+  implementation("org.apache.httpcomponents:httpclient:4.5")
+  implementation("com.google.guava:guava:11.0.2")
   runtimeOnly("org.postgresql:postgresql")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

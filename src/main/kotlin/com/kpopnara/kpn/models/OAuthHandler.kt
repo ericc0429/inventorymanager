@@ -26,7 +26,7 @@ object OAuthHandler {
     private const val SQUARE_ACCESS_TOKEN_ENV_VAR = "EAAAEPLRBeVy9JYymCS-NJi9sd35V-7MC8WBDu4x7fxS3wn856_qLcnlMkPy9H3d"
 
     // Modify this list as needed
-    private val SCOPES = arrayOf("INVENTORY_READ")
+    private val SCOPES = arrayOf("INVENTORY_READ", "ITEMS_READ")
 
     // Serves the authorize link
     internal class AuthorizeHandler : HttpHandler {

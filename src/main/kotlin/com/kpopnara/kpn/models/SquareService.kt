@@ -1,7 +1,8 @@
 package com.kpopnara.kpn.models
 
-import com.kpopnara.kpn.models.OAuthHandler.AuthorizeHandler
+import com.google.common.collect.Lists
 import com.kpopnara.kpn.*
+import com.kpopnara.kpn.models.OAuthHandler.AuthorizeHandler
 import com.squareup.square.Environment
 import com.squareup.square.SquareClient
 import com.squareup.square.exceptions.ApiException
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Service
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.util.*
-import kotlin.collections.ArrayList
 
 @Service
-class SquareService(@Autowired private val stockRepository : StockRepo, @Autowired private val assetRepository : AssetRepo, @Autowired private val albumRepository : AlbumRepo) {
+class SquareService(@Autowired private val stockRepository : StockRepo,
+                    @Autowired private val assetRepository : AssetRepo,
+                    @Autowired private val albumRepository : AlbumRepo,
+                    @Autowired private val productRepository : ProductRepo) {
     var client: SquareClient? = null
 
     private val SQUARE_ACCESS_TOKEN_ENV_VAR = "EAAAEAMXjxAjK42SK99tHgpCJDIuqLEt9lP0QCGCiXz81QFWEM3_4e4HqXSDjjld"
@@ -92,42 +95,41 @@ class SquareService(@Autowired private val stockRepository : StockRepo, @Autowir
             val catalogId = inventoryCount.catalogObjectId
             val existingAlbum = albumRepository.findByCatalogId(catalogId)
             val existingAsset = assetRepository.findByCatalogId(catalogId)
-            if (existingAlbum == null && existingAsset == null) {
+            val existingProduct = productRepository.findByCatalogId(catalogId)
+            if (existingAlbum == null && existingAsset == null && existingProduct == null) {
                 itemsToBeCreatedIdList.add(catalogId)
+                var newStock = Stock(LocationType.SOUTHLOOP_CHI,
+                    existingAsset,
+                    Integer.parseInt(inventoryCount.quantity),
+                    0,
+                    "",
+                    false,
+                    "",
+                    "",
+                    catalogId)
+                println("Found matching stock and updating")
+                stockRepository.save(newStock)
             } else {
-                println("No album or asset found")
+                println("Existing album, asset, or product found!")
                 val existingStock = stockRepository.findByCatalogId(inventoryCount.catalogObjectId)
-                // TODO: Need more logical solution to separate existingAsset & existingAlbum with a better error handling
+
+                // TODO: Need more logical solution to separate asset, album, and product with a better error handling
                 if (existingStock == null) {
-                    var newStock : Stock
-                    if (existingAlbum != null) {
-                        newStock = Stock(LocationType.SOUTHLOOP_CHI,
-                                            existingAlbum,
-                                            Integer.parseInt(inventoryCount.quantity),
-                                            0,
-                                            "",
-                                            false,
-                                            "",
-                                            "",
-                                            catalogId)
-                        println("Found matching stock and updating")
-                        stockRepository.save(newStock)
-                    } else if (existingAsset != null) {
-                        newStock = Stock(LocationType.SOUTHLOOP_CHI,
-                                            existingAsset,
-                                            Integer.parseInt(inventoryCount.quantity),
-                                            0,
-                                            "",
-                                            false,
-                                            "",
-                                            null,
-                                            catalogId)
-                        println("Found matching stock and updating")
-                        stockRepository.save(newStock)
-                    }
+                    var newStock = Stock(LocationType.SOUTHLOOP_CHI,
+                        existingAsset,
+                        Integer.parseInt(inventoryCount.quantity),
+                        0,
+                        "",
+                        false,
+                        "",
+                        "",
+                        catalogId)
+                    println("Found matching stock and updating")
+                    stockRepository.save(newStock)
 
                 } else {
-                    println("Found no matching stock and creating a new entity in the Stock schema")
+                    println("Found a matching stock in the DB and updating the values")
+                    // TODO: Update more fields when the attributes are finalized
                     existingStock.count = Integer.parseInt(inventoryCount.quantity)
                     stockRepository.save(existingStock)
                 }
@@ -135,21 +137,38 @@ class SquareService(@Autowired private val stockRepository : StockRepo, @Autowir
             }
         }
 
-        println("Size of itemsToBeCreatedIdList: " + itemsToBeCreatedIdList.size)
+        updateItems(itemsToBeCreatedIdList)
+
+    }
+
+    fun updateItems(itemsToBeCreatedIdList : List<String>) {
         val batchRetrieveCatalogApi = client?.catalogApi
-        val body = BatchRetrieveCatalogObjectsRequest.Builder(itemsToBeCreatedIdList).build()
-        val result = batchRetrieveCatalogApi?.batchRetrieveCatalogObjects(body)
 
-        if (result != null) {
-            updateItems(result.objects)
+        val initialListSize = itemsToBeCreatedIdList.size
+        println("Size of itemsToBeCreatedIdList: " + itemsToBeCreatedIdList.size)
+        val partition: List<List<String>> = Lists.partition(itemsToBeCreatedIdList, 1000)
+
+        var count = 0
+        for (sublist in partition) {
+            val body = BatchRetrieveCatalogObjectsRequest.Builder(itemsToBeCreatedIdList).objectIds(sublist).build()
+            val result : BatchRetrieveCatalogObjectsResponse?
+            try {
+                result = batchRetrieveCatalogApi?.batchRetrieveCatalogObjects(body)
+                if (result != null) {
+                    for (catalogObject in result.objects) {
+                        count++
+                        println("#" + count + " Item type: " + catalogObject.type)
+//                        val itemData = catalogObject.itemData
+//                        val name = itemData.name
+//                        println("Item: " + name + ", type: " + catalogObject.type)
+                    }
+                }
+            } catch (e : ApiException) {
+                for (error in e.errors) {
+                    println(error.detail)
+                }
+            }
         }
     }
 
-    fun updateItems(catalogObjectsList : List<CatalogObject>) {
-        for (catalogObject in catalogObjectsList) {
-            val itemData = catalogObject.itemData
-            val name = itemData.name
-            println("Item: " + name + ", type: " + catalogObject.type)
-        }
-    }
 }

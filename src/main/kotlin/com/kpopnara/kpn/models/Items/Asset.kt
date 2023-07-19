@@ -50,7 +50,7 @@ class Asset(
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", unique = true, nullable = false)
+    @Column(name = "id", updatable = false, nullable = false)
     override val id: UUID?=null // Unique identifier
 ) : Item(name, gtin, price, stock, catalogId, id), IAsset {}
 

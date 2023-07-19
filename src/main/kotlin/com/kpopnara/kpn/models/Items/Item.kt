@@ -21,7 +21,7 @@ abstract class Item(
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", unique = true, nullable = false)
+    @Column(name = "id", updatable = true, nullable = false)
     open val id: UUID?=null // Unique identifier
 )
 
