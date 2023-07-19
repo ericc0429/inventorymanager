@@ -21,7 +21,7 @@ enum class GroupGenderType {
 }
 
 enum class GroupType {
-  GROUPP,
+  GROUP,
   SUBUNIT,
   NONE
 }

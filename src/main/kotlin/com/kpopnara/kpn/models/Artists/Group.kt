@@ -8,8 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
+
+enum class AttribType {
+  MEMBER,
+  ALBUM,
+  ASSET
+}
 
 /* ENTITY -- Artist -- Group
 This represents groups that also contain members of type Person.
@@ -81,7 +88,7 @@ data class NewGroup(var name: String)
 
 @Repository interface GroupRepo : JpaRepository<Group, UUID>
 
-data class NewMember(val memberId: UUID)
+data class NewAttrib(val attribId: String)
 
 @RestController
 @RequestMapping("/groups")
@@ -90,13 +97,19 @@ class GroupController(val service: GroupService) {
 
   @PostMapping fun addGroup(@RequestBody newGroup: NewGroup) = service.save(newGroup)
 
-  @PostMapping("{id}/addmember")
-  fun addMember(@PathVariable id: UUID, @RequestBody newMember: NewMember): GroupDTO =
-      service.addMember(id, newMember)
+  @PostMapping("{id}/add")
+  fun addAttrib(@PathVariable id: UUID, @RequestBody newAttrib: NewAttrib): GroupDTO =
+      service.addAttrib(id, newAttrib)
 }
 
 @Service
-class GroupService(val db: GroupRepo, val artistRepo: ArtistRepo) {
+@Transactional
+class GroupService(
+    val db: GroupRepo,
+    val artistRepo: ArtistRepo,
+    val albumRepo: AlbumRepo,
+    val assetRepo: AssetRepo
+) {
   fun findAll(): Iterable<GroupDTO> = db.findAll().map { it.toView() }
 
   fun save(newGroup: NewGroup): GroupDTO =
@@ -114,15 +127,38 @@ class GroupService(val db: GroupRepo, val artistRepo: ArtistRepo) {
           )
           .toView()
 
-  fun addMember(id: UUID, newMember: NewMember): GroupDTO {
+  fun addAttrib(id: UUID, newAttrib: NewAttrib): GroupDTO {
     val group = db.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
     val member =
-        artistRepo.findById(newMember.memberId).orElseThrow {
+        artistRepo.findById(UUID.fromString(newAttrib.attribId)).orElseThrow {
           ResponseStatusException(HttpStatus.NOT_FOUND)
         }
-
+    val namae = newAttrib.attribId
+    println("==== name: $namae")
     return db.save(group.copy(members = group.members.plus(member))).toView()
   }
+  /*   fun addAttrib(id: UUID, newAttrib: NewAttrib): GroupDTO {
+    val group = db.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+    if (newAttrib.type == AttribType.MEMBER) {
+      val member =
+          artistRepo.findById(newAttrib.attribId).orElseThrow {
+            ResponseStatusException(HttpStatus.NOT_FOUND)
+          }
+      return db.save(group.copy(members = group.members.plus(member))).toView()
+    } else if (newAttrib.type == AttribType.ALBUM) {
+      val album =
+          albumRepo.findById(newAttrib.attribId).orElseThrow {
+            ResponseStatusException(HttpStatus.NOT_FOUND)
+          }
+      return db.save(group.copy(albums = group.albums.plus(album))).toView()
+    } else if (newAttrib.type == AttribType.ASSET) {
+      val asset =
+          assetRepo.findById(newAttrib.attribId).orElseThrow {
+            ResponseStatusException(HttpStatus.NOT_FOUND)
+          }
+      return db.save(group.copy(assets = group.assets.plus(asset))).toView()
+    } else return group.toView()
+  } */
 
   // fun <T : Any> Optional<out T>.toList(): List<T> = if (isPresent) listOf(get()) else emptyList()
 }

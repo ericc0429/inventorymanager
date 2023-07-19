@@ -6,6 +6,7 @@ import java.util.UUID
 import kotlin.collections.Set
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
 /* ENTITY -- Item -- Asset
@@ -18,7 +19,7 @@ class Asset(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
-    override val id: UUID, // Unique identifier
+    override val id: UUID?, // Unique identifier
     @Column override var name: String,
     @Column override var gtin: String,
     @Column override var price: Double,
@@ -46,7 +47,58 @@ class Asset(
     @Column var brand: String,
 ) : Item(id, name, gtin, price, stock), IAsset {}
 
+// DTO
+data class AssetDTO(
+    val id: UUID?,
+    var name: String,
+    var gtin: String,
+    var price: Double,
+    var stock: Set<Stock>,
+    var artist: Set<Artist>,
+    var version: String,
+    var extras: Set<Item>,
+    var released: String,
+    var brand: String
+)
+
+fun Asset.toView() =
+    AssetDTO(id, name, gtin, price, stock, artist, version, extras, released, brand)
+
+data class NewAsset(var name: String)
+
+// Repository
 @Repository interface AssetRepo : JpaRepository<Asset, UUID>
+
+@RestController
+@RequestMapping("/assets")
+class AssetController(val service: AssetService) {
+  @GetMapping fun assets(): Iterable<AssetDTO> = service.findAll()
+
+  @PostMapping fun addAsset(@RequestBody newAsset: NewAsset) = service.save(newAsset)
+}
+
+@Service
+class AssetService(val db: AssetRepo) {
+  fun findAll(): Iterable<AssetDTO> = db.findAll().map { it.toView() }
+
+  fun save(newAsset: NewAsset): AssetDTO =
+      db.save(
+              Asset(
+                  id = null,
+                  name = newAsset.name,
+                  gtin = "unknown",
+                  price = 0.0,
+                  stock = emptySet(),
+                  artist = emptySet(),
+                  version = "unknown",
+                  extras = emptySet(),
+                  released = "unknown",
+                  brand = "unknown"
+              )
+          )
+          .toView()
+}
+
 /*
 @RestController
 @RequestMapping("/api")
