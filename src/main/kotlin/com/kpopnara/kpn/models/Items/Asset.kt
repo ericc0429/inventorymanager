@@ -2,6 +2,7 @@ package com.kpopnara.kpn
 
 // import org.springframework.data.relational.core.mapping.Table
 import jakarta.persistence.*
+import org.hibernate.annotations.Type
 import java.util.Optional
 import java.util.UUID
 import kotlin.collections.Set
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
+import kotlin.reflect.typeOf
 
 /* ENTITY -- Item -- Asset
 This represents assets that are associated with an artist, but are NOT albums. (think lightsticks, posters, etc.)
@@ -17,10 +19,7 @@ This represents assets that are associated with an artist, but are NOT albums. (
 @Table(name = "assets")
 class Asset(
     // Inherited from Item
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
-    override val id: UUID, // Unique identifier
+
     @Column override var name: String,
     @Column override var gtin: String,
     @Column override var price: Double,
@@ -46,9 +45,18 @@ class Asset(
     // Asset-Specific Fields
     // @Column var group: Group,
     @Column var brand: String,
-) : Item(id, name, gtin, price, stock), IAsset {}
+    @Column(unique = true)
+    override var catalogId : String,
 
-@Repository interface AssetRepo : JpaRepository<Asset, UUID>
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", unique = true, nullable = false)
+    override val id: UUID?=null // Unique identifier
+) : Item(name, gtin, price, stock, catalogId, id), IAsset {}
+
+@Repository interface AssetRepo : JpaRepository<Asset, UUID> {
+    fun findByCatalogId(catalogId: String) : Asset?
+}
 
 @RestController
 @RequestMapping("/api")

@@ -17,10 +17,7 @@ This represents products that aren't associated with a music group (think facema
 @Table(name = "product")
 class Product(
     // Inherited from IAsset
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
-    override val id: UUID, // Unique identifier
+
     @Column override var name: String,
     @Column override var gtin: String,
     @Column override var price: Double,
@@ -28,12 +25,21 @@ class Product(
 
     // Product Specific
     @Column var description: String,
-) : Item(id, name, gtin, price, stock) {
+    @Column(unique = true)
+    override var catalogId : String,
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", unique = true, nullable = false)
+    override val id: UUID?=null // Unique identifier
+) : Item(name, gtin, price, stock, catalogId, id) {
 
   // constructor() : this(emptySet(), "", "", "", "", "", "", "", 0.0, emptySet())
 }
 
-@Repository interface ProductRepo : JpaRepository<Product, UUID>
+@Repository interface ProductRepo : JpaRepository<Product, UUID> {
+    fun findByCatalogId(catalogId: String) : Product?
+}
 
 @RestController
 @RequestMapping("/api")

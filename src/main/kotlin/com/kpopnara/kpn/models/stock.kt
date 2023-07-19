@@ -5,6 +5,7 @@ import jakarta.persistence.*
 import java.util.Optional
 import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.lang.Nullable
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
@@ -20,12 +21,8 @@ enum class LocationType {
 @Entity(name = "Stock")
 // @Table(name = "stock")
 class Stock(
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", unique = true, nullable = false)
-    val id: UUID, // Unique identifier
     @Column @Enumerated(EnumType.ORDINAL) val location: LocationType,
-    @ManyToOne @JoinColumn(name = "asset_id") var item: Item,
+    @Nullable @ManyToOne @JoinColumn(name = "asset_id") var item: Item?,
     @Column var count: Int,
     @Column var restock_threshold: Int,
     // Last date item went out of stock -- to help prevent accidental double-orders.
@@ -36,9 +33,32 @@ class Stock(
     @Column var order_date: String,
     // Tracking number
     @Column var tracking: String?,
-) {}
 
-@Repository interface StockRepo : JpaRepository<Stock, UUID>
+    @Column(unique = true)
+    var catalogId : String,
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", unique = true, nullable = false)
+    val id: UUID?=null // Unique identifier
+) {
+//    constructor(location: LocationType,
+//                item: Item, count: Int,
+//                restock_threshold: Int,
+//                oos_date: String,
+//                ordered: Boolean,
+//                order_date: String,
+//                tracking: String,
+//                catalogId : String) : this( ) {
+//        this.location = location
+//        this.item = item
+//    }
+}
+
+@Repository
+interface StockRepo : JpaRepository<Stock, UUID> {
+    fun findByCatalogId(catalogId: String) : Stock?
+}
 
 @RestController
 @RequestMapping("/api")

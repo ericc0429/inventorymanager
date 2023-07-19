@@ -17,10 +17,6 @@ This represents albums associated with either a group or a solo artist.
 @Table(name = "albums")
 class Album(
     // Inherited from IAsset
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
-    override val id: UUID, // Unique identifier
     @Column override var name: String,
     @Column override var gtin: String,
     @Column override var price: Double,
@@ -47,9 +43,19 @@ class Album(
     @Column var discography: String,
     @Column var format: String,
     @Column var color: String,
-) : Item(id, name, gtin, price, stock), IAsset {}
 
-@Repository interface AlbumRepo : JpaRepository<Album, UUID>
+    @Column(unique = true)
+    override var catalogId : String,
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", unique = true, nullable = false)
+    override val id: UUID?=null // Unique identifier
+) : Item(name, gtin, price, stock, catalogId, id), IAsset {}
+
+@Repository interface AlbumRepo : JpaRepository<Album, UUID> {
+    fun findByCatalogId(catalogId: String) : Album?
+}
 
 @RestController
 @RequestMapping("/api")

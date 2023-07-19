@@ -1,4 +1,4 @@
-package com.example.kpn.models
+package com.kpopnara.kpn.models
 
 import com.squareup.square.Environment
 import com.squareup.square.SquareClient
