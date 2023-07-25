@@ -44,7 +44,7 @@ abstract class Artist(
         joinColumns = [JoinColumn(name = "artist_id")],
         inverseJoinColumns = [JoinColumn(name = "album_id")]
     )
-    open var albums: Set<Album?>,
+    open var albums: Set<Album>,
     // Other Assets
     @ManyToMany
     @JoinTable(
@@ -52,5 +52,5 @@ abstract class Artist(
         joinColumns = [JoinColumn(name = "artist_id")],
         inverseJoinColumns = [JoinColumn(name = "asset_id")]
     )
-    open var assets: Set<Asset?>,
+    open var assets: Set<Asset>,
 )

@@ -53,16 +53,27 @@ data class AssetDTO(
     var name: String,
     var gtin: String,
     var price: Double,
-    var stock: Set<Stock>,
-    var artist: Set<Artist>,
+    var stock: Iterable<String>,
+    var artist: Iterable<String>,
     var version: String,
-    var extras: Set<Item>,
+    var extras: Iterable<String>,
     var released: String,
     var brand: String
 )
 
 fun Asset.toView() =
-    AssetDTO(id, name, gtin, price, stock, artist, version, extras, released, brand)
+    AssetDTO(
+        id,
+        name,
+        gtin,
+        price,
+        stock.map { it.location.toString() },
+        artist.map { it.name },
+        version,
+        extras.map { it.name },
+        released,
+        brand
+    )
 
 data class NewAsset(var name: String)
 

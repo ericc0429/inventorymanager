@@ -28,7 +28,7 @@ class Person(
         joinColumns = [JoinColumn(name = "person_id")],
         inverseJoinColumns = [JoinColumn(name = "album_id")]
     )
-    override var albums: Set<Album?>,
+    override var albums: Set<Album>,
     // Other Assets
     @ManyToMany
     @JoinTable(
@@ -36,13 +36,13 @@ class Person(
         joinColumns = [JoinColumn(name = "person_id")],
         inverseJoinColumns = [JoinColumn(name = "asset_id")]
     )
-    override var assets: Set<Asset?>,
+    override var assets: Set<Asset>,
 
     // Artist Specific Fields
     @Column var birthday: String,
     @Column var gender: GenderType,
     // Use a set in case of person being in a group and its subunits
-    @Column @ManyToMany var group: Set<Group?>,
+    @Column @ManyToMany var group: Set<Group>,
 ) : Artist(id, name, debut, albums, assets) {}
 
 data class ArtistDTO(
@@ -87,7 +87,7 @@ class ArtistService(val db: ArtistRepo) {
   fun save(newArtist: NewArtist): ArtistDTO =
       db.save(
               Person(
-                  id = null,
+                  id = UUID.randomUUID(),
                   name = newArtist.name,
                   debut = "unknown",
                   albums = emptySet(),

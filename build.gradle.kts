@@ -17,10 +17,12 @@ java { sourceCompatibility = JavaVersion.VERSION_17 }
 repositories { mavenCentral() }
 
 dependencies {
+  annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
+  implementation("org.mapstruct:mapstruct:1.5.5.Final")
   runtimeOnly("org.postgresql:postgresql")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
