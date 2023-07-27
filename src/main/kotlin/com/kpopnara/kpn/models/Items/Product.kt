@@ -21,7 +21,7 @@ class Product(
     @Column override var name: String,
     @Column override var gtin: String,
     @Column override var price: Double,
-    @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>,
+    @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>?,
 
     // Product Specific
     @Column var description: String,

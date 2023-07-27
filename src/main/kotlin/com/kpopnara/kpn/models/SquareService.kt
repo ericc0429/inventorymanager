@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.IOException
 import java.net.InetSocketAddress
+import java.security.KeyStore
 import java.util.*
 
 @Service
@@ -90,14 +91,16 @@ class SquareService(@Autowired private val stockRepository : StockRepo,
      * Inventory API call. Then, it updates or creates the stock data.
      */
     fun convertInventoryCountToStock(inventoryCountList : List<InventoryCount>) {
-        var itemsToBeCreatedIdList = ArrayList<String>()
+        var itemVariationsToBeCreatedIdList = ArrayList<String>()
+
         for (inventoryCount in inventoryCountList) {
             val catalogId = inventoryCount.catalogObjectId
             val existingAlbum = albumRepository.findByCatalogId(catalogId)
             val existingAsset = assetRepository.findByCatalogId(catalogId)
             val existingProduct = productRepository.findByCatalogId(catalogId)
             if (existingAlbum == null && existingAsset == null && existingProduct == null) {
-                itemsToBeCreatedIdList.add(catalogId)
+                itemVariationsToBeCreatedIdList.add(catalogId)
+//                println("InventoryCount type: " + inventoryCount.catalogObjectType + ", state: " + inventoryCount.state)
                 var newStock = Stock(LocationType.SOUTHLOOP_CHI,
                     existingAsset,
                     Integer.parseInt(inventoryCount.quantity),
@@ -107,7 +110,6 @@ class SquareService(@Autowired private val stockRepository : StockRepo,
                     "",
                     "",
                     catalogId)
-                println("Found matching stock and updating")
                 stockRepository.save(newStock)
             } else {
                 println("Existing album, asset, or product found!")
@@ -137,30 +139,37 @@ class SquareService(@Autowired private val stockRepository : StockRepo,
             }
         }
 
-        updateItems(itemsToBeCreatedIdList)
+        updateItems(itemVariationsToBeCreatedIdList)
 
     }
 
-    fun updateItems(itemsToBeCreatedIdList : List<String>) {
-        val batchRetrieveCatalogApi = client?.catalogApi
+    fun updateItems(itemVariationsToBeCreatedIdList : List<String>) {
+        var categoryMap = HashMap<String, String>()
+        var itemsList = ArrayList<CatalogObject>()
+        var itemVariationsList = ArrayList<CatalogObject>()
 
-        val initialListSize = itemsToBeCreatedIdList.size
-        println("Size of itemsToBeCreatedIdList: " + itemsToBeCreatedIdList.size)
-        val partition: List<List<String>> = Lists.partition(itemsToBeCreatedIdList, 1000)
+        val batchRetrieveCatalogApi = client?.catalogApi
+        val initialListSize = itemVariationsToBeCreatedIdList.size
+        println("Size of itemVariationsToBeCreatedIdList: " + itemVariationsToBeCreatedIdList.size)
+        val itemVariationPartition: List<List<String>> = Lists.partition(itemVariationsToBeCreatedIdList, 1000)
+        var itemsIdList = ArrayList<String>()
 
         var count = 0
-        for (sublist in partition) {
-            val body = BatchRetrieveCatalogObjectsRequest.Builder(itemsToBeCreatedIdList).objectIds(sublist).build()
+        for (sublist in itemVariationPartition) {
+            val body = BatchRetrieveCatalogObjectsRequest.Builder(sublist).objectIds(sublist).includeRelatedObjects(true).build()
             val result : BatchRetrieveCatalogObjectsResponse?
             try {
                 result = batchRetrieveCatalogApi?.batchRetrieveCatalogObjects(body)
                 if (result != null) {
                     for (catalogObject in result.objects) {
                         count++
-                        println("#" + count + " Item type: " + catalogObject.type)
-//                        val itemData = catalogObject.itemData
-//                        val name = itemData.name
-//                        println("Item: " + name + ", type: " + catalogObject.type)
+                        println("#" + count + " Item variation name: " + catalogObject.itemVariationData.name + " Item type: " + catalogObject.type + ", CatalogId: " + catalogObject.id + ", UPC: " + catalogObject.itemVariationData.upc)
+                        itemVariationsList.add(catalogObject)
+                    }
+                    for (relatedObject in result.relatedObjects) {
+                        if (!itemsIdList.contains(relatedObject.id)) {
+                            itemsIdList.add(relatedObject.id)
+                        }
                     }
                 }
             } catch (e : ApiException) {
@@ -169,6 +178,97 @@ class SquareService(@Autowired private val stockRepository : StockRepo,
                 }
             }
         }
+
+        val itemPartition: List<List<String>> = Lists.partition(itemsIdList, 1000)
+        count = 0
+        for (sublist in itemPartition) {
+            val body = BatchRetrieveCatalogObjectsRequest.Builder(sublist).objectIds(sublist).includeRelatedObjects(true).build()
+            val result : BatchRetrieveCatalogObjectsResponse?
+            try {
+                result = batchRetrieveCatalogApi?.batchRetrieveCatalogObjects(body)
+                if (result != null) {
+                    for (catalogObject in result.objects) {
+                        count++
+                        println("#" + count + " Item name: " + catalogObject.itemData.name + "     |   categoryID: " + catalogObject.itemData.categoryId + ", CatalogId: " + catalogObject.id + ", Product type: " + catalogObject.itemData.productType)
+                        itemsList.add(catalogObject)
+                    }
+                    for (relatedObject in result.relatedObjects) {
+                        if (relatedObject.type.equals("CATEGORY") && !categoryMap.contains(relatedObject.id)) {
+                            categoryMap[relatedObject.id] = relatedObject.categoryData.name
+                        }
+                    }
+                }
+            } catch (e : ApiException) {
+                for (error in e.errors) {
+                    println(error.detail)
+                }
+            }
+        }
+
+        for (item in itemsList) {
+            val itemData = item.itemData
+            val existingStock = stockRepository.findByCatalogId(item.id)
+            if (categoryMap.contains(itemData.categoryId) && categoryMap.get(itemData.categoryId).equals("ALBUM")) {
+                var newAlbum : Album?
+                if (existingStock != null) {
+                    newAlbum = Album(
+                        itemData.name,
+                        "",
+                        "",
+                        0.0,
+                        null,
+                        null,
+                        null,
+                        null,
+                        "",
+                        "",
+                        "",
+                        "",
+                        item.id
+                    )
+                } else {
+                    newAlbum = Album(
+                        itemData.name,
+                        "",
+                        "",
+                        0.0,
+                        null,
+                        null,
+                        null,
+                        null,
+                        "",
+                        "",
+                        "",
+                        "",
+                        item.id
+                    )
+                }
+
+                albumRepository.save(newAlbum)
+                println("SAVING TO ALBUM")
+            } else {
+                var newAsset = Asset(itemData.name,
+                    "",
+                    "",
+                    0.0,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "",
+                    "",
+                    item.id
+                )
+                assetRepository.save(newAsset)
+                println("SAVING TO ASSET")
+            }
+        }
+
+
+//        categoryMap.forEach { (key, value) ->
+//            println("$key : $value")
+//        }
+
     }
 
 }

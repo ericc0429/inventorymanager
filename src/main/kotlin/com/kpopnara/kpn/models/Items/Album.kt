@@ -14,19 +14,20 @@ import org.springframework.web.bind.annotation.*
 This represents albums associated with either a group or a solo artist.
 */
 @Entity(name = "Album")
-@Table(name = "albums")
+@Table(name = "album")
 class Album(
     // Inherited from IAsset
     @Column override var name: String,
     @Column override var gtin: String,
+    @Column var sku: String,
     @Column override var price: Double,
-    @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>,
+    @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>?,
 
     // Inherited from IArtistAsset
-    @Column
+    @Column(nullable = true)
     @ManyToMany(targetEntity = Artist::class)
-    override var artist: Set<Artist>, // Associated artist's UUID
-    @Column override var version: String,
+    override var artist: Set<Artist>?, // Associated artist's UUID
+    @Column override var version: String?,
     // Join Table mapping extras that come with product
     @ManyToMany(targetEntity = Item::class)
     @JoinTable(
@@ -34,17 +35,17 @@ class Album(
         joinColumns = [JoinColumn(name = "album_id")],
         inverseJoinColumns = [JoinColumn(name = "item_id")]
     )
-    override var extras: Set<Item>,
+    override var extras: Set<Item>?,
 
     // @Column override var extras: String,
-    @Column override var released: String,
+    @Column override var released: String?,
 
     // Album-Specific Fields
-    @Column var discography: String,
-    @Column var format: String,
-    @Column var color: String,
+    @Column var discography: String?,
+    @Column var format: String?,
+    @Column var color: String?,
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     override var catalogId : String,
 
     @Id
@@ -55,6 +56,8 @@ class Album(
 
 @Repository interface AlbumRepo : JpaRepository<Album, UUID> {
     fun findByCatalogId(catalogId: String) : Album?
+
+//    fun findBySku(sku : String) : Asset?
 }
 
 @RestController

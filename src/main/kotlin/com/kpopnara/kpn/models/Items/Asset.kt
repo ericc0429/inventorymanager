@@ -22,14 +22,15 @@ class Asset(
 
     @Column override var name: String,
     @Column override var gtin: String,
+    @Column var sku: String,
     @Column override var price: Double,
-    @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>,
+    @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>?,
 
     // Inherited from IAsset Interface
     @Column
     @ManyToMany(targetEntity = Artist::class)
-    override var artist: Set<Artist>, // Associated artist's UUID
-    @Column override var version: String,
+    override var artist: Set<Artist>?, // Associated artist's UUID
+    @Column override var version: String?,
     // Join Table mapping extras that come with product
     @Column
     @ManyToMany(targetEntity = Item::class)
@@ -38,13 +39,13 @@ class Asset(
         joinColumns = [JoinColumn(name = "asset_id")],
         inverseJoinColumns = [JoinColumn(name = "item_id")]
     )
-    override var extras: Set<Item>,
+    override var extras: Set<Item>?,
     // @Column override var extras: String,
-    @Column override var released: String,
+    @Column override var released: String?,
 
     // Asset-Specific Fields
     // @Column var group: Group,
-    @Column var brand: String,
+    @Column var brand: String?,
     @Column(unique = true)
     override var catalogId : String,
 
@@ -56,6 +57,8 @@ class Asset(
 
 @Repository interface AssetRepo : JpaRepository<Asset, UUID> {
     fun findByCatalogId(catalogId: String) : Asset?
+
+//    fun findBySku(sku : String) : Asset?
 }
 
 @RestController

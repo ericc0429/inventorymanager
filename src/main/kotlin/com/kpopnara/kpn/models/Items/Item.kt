@@ -15,7 +15,7 @@ abstract class Item(
     @Column open var name: String,
     @Column open var gtin: String,
     @Column open var price: Double,
-    @Column @OneToMany(mappedBy = "item") open var stock: Set<Stock>,
+    @Column @OneToMany(mappedBy = "item") open var stock: Set<Stock>?,
     @Column(unique = true)
     open var catalogId : String,
 
@@ -26,8 +26,8 @@ abstract class Item(
 )
 
 interface IAsset {
-  var artist: Set<Artist>
-  var version: String
-  var extras: Set<Item>
-  var released: String
+  var artist: Set<Artist>?
+  var version: String?
+  var extras: Set<Item>?
+  var released: String?
 }
