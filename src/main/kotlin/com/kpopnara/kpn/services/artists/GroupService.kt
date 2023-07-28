@@ -1,6 +1,6 @@
 package com.kpopnara.kpn.services
 
-import com.kpopnara.kpn.models.*
+import com.kpopnara.kpn.models.artists.*
 
 interface GroupService {
   fun getGroups(): Iterable<GroupDTO>

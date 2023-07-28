@@ -1,56 +1,37 @@
-package com.kpopnara.kpn.models
+package com.kpopnara.kpn.models.artists
 
-// import org.springframework.data.relational.core.mapping.Table
+import com.kpopnara.kpn.models.products.Album
+import com.kpopnara.kpn.models.products.Asset
 import jakarta.persistence.*
 import java.util.UUID
 import kotlin.collections.Set
 import org.springframework.web.bind.annotation.*
 
-enum class GenderType {
-  MALE,
-  FEMALE,
-  NONBINARY,
-  NONE
-}
-
-enum class GroupGenderType {
-  GIRL,
-  BOY,
-  COED,
-  NONE
-}
-
-enum class GroupType {
-  GROUP,
-  SUBUNIT,
-  NONE
-}
-
 @Entity
 @Table(name = "artists")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "artist_type", discriminatorType = DiscriminatorType.STRING)
-abstract class Artist(
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
-    open val id: UUID?, // Unique identifier
-    @Column open var name: String,
-    @Column open var debut: String,
-    // Albums
-    @ManyToMany
-    @JoinTable(
-        name = "artist_album_jt",
-        joinColumns = [JoinColumn(name = "artist_id")],
-        inverseJoinColumns = [JoinColumn(name = "album_id")]
-    )
-    open var albums: Set<Album>,
-    // Other Assets
-    @ManyToMany
-    @JoinTable(
-        name = "artist_asset_jt",
-        joinColumns = [JoinColumn(name = "artist_id")],
-        inverseJoinColumns = [JoinColumn(name = "asset_id")]
-    )
-    open var assets: Set<Asset>,
+open class Artist(
+        @Id
+        @GeneratedValue(strategy = GenerationType.UUID)
+        @Column(name = "id", updatable = false, nullable = false)
+        val id: UUID?, // Unique identifier
+        var name: String,
+        var debut: String,
+        // Albums
+        @ManyToMany
+        @JoinTable(
+                name = "artist_album_jt",
+                joinColumns = [JoinColumn(name = "artist_id")],
+                inverseJoinColumns = [JoinColumn(name = "album_id")]
+        )
+        var albums: Set<Album>,
+        // Other Assets
+        @ManyToMany
+        @JoinTable(
+                name = "artist_asset_jt",
+                joinColumns = [JoinColumn(name = "artist_id")],
+                inverseJoinColumns = [JoinColumn(name = "asset_id")]
+        )
+        var assets: Set<Asset>,
 )

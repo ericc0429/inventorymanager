@@ -1,6 +1,8 @@
-package com.kpopnara.kpn.models
+package com.kpopnara.kpn.models.products
 
 // import org.springframework.data.relational.core.mapping.Table
+import com.kpopnara.kpn.models.artists.*
+import com.kpopnara.kpn.models.stock.*
 import jakarta.persistence.*
 import java.util.UUID
 import kotlin.collections.Set
@@ -9,13 +11,13 @@ import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
-/* ENTITY -- Item -- Asset
+/* ENTITY -- Product -- Asset
 This represents assets that are associated with an artist, but are NOT albums. (think lightsticks, posters, etc.)
 */
 @Entity
 @Table(name = "assets")
 class Asset(
-    // Inherited from Item
+    // Inherited from Product
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
@@ -23,7 +25,7 @@ class Asset(
     @Column override var name: String,
     @Column override var gtin: String,
     @Column override var price: Double,
-    @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>,
+    @Column @OneToMany(mappedBy = "product") override var stock: Set<Stock>,
 
     // Inherited from IAsset Interface
     @Column
@@ -32,20 +34,20 @@ class Asset(
     @Column override var version: String,
     // Join Table mapping extras that come with product
     @Column
-    @ManyToMany(targetEntity = Item::class)
+    @ManyToMany(targetEntity = Product::class)
     @JoinTable(
         name = "asset_extras_jt",
         joinColumns = [JoinColumn(name = "asset_id")],
         inverseJoinColumns = [JoinColumn(name = "item_id")]
     )
-    override var extras: Set<Item>,
+    override var extras: Set<Product>,
     // @Column override var extras: String,
     @Column override var released: String,
 
     // Asset-Specific Fields
     // @Column var group: Group,
     @Column var brand: String,
-) : Item(id, name, gtin, price, stock), IAsset {}
+) : Product(id, name, gtin, price, stock), IAsset {}
 
 // DTO
 data class AssetDTO(

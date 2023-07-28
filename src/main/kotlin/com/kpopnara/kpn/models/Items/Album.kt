@@ -1,6 +1,7 @@
-package com.kpopnara.kpn.models
+package com.kpopnara.kpn.models.products
 
-// import org.springframework.data.relational.core.mapping.Table
+import com.kpopnara.kpn.models.artists.*
+import com.kpopnara.kpn.models.stock.*
 import jakarta.persistence.*
 import java.util.UUID
 import kotlin.collections.Set
@@ -9,13 +10,13 @@ import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
-/* ENTITY -- Item -- Album
+/* ENTITY -- Product -- Album
 This represents albums associated with either a group or a solo artist.
 */
 @Entity(name = "Album")
 @Table(name = "albums")
 class Album(
-    // Inherited from IAsset
+    // Inherited from Product
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
@@ -25,19 +26,19 @@ class Album(
     @Column override var price: Double,
     @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>,
 
-    // Inherited from IArtistAsset
+    // Inherited from IAsset
     @Column
     @ManyToMany(targetEntity = Artist::class)
     override var artist: Set<Artist>, // Associated artist's UUID
     @Column override var version: String,
     // Join Table mapping extras that come with product
-    @ManyToMany(targetEntity = Item::class)
+    @ManyToMany(targetEntity = Product::class)
     @JoinTable(
         name = "album_extras_jt",
         joinColumns = [JoinColumn(name = "album_id")],
         inverseJoinColumns = [JoinColumn(name = "item_id")]
     )
-    override var extras: Set<Item>,
+    override var extras: Set<Product>,
 
     // @Column override var extras: String,
     @Column override var released: String,
@@ -46,7 +47,7 @@ class Album(
     @Column var discography: String,
     @Column var format: String,
     @Column var color: String,
-) : Item(id, name, gtin, price, stock), IAsset {}
+) : Product(id, name, gtin, price, stock), IAsset {}
 
 // Data Object
 data class AlbumDTO(

@@ -1,5 +1,7 @@
-package com.kpopnara.kpn.models
+package com.kpopnara.kpn.models.artists
 
+import com.kpopnara.kpn.models.products.Album
+import com.kpopnara.kpn.models.products.Asset
 import jakarta.persistence.*
 import java.util.UUID
 import kotlin.collections.Set
@@ -7,45 +9,24 @@ import kotlin.collections.plus
 import org.mapstruct.Mapper
 import org.springframework.web.bind.annotation.*
 
-enum class AttribType {
-  MEMBER,
-  ALBUM,
-  ASSET
-}
-
 /* ENTITY -- Artist -- Group
 This represents groups that also contain members of type Person.
 */
 @Entity
 @DiscriminatorValue("Group")
-data class Group(
+class Group(
     // Inherited
-    @Id
-    @GeneratedValue
-    @Column(name = "id", updatable = false, nullable = false)
-    override var id: UUID?, // Unique identifier
-    @Column override var name: String,
-    @Column override var debut: String,
+    id: UUID?, // Unique identifier
+    name: String,
+    debut: String,
     // Albums
-    @ManyToMany
-    @JoinTable(
-        name = "group_album_jt",
-        joinColumns = [JoinColumn(name = "group_id")],
-        inverseJoinColumns = [JoinColumn(name = "album_id")]
-    )
-    override var albums: Set<Album> = setOf(),
+    albums: Set<Album> = setOf(),
     // Other Assets
-    @ManyToMany
-    @JoinTable(
-        name = "group_asset_jt",
-        joinColumns = [JoinColumn(name = "group_id")],
-        inverseJoinColumns = [JoinColumn(name = "asset_id")]
-    )
-    override var assets: Set<Asset> = setOf(),
+    assets: Set<Asset> = setOf(),
 
     // Group Specific Fields
-    @Column var type: GroupType,
-    @Column var group_gender: GroupGenderType,
+    var type: GroupType,
+    var group_gender: GroupGenderType,
     // Table linking group to its members
     @ManyToMany(targetEntity = Artist::class)
     @JoinTable(

@@ -1,6 +1,7 @@
-package com.kpopnara.kpn.models
+package com.kpopnara.kpn.models.stock
 
 // import org.springframework.data.relational.core.mapping.Table
+import com.kpopnara.kpn.models.products.*
 import jakarta.persistence.*
 import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
@@ -24,7 +25,7 @@ class Stock(
     @Column(name = "id", unique = true, nullable = false)
     val id: UUID?, // Unique identifier
     @Column @Enumerated(EnumType.ORDINAL) val location: LocationType,
-    @ManyToOne @JoinColumn(name = "asset_id") var item: Item,
+    @ManyToOne @JoinColumn(name = "asset_id") var product: Product,
     @Column var count: Int,
     @Column var restock_threshold: Int,
     // Last date item went out of stock -- to help prevent accidental double-orders.
@@ -40,7 +41,7 @@ class Stock(
 data class StockDTO(
     val id: UUID?,
     val location: LocationType,
-    var item: Item,
+    var product: Product,
     var count: Int,
     var restock_threshold: Int,
     var oos_date: String,
@@ -50,9 +51,19 @@ data class StockDTO(
 )
 
 fun Stock.toView() =
-    StockDTO(id, location, item, count, restock_threshold, oos_date, ordered, order_date, tracking)
+    StockDTO(
+        id,
+        location,
+        product,
+        count,
+        restock_threshold,
+        oos_date,
+        ordered,
+        order_date,
+        tracking
+    )
 
-data class NewStock(var location: LocationType, var item: Item)
+data class NewStock(var location: LocationType, var product: Product)
 
 @Repository interface StockRepo : JpaRepository<Stock, UUID>
 
@@ -73,7 +84,7 @@ class StockService(val db: StockRepo) {
               Stock(
                   id = null,
                   location = newStock.location,
-                  item = newStock.item,
+                  product = newStock.product,
                   count = 0,
                   restock_threshold = 25,
                   oos_date = "unknown",

@@ -1,6 +1,7 @@
 package com.kpopnara.kpn.services
 
-import com.kpopnara.kpn.models.*
+import com.kpopnara.kpn.models.artists.*
+import com.kpopnara.kpn.models.products.*
 import com.kpopnara.kpn.repos.GroupRepo
 import java.util.Optional
 import org.springframework.stereotype.Service
