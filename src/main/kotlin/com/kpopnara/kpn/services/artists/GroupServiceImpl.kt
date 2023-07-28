@@ -12,9 +12,6 @@ import org.springframework.transaction.annotation.Transactional
 class GroupServiceImpl(val db: GroupRepo) : GroupService {
 
   override fun getGroups(): Iterable<GroupDTO> {
-    db.findAll().map { println("==== [Group] findAll(): $it") }
-    // return db.findAll()
-
     return db.findAll().map { it.toView() }
   }
 

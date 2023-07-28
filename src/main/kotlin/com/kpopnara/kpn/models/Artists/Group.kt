@@ -28,7 +28,7 @@ class Group(
     // Group Specific Fields
     var type: GroupType,
     // Table linking group to its members
-    @ManyToMany(targetEntity = Artist::class)
+    @ManyToMany(targetEntity = Artist::class, fetch = FetchType.EAGER)
     @JoinTable(
         name = "group_person_jt",
         joinColumns = [JoinColumn(name = "group_id")],

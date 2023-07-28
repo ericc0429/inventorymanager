@@ -20,7 +20,7 @@ open class Artist(
     open var debut: String,
     open var gender: GenderType,
     // Albums
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "artist_album_jt",
         joinColumns = [JoinColumn(name = "artist_id")],
@@ -28,7 +28,7 @@ open class Artist(
     )
     open var albums: Set<Album>,
     // Other Assets
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "artist_asset_jt",
         joinColumns = [JoinColumn(name = "artist_id")],
