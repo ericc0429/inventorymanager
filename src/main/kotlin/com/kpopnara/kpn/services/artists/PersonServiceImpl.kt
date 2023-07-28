@@ -17,10 +17,10 @@ class PersonServiceImpl(val db: PersonRepo) : PersonService {
                   id = null,
                   name = newPerson.name,
                   debut = "unknown",
+                  gender = GenderType.NONE,
                   albums = emptySet(),
                   assets = emptySet(),
                   birthday = "unknown",
-                  gender = GenderType.NONE,
                   group = emptySet(),
               )
           )

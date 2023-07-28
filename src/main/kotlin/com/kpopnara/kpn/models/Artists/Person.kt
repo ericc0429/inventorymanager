@@ -16,6 +16,7 @@ class Person(
     id: UUID?, // Unique Identifier
     name: String,
     debut: String,
+    gender: GenderType,
     // Albums
     albums: Set<Album>,
     // Other Assets
@@ -23,19 +24,18 @@ class Person(
 
     // Artist Specific Fields
     var birthday: String,
-    var gender: GenderType,
     // Use a set in case of person being in a group and its subunits
     @ManyToMany var group: Set<Group>,
-) : Artist(id, name, debut, albums, assets) {}
+) : Artist(id, name, debut, gender, albums, assets) {}
 
 data class PersonDTO(
     val id: UUID?,
     var name: String,
     var debut: String,
+    var gender: GenderType,
     var albums: Iterable<String?>,
     var assets: Iterable<String?>,
     var birthday: String,
-    var gender: GenderType,
     var group: Iterable<String?>,
 )
 
@@ -44,11 +44,11 @@ fun Person.toView() =
         id,
         name,
         debut,
-        albums.map { it?.name },
-        assets.map { it?.name },
-        birthday,
         gender,
-        group.map { it?.name },
+        albums.map { it.name },
+        assets.map { it.name },
+        birthday,
+        group.map { it.name },
     )
 
 data class NewPerson(var name: String)

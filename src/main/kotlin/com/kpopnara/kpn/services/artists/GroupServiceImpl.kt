@@ -24,10 +24,10 @@ class GroupServiceImpl(val db: GroupRepo) : GroupService {
                   id = null,
                   name = newGroup.name,
                   debut = "unknown",
+                  gender = GenderType.NONE,
                   albums = emptySet<Album>(),
                   assets = emptySet<Asset>(),
                   type = GroupType.NONE,
-                  group_gender = GroupGenderType.NONE,
                   members = emptySet<Artist>()
               )
           )

@@ -19,6 +19,7 @@ class Group(
     id: UUID?, // Unique identifier
     name: String,
     debut: String,
+    gender: GenderType,
     // Albums
     albums: Set<Album> = setOf(),
     // Other Assets
@@ -26,7 +27,6 @@ class Group(
 
     // Group Specific Fields
     var type: GroupType,
-    var group_gender: GroupGenderType,
     // Table linking group to its members
     @ManyToMany(targetEntity = Artist::class)
     @JoinTable(
@@ -35,16 +35,16 @@ class Group(
         inverseJoinColumns = [JoinColumn(name = "person_id")]
     )
     var members: Set<Artist> = setOf(), // List of UUID of members/subunits
-) : Artist(id, name, debut, albums, assets) {}
+) : Artist(id, name, debut, gender, albums, assets) {}
 
 data class GroupDTO(
     val id: UUID?,
     var name: String,
     var debut: String,
+    var gender: GenderType,
     var albums: Iterable<String?>,
     var assets: Iterable<String?>,
     var type: GroupType?,
-    var group_gender: GroupGenderType,
     var members: Iterable<String?>
 )
 
@@ -56,14 +56,14 @@ interface GroupMapper {
 
 fun Group.toView() =
     GroupDTO(
-        if (id != null) id else null,
-        if (name != null) name else "",
-        if (debut != null) debut else "",
-        if (albums != null && albums.size != 0) albums.map { it?.name } else emptySet(),
-        if (albums != null && assets.size != 0) assets.map { it?.name } else emptySet(),
+        id,
+        name,
+        debut,
+        gender,
+        albums.map { it.name },
+        assets.map { it.name },
         type,
-        group_gender,
-        if (members.size != 0) members.map { it?.name } else emptySet()
+        members.map { it.name }
     )
 
 data class NewGroup(var name: String)
