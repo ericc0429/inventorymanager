@@ -67,3 +67,11 @@ fun Group.toView() =
     )
 
 data class NewGroup(var name: String)
+
+data class EditGroup(
+    val name: String?,
+    val debut: String?,
+    val gender: GenderType?,
+    val type: GroupType?,
+)
+

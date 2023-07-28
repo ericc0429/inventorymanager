@@ -52,3 +52,10 @@ fun Person.toView() =
     )
 
 data class NewPerson(var name: String)
+
+data class EditPerson(
+    val name: String?,
+    val debut: String?,
+    val gender: GenderType?,
+    val birthday: String?,
+)

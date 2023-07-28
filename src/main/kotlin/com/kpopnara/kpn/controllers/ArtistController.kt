@@ -2,8 +2,7 @@ package com.kpopnara.kpn.controllers
 
 import com.kpopnara.kpn.models.artists.*
 import com.kpopnara.kpn.services.ArtistServiceImpl
-import com.kpopnara.kpn.services.GroupServiceImpl
-import com.kpopnara.kpn.services.PersonServiceImpl
+import java.util.UUID
 import org.springframework.web.bind.annotation.*
 
 
@@ -17,18 +16,18 @@ class ArtistController(val service: ArtistServiceImpl) {
   @PostMapping("/groups") fun addGroup(@RequestBody newGroup: NewGroup) = service.addGroup(newGroup)
   @PostMapping("/solo") fun addPerson(@RequestBody newPerson: NewPerson) = service.addPerson(newPerson)
 
+  @PutMapping("/groups/{id}") fun updateGroup(@PathVariable id: UUID, @RequestBody editGroup: EditGroup) = service.updateGroup(id, editGroup)
+  @PutMapping("/solo/{id}") fun updatePerson(@PathVariable id: UUID, @RequestBody editPerson: EditPerson) = service.updatePerson(id, editPerson)
+
+  @DeleteMapping("/{id}") fun deleteArtist(@PathVariable id: UUID) = service.deleteArtist(id)
 }
 
-@RestController
+/* @RestController
 @RequestMapping("/groups")
 class GroupController(val service: GroupServiceImpl) {
   @GetMapping fun getGroups(): Iterable<GroupDTO> = service.getGroups()
 
   @PostMapping fun addGroup(@RequestBody newGroup: NewGroup) = service.addGroup(newGroup)
-
-  /* @PostMapping("{id}/add")
-  fun addAttrib(@PathVariable id: UUID, @RequestBody newAttrib: NewAttrib): GroupDTO =
-      service.addAttrib(id, newAttrib) */
 }
 
 @RestController
@@ -38,3 +37,4 @@ class PersonController(val service: PersonServiceImpl) {
 
   @PostMapping fun addPerson(@RequestBody newPerson: NewPerson) = service.addPerson(newPerson)
 }
+ */
