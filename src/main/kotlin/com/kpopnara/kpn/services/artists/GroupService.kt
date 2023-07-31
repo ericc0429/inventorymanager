@@ -9,4 +9,6 @@ interface GroupService {
   fun addGroup(newGroup: NewGroup): GroupDTO
 
   fun updateGroup(id: UUID, editGroup: EditGroup): GroupDTO
+
+  fun addPersonToGroup(id: UUID, newMember: NewMember): GroupDTO
 }

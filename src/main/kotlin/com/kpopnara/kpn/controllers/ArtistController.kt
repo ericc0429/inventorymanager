@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/artists")
 class ArtistController(val service: ArtistServiceImpl) {
-  @GetMapping fun getAllArtists(): Iterable<Artist> = service.getAll()
+  @GetMapping fun getAllArtists(): Iterable<ArtistDTO> = service.getAll()
   @GetMapping("/groups") fun getGroups(): Iterable<GroupDTO> = service.getGroups()
   @GetMapping("/solo") fun getPeople(): Iterable<PersonDTO> = service.getPeople()
 
@@ -18,6 +18,8 @@ class ArtistController(val service: ArtistServiceImpl) {
 
   @PutMapping("/groups/{id}") fun updateGroup(@PathVariable id: UUID, @RequestBody editGroup: EditGroup) = service.updateGroup(id, editGroup)
   @PutMapping("/solo/{id}") fun updatePerson(@PathVariable id: UUID, @RequestBody editPerson: EditPerson) = service.updatePerson(id, editPerson)
+
+  @PutMapping("/groups/{id}/addMember") fun addPersonToGroup(@PathVariable id: UUID, @RequestBody newMember: NewMember) = service.addPersonToGroup(id, newMember)
 
   @DeleteMapping("/{id}") fun deleteArtist(@PathVariable id: UUID) = service.deleteArtist(id)
 }

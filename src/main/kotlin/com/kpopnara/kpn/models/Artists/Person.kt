@@ -25,7 +25,7 @@ class Person(
     // Artist Specific Fields
     var birthday: String,
     // Use a set in case of person being in a group and its subunits
-    @ManyToMany(fetch = FetchType.EAGER) var group: Set<Group>,
+    @ManyToMany(mappedBy = "members", fetch = FetchType.EAGER) var group: Set<Group>,
 ) : Artist(id, name, debut, gender, albums, assets) {}
 
 data class PersonDTO(
@@ -39,7 +39,7 @@ data class PersonDTO(
     var group: Iterable<String?>,
 )
 
-fun Person.toView() =
+fun Person.toDTO() =
     PersonDTO(
         id,
         name,
@@ -49,6 +49,20 @@ fun Person.toView() =
         assets.map { it.name },
         birthday,
         group.map { it.name },
+    )
+
+fun Person.toArtistDTO() = 
+    ArtistDTO(
+        id = id,
+        name = name,
+        debut = debut,
+        gender = gender,
+        albums = albums.map { it.name },
+        assets = assets.map { it.name },
+        type = GroupType.NONE,
+        members = emptySet(),
+        birthday = birthday,
+        group = group.map{ it.name },
     )
 
 data class NewPerson(var name: String)

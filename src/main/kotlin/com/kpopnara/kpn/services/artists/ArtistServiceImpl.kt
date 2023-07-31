@@ -20,16 +20,17 @@ class ArtistServiceImpl(
     val personRepo: ArtistRepo<Person>
     ) : ArtistService, GroupService, PersonService {
 
-    override fun getAll(): Iterable<Artist> {
-        return artistRepo.findAll()
+    override fun getAll(): Iterable<ArtistDTO> {
+        //return artistRepo.findAll()
+        return groupRepo.findAll().map {it.toArtistDTO()} + personRepo.findAll().map {it.toArtistDTO()}
     }
 
     override fun getGroups(): Iterable<GroupDTO> {
-        return groupRepo.findAll().map { it.toView() }
+        return groupRepo.findAll().map { it.toDTO() }
     }
 
     override fun getPeople(): Iterable<PersonDTO> {
-        return personRepo.findAll().map { it.toView() }
+        return personRepo.findAll().map { it.toDTO() }
     }
 
     override fun addGroup(newGroup: NewGroup): GroupDTO =
@@ -45,7 +46,7 @@ class ArtistServiceImpl(
                 members = emptySet<Artist>()
             )
         )
-        .toView()
+        .toDTO()
 
     override fun addPerson(newPerson: NewPerson): PersonDTO =
         personRepo.save(
@@ -60,7 +61,7 @@ class ArtistServiceImpl(
                 group = emptySet(),
             )
         )
-        .toView()
+        .toDTO()
 
     override fun updateGroup(id: UUID, editGroup: EditGroup) : GroupDTO {
         val group = groupRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
@@ -70,7 +71,7 @@ class ArtistServiceImpl(
         group.gender = if (editGroup.gender != null) editGroup.gender else group.gender
         group.type = if (editGroup.type != null) editGroup.type else group.type
 
-        return groupRepo.save(group).toView()
+        return groupRepo.save(group).toDTO()
     }
 
     override fun updatePerson(id: UUID, editPerson: EditPerson) : PersonDTO {
@@ -81,13 +82,30 @@ class ArtistServiceImpl(
         person.gender = if (editPerson.gender != null) editPerson.gender else person.gender
         person.birthday = if (editPerson.birthday != null) editPerson.birthday else person.birthday
 
-        return personRepo.save(person).toView()
+        return personRepo.save(person).toDTO()
     }
 
-    override fun deleteArtist(id: UUID): Artist {
+    override fun addPersonToGroup(id: UUID, newMember: NewMember) : GroupDTO {
+        val group = groupRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
+        val member = if (newMember.id != null) personRepo.findById(newMember.id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
+            else if (newMember.name != null) personRepo.findByName(newMember.name)/* .orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) } */
+            else throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+
+        group.members = if (member != null) group.members.plus(member) else group.members
+        
+        return groupRepo.save(group).toDTO()
+
+    }
+
+    // fun addAssetToGroup(id: UUID, newAsset)
+
+    override fun deleteArtist(id: UUID): ArtistDTO {
         val artist = artistRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
+        if (artist is Person && artist.group.size > 0) {
+            for (group: Group in artist.group ) group.members = group.members.minus(artist)
+        }
         artistRepo.deleteById(id)
-        return artist
+        return if (artist is Group) artist.toArtistDTO() else (artist as Person).toArtistDTO()
     }
 
     fun <T : Any> Optional<out T>.toList(): List<T> = if (isPresent) listOf(get()) else emptyList()

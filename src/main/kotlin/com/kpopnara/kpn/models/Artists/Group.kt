@@ -4,7 +4,6 @@ import com.kpopnara.kpn.models.products.Album
 import com.kpopnara.kpn.models.products.Asset
 import jakarta.persistence.*
 import java.util.UUID
-import kotlin.collections.Set
 import kotlin.collections.plus
 import org.mapstruct.Mapper
 import org.springframework.web.bind.annotation.*
@@ -39,13 +38,13 @@ class Group(
 
 data class GroupDTO(
     val id: UUID?,
-    var name: String,
-    var debut: String,
-    var gender: GenderType,
-    var albums: Iterable<String?>,
-    var assets: Iterable<String?>,
+    var name: String?,
+    var debut: String?,
+    var gender: GenderType?,
+    var albums: Iterable<String?>?,
+    var assets: Iterable<String?>?,
     var type: GroupType?,
-    var members: Iterable<String?>
+    var members: Iterable<String?>?
 )
 
 @Mapper
@@ -54,7 +53,7 @@ interface GroupMapper {
   fun toBean(groupDTO: GroupDTO): Group
 }
 
-fun Group.toView() =
+fun Group.toDTO() =
     GroupDTO(
         id,
         name,
@@ -66,7 +65,24 @@ fun Group.toView() =
         members.map { it.name }
     )
 
-data class NewGroup(var name: String)
+fun Group.toArtistDTO() =
+    ArtistDTO(
+        id = id,
+        name = name,
+        debut = debut,
+        gender = gender,
+        albums = albums.map { it.name },
+        assets = assets.map { it.name },
+        type = type,
+        members = members.map { it.name },
+        birthday = null,
+        group = emptySet(),
+
+    )
+
+data class NewGroup(val name: String)
+
+data class NewMember(val id: UUID?, val name: String?)
 
 data class EditGroup(
     val name: String?,

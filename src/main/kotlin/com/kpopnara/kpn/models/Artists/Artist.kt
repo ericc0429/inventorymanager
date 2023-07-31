@@ -36,3 +36,32 @@ open class Artist(
     )
     open var assets: Set<Asset>,
 )
+
+data class ArtistDTO(
+    val id: UUID?,
+    var name: String,
+    var debut: String,
+    var gender: GenderType,
+    var albums: Iterable<String?>,
+    var assets: Iterable<String?>,
+    // Group
+    var type: GroupType?,
+    var members: Iterable<String?>?,
+    // Solo Artist
+    var birthday: String?,
+    var group: Iterable<String?>?
+)
+
+/* fun Artist.toDTO() =
+    ArtistDTO (
+        id,
+        name,
+        debut,
+        gender,
+        albums.map { it.name },
+        assets.map { it.name },
+        null,
+        null,
+        null,
+        null,
+    ) */
