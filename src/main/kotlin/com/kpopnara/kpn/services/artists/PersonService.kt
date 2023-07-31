@@ -4,9 +4,9 @@ import com.kpopnara.kpn.models.artists.*
 import java.util.UUID
 
 interface PersonService {
-  fun getPeople(): Iterable<PersonDTO>
+  fun getPeople(): Iterable<ArtistDTO>
 
-  fun addPerson(newPerson: NewPerson): PersonDTO
+  fun addPerson(newArtist: NewArtist): ArtistDTO
 
-  fun updatePerson(id: UUID, editPerson: EditPerson): PersonDTO
+  fun updatePerson(id: UUID, editArtist: EditArtist): ArtistDTO
 }

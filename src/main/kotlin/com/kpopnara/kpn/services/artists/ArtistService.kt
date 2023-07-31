@@ -4,7 +4,11 @@ import com.kpopnara.kpn.models.artists.*
 import java.util.UUID
 
 interface ArtistService {
-  fun getAll(): Iterable<ArtistDTO>
+  fun getArtists(): Iterable<ArtistDTO>
+
+  fun addArtist(newArtist: NewArtist): ArtistDTO
+
+  // fun updateArtist(editArtist: EditArtist): ArtistDTO
 
   fun deleteArtist(id: UUID): ArtistDTO
 }

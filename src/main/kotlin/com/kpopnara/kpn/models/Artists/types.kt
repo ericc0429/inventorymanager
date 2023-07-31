@@ -7,7 +7,8 @@ enum class GenderType {
   NONE
 }
 
-enum class GroupType {
+enum class ArtistType {
+  ARTIST,
   GROUP,
   SUBUNIT,
   NONE

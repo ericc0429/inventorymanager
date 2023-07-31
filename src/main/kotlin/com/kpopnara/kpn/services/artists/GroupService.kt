@@ -4,11 +4,13 @@ import com.kpopnara.kpn.models.artists.*
 import java.util.UUID
 
 interface GroupService {
-  fun getGroups(): Iterable<GroupDTO>
+  fun getGroups(): Iterable<ArtistDTO>
 
-  fun addGroup(newGroup: NewGroup): GroupDTO
+  fun addGroup(newArtist: NewArtist): ArtistDTO
 
-  fun updateGroup(id: UUID, editGroup: EditGroup): GroupDTO
+  fun updateGroup(id: UUID, editArtist: EditArtist): ArtistDTO
 
-  fun addPersonToGroup(id: UUID, newMember: NewMember): GroupDTO
+  fun addPersonToGroup(id: UUID, newMember: Member): ArtistDTO
+
+  fun removePersonFromGroup(id: UUID, removeMember: Member): ArtistDTO
 }

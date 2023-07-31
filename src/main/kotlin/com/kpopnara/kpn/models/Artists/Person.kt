@@ -15,8 +15,8 @@ class Person(
     // Inherited
     id: UUID?, // Unique Identifier
     name: String,
-    debut: String,
     gender: GenderType,
+    debut: String,
     // Albums
     albums: Set<Album>,
     // Other Assets
@@ -26,9 +26,9 @@ class Person(
     var birthday: String,
     // Use a set in case of person being in a group and its subunits
     @ManyToMany(mappedBy = "members", fetch = FetchType.EAGER) var group: Set<Group>,
-) : Artist(id, name, debut, gender, albums, assets) {}
+) : Artist(id, name, ArtistType.ARTIST, gender, debut, albums, assets) {}
 
-data class PersonDTO(
+/* data class PersonDTO(
     val id: UUID?,
     var name: String,
     var debut: String,
@@ -49,27 +49,26 @@ fun Person.toDTO() =
         assets.map { it.name },
         birthday,
         group.map { it.name },
-    )
+    ) */
 
-fun Person.toArtistDTO() = 
+fun Person.toDTO() = 
     ArtistDTO(
         id = id,
         name = name,
-        debut = debut,
+        type = ArtistType.ARTIST,
         gender = gender,
+        debut = debut,
         albums = albums.map { it.name },
         assets = assets.map { it.name },
-        type = GroupType.NONE,
+        
         members = emptySet(),
         birthday = birthday,
         group = group.map{ it.name },
     )
 
-data class NewPerson(var name: String)
-
-data class EditPerson(
+/* data class EditPerson(
     val name: String?,
     val debut: String?,
     val gender: GenderType?,
     val birthday: String?,
-)
+) */

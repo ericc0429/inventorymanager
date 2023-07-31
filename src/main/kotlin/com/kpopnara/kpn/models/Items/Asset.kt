@@ -15,39 +15,23 @@ import org.springframework.web.bind.annotation.*
 This represents assets that are associated with an artist, but are NOT albums. (think lightsticks, posters, etc.)
 */
 @Entity
-@Table(name = "assets")
+@DiscriminatorValue("Asset")
 class Asset(
     // Inherited from Product
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
-    override val id: UUID?, // Unique identifier
-    @Column override var name: String,
-    @Column override var gtin: String,
-    @Column override var price: Double,
-    @Column @OneToMany(mappedBy = "product") override var stock: Set<Stock>,
-
-    // Inherited from IAsset Interface
-    @Column
-    @ManyToMany(targetEntity = Artist::class)
-    override var artist: Set<Artist>, // Associated artist's UUID
-    @Column override var version: String,
-    // Join Table mapping extras that come with product
-    @Column
-    @ManyToMany(targetEntity = Product::class)
-    @JoinTable(
-        name = "asset_extras_jt",
-        joinColumns = [JoinColumn(name = "asset_id")],
-        inverseJoinColumns = [JoinColumn(name = "item_id")]
-    )
-    override var extras: Set<Product>,
-    // @Column override var extras: String,
-    @Column override var released: String,
+    id: UUID?, // Unique identifier
+    name: String,
+    gtin: String,
+    price: Double,
+    stock: Set<Stock>,
+    @ManyToMany(mappedBy = "assets", targetEntity = Artist::class)
+    var artist: Set<Artist>, // Associated artist's UUID
+    version: String,
+    extras: Set<Product>,
+    released: String,
 
     // Asset-Specific Fields
-    // @Column var group: Group,
-    @Column var brand: String,
-) : Product(id, name, gtin, price, stock), IAsset {}
+    var brand: String,
+) : ArtistProduct(id, name, gtin, price, stock, version, extras, released) {}
 
 // DTO
 data class AssetDTO(
@@ -79,10 +63,8 @@ fun Asset.toView() =
 
 data class NewAsset(var name: String)
 
-// Repository
-@Repository interface AssetRepo : JpaRepository<Asset, UUID>
 
-@RestController
+/* @RestController
 @RequestMapping("/assets")
 class AssetController(val service: AssetService) {
   @GetMapping fun assets(): Iterable<AssetDTO> = service.findAll()
@@ -110,56 +92,4 @@ class AssetService(val db: AssetRepo) {
               )
           )
           .toView()
-}
-
-/*
-@RestController
-@RequestMapping("/api")
-class AssetController(val service: AssetService) {
-  @GetMapping("/assets") fun assets(): List<Asset> = service.findAssets()
-
-  @GetMapping("/asset/{id}")
-  fun getAsset(@PathVariable id: UUID): List<Asset> = service.findAssetById(id)
-
-  @PostMapping("/assets")
-  fun postAsset(@RequestBody asset: Asset) {
-    service.save(asset)
-  }
-
-  @PutMapping("asset/{id}")
-  fun updateAsset(@RequestBody asset: Asset) {
-    service.save(asset)
-  }
-
-  @DeleteMapping("/assets")
-  fun deleteAssets() {
-    service.deleteAssets()
-  }
-
-  @DeleteMapping("/asset/{id}")
-  fun deleteAsset(@PathVariable id: UUID) {
-    service.deleteAssetById(id)
-  }
-}
-
-@Service
-class AssetService(val db: AssetRepo) {
-  fun findAssets(): List<Asset> = db.findAll().toList()
-
-  fun findAssetById(id: UUID): List<Asset> = db.findById(id).toList()
-
-  fun save(asset: Asset) {
-    db.save(asset)
-  }
-
-  fun deleteAssets() {
-    db.deleteAll()
-  }
-
-  fun deleteAssetById(id: UUID) {
-    db.deleteById(id)
-  }
-
-  fun <T : Any> Optional<out T>.toList(): List<T> = if (isPresent) listOf(get()) else emptyList()
-}
- */
+} */

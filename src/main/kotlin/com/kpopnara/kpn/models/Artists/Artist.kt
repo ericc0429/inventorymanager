@@ -17,8 +17,9 @@ open class Artist(
     @Column(name = "id", updatable = false, nullable = false)
     open val id: UUID?, // Unique identifier
     open var name: String,
-    open var debut: String,
+    open var type: ArtistType,
     open var gender: GenderType,
+    open var debut: String,
     // Albums
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -39,29 +40,31 @@ open class Artist(
 
 data class ArtistDTO(
     val id: UUID?,
-    var name: String,
-    var debut: String,
-    var gender: GenderType,
-    var albums: Iterable<String?>,
-    var assets: Iterable<String?>,
+    val name: String,
+    val type: ArtistType,
+    val gender: GenderType,
+    val debut: String,
+    val albums: Iterable<String?>,
+    val assets: Iterable<String?>,
     // Group
-    var type: GroupType?,
-    var members: Iterable<String?>?,
+    val members: Iterable<String?>?,
     // Solo Artist
-    var birthday: String?,
-    var group: Iterable<String?>?
+    val birthday: String?,
+    val group: Iterable<String?>?
 )
 
-/* fun Artist.toDTO() =
-    ArtistDTO (
-        id,
-        name,
-        debut,
-        gender,
-        albums.map { it.name },
-        assets.map { it.name },
-        null,
-        null,
-        null,
-        null,
-    ) */
+data class NewArtist(
+    val name: String,
+    val type: ArtistType = ArtistType.ARTIST,
+    val gender: GenderType?,
+    val debut: String?,
+    val birthday: String?,
+)
+
+data class EditArtist(
+    val name: String?,
+    val type: ArtistType?,
+    val gender: GenderType?,
+    val debut: String?,
+    val birthday: String?,
+)

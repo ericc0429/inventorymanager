@@ -1,6 +1,7 @@
 package com.kpopnara.kpn.repos
 
 import com.kpopnara.kpn.models.artists.*
+import com.kpopnara.kpn.models.products.*
 import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
@@ -15,4 +16,24 @@ import org.springframework.stereotype.Repository
 
 @Repository interface PersonRepo : ArtistRepo<Person> {
   override fun findByName(name: String) : Person?
+}
+
+@Repository interface ProductRepo<T : Product?> : JpaRepository<T, UUID?> {
+  fun findByName(name: String) : T?
+}
+
+@Repository interface AProductRepo<T : ArtistProduct?> : ProductRepo<ArtistProduct> {
+  override fun findByName(name: String) : ArtistProduct?
+}
+
+@Repository interface AlbumRepo : AProductRepo<Album> {
+  override fun findByName(name: String) : Album?
+}
+
+@Repository interface AssetRepo : AProductRepo<Asset> {
+  override fun findByName(name: String) : Asset?
+}
+
+@Repository interface ItemRepo : ProductRepo<Item> {
+  override fun findByName(name: String) : Item?
 }

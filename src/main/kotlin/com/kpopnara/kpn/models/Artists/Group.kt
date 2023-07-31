@@ -5,7 +5,6 @@ import com.kpopnara.kpn.models.products.Asset
 import jakarta.persistence.*
 import java.util.UUID
 import kotlin.collections.plus
-import org.mapstruct.Mapper
 import org.springframework.web.bind.annotation.*
 
 /* ENTITY -- Artist -- Group
@@ -17,6 +16,7 @@ class Group(
     // Inherited
     id: UUID?, // Unique identifier
     name: String,
+    type: ArtistType,
     debut: String,
     gender: GenderType,
     // Albums
@@ -25,7 +25,6 @@ class Group(
     assets: Set<Asset> = setOf(),
 
     // Group Specific Fields
-    var type: GroupType,
     // Table linking group to its members
     @ManyToMany(targetEntity = Artist::class, fetch = FetchType.EAGER)
     @JoinTable(
@@ -34,29 +33,25 @@ class Group(
         inverseJoinColumns = [JoinColumn(name = "person_id")]
     )
     var members: Set<Artist> = setOf(), // List of UUID of members/subunits
-) : Artist(id, name, debut, gender, albums, assets) {}
+) : Artist(id, name, type, gender, debut, albums, assets) {}
 
+/* 
 data class GroupDTO(
     val id: UUID?,
     var name: String?,
+    val type: ArtistType?,
     var debut: String?,
     var gender: GenderType?,
     var albums: Iterable<String?>?,
     var assets: Iterable<String?>?,
-    var type: GroupType?,
     var members: Iterable<String?>?
 )
-
-@Mapper
-interface GroupMapper {
-  fun toDTO(group: Group): GroupDTO
-  fun toBean(groupDTO: GroupDTO): Group
-}
 
 fun Group.toDTO() =
     GroupDTO(
         id,
         name,
+        type,
         debut,
         gender,
         albums.map { it.name },
@@ -64,30 +59,28 @@ fun Group.toDTO() =
         type,
         members.map { it.name }
     )
+*/
 
-fun Group.toArtistDTO() =
+fun Group.toDTO() =
     ArtistDTO(
         id = id,
         name = name,
-        debut = debut,
+        type = type,
         gender = gender,
+        debut = debut,
         albums = albums.map { it.name },
         assets = assets.map { it.name },
-        type = type,
         members = members.map { it.name },
         birthday = null,
         group = emptySet(),
-
     )
 
-data class NewGroup(val name: String)
+data class Member(val id: UUID?, val name: String?)
 
-data class NewMember(val id: UUID?, val name: String?)
-
-data class EditGroup(
+/* data class EditGroup(
     val name: String?,
     val debut: String?,
     val gender: GenderType?,
     val type: GroupType?,
-)
+) */
 

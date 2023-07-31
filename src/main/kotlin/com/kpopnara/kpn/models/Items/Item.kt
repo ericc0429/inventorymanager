@@ -1,7 +1,5 @@
-package com.kpopnara.kpn.models.items
+package com.kpopnara.kpn.models.products
 
-// import org.springframework.data.relational.core.mapping.Table
-import com.kpopnara.kpn.models.products.*
 import com.kpopnara.kpn.models.stock.*
 import jakarta.persistence.*
 import java.util.UUID
@@ -11,10 +9,10 @@ import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
-/* ENTITY -- Item -- Item
+/* ENTITY -- Product -- Item
 This represents items that aren't associated with a music group (think facemasks, jewelry, etc.)
 */
-@Entity(name = "Item")
+@Entity
 @Table(name = "items")
 class Item(
     // Inherited from IAsset
@@ -44,9 +42,7 @@ fun Item.toView() = ItemDTO(id, name, gtin, price, stock, description)
 
 data class NewItem(var name: String)
 
-@Repository interface ItemRepo : JpaRepository<Item, UUID>
-
-@RestController
+/* @RestController
 @RequestMapping("/items")
 class ItemController(val service: ItemService) {
   @GetMapping fun items(): Iterable<ItemDTO> = service.findAll()
@@ -71,3 +67,4 @@ class ItemService(val db: ItemRepo) {
           )
           .toView()
 }
+ */

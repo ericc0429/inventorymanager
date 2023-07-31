@@ -18,7 +18,6 @@ enum class LocationType {
 }
 
 @Entity(name = "Stock")
-// @Table(name = "stock")
 class Stock(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
