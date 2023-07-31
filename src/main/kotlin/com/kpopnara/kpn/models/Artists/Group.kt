@@ -35,32 +35,6 @@ class Group(
     var members: Set<Artist> = setOf(), // List of UUID of members/subunits
 ) : Artist(id, name, type, gender, debut, albums, assets) {}
 
-/* 
-data class GroupDTO(
-    val id: UUID?,
-    var name: String?,
-    val type: ArtistType?,
-    var debut: String?,
-    var gender: GenderType?,
-    var albums: Iterable<String?>?,
-    var assets: Iterable<String?>?,
-    var members: Iterable<String?>?
-)
-
-fun Group.toDTO() =
-    GroupDTO(
-        id,
-        name,
-        type,
-        debut,
-        gender,
-        albums.map { it.name },
-        assets.map { it.name },
-        type,
-        members.map { it.name }
-    )
-*/
-
 fun Group.toDTO() =
     ArtistDTO(
         id = id,
@@ -76,11 +50,3 @@ fun Group.toDTO() =
     )
 
 data class Member(val id: UUID?, val name: String?)
-
-/* data class EditGroup(
-    val name: String?,
-    val debut: String?,
-    val gender: GenderType?,
-    val type: GroupType?,
-) */
-

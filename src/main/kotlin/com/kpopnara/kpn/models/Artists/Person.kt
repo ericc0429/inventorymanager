@@ -28,29 +28,6 @@ class Person(
     @ManyToMany(mappedBy = "members", fetch = FetchType.EAGER) var group: Set<Group>,
 ) : Artist(id, name, ArtistType.ARTIST, gender, debut, albums, assets) {}
 
-/* data class PersonDTO(
-    val id: UUID?,
-    var name: String,
-    var debut: String,
-    var gender: GenderType,
-    var albums: Iterable<String?>,
-    var assets: Iterable<String?>,
-    var birthday: String,
-    var group: Iterable<String?>,
-)
-
-fun Person.toDTO() =
-    PersonDTO(
-        id,
-        name,
-        debut,
-        gender,
-        albums.map { it.name },
-        assets.map { it.name },
-        birthday,
-        group.map { it.name },
-    ) */
-
 fun Person.toDTO() = 
     ArtistDTO(
         id = id,
@@ -65,10 +42,3 @@ fun Person.toDTO() =
         birthday = birthday,
         group = group.map{ it.name },
     )
-
-/* data class EditPerson(
-    val name: String?,
-    val debut: String?,
-    val gender: GenderType?,
-    val birthday: String?,
-) */
