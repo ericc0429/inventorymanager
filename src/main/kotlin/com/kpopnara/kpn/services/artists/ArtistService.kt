@@ -9,6 +9,11 @@ interface ArtistService {
   fun addArtist(newArtist: NewArtist): ArtistDTO
 
   // fun updateArtist(editArtist: EditArtist): ArtistDTO
+  fun addAlbumToArtist(id: UUID, product: IdNameDTO): ArtistDTO
+  fun removeAlbumFromArtist(id: UUID, product: IdNameDTO): ArtistDTO
+
+  fun addAssetToArtist(id: UUID, product: IdNameDTO): ArtistDTO
+  fun removeAssetFromArtist(id: UUID, product: IdNameDTO): ArtistDTO
 
   fun deleteArtist(id: UUID): ArtistDTO
 }

@@ -72,3 +72,8 @@ data class EditProduct(
     val color: String?,
     val brand: String?,
 )
+
+data class ProductSearchDTO(
+    val id: UUID?,
+    val name: String?,
+)

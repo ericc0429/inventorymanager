@@ -3,8 +3,7 @@ package com.kpopnara.kpn.services
 import com.kpopnara.kpn.models.artists.*
 import com.kpopnara.kpn.models.products.*
 import com.kpopnara.kpn.repos.ArtistRepo
-import com.kpopnara.kpn.repos.GroupRepo
-import com.kpopnara.kpn.repos.PersonRepo
+import com.kpopnara.kpn.repos.ProductRepo
 import java.util.Optional
 import java.util.UUID
 import org.springframework.stereotype.Service
@@ -17,7 +16,9 @@ import org.springframework.web.server.ResponseStatusException
 class ArtistServiceImpl(
     val artistRepo: ArtistRepo<Artist>, 
     val groupRepo: ArtistRepo<Group>, 
-    val personRepo: ArtistRepo<Person>
+    val personRepo: ArtistRepo<Person>,
+    val albumRepo: ProductRepo<Album>,
+    val assetRepo: ProductRepo<Asset>
     ) : ArtistService, GroupService, PersonService {
 
     override fun getArtists(): Iterable<ArtistDTO> {
@@ -169,7 +170,67 @@ class ArtistServiceImpl(
         else throw ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Group not found.")
     }
 
-    // fun addAssetToGroup(id: UUID, newAsset)
+    override fun addAlbumToArtist(id: UUID, product: IdNameDTO): ArtistDTO {
+        val artist = artistRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Artist not found.") }
+        val album = if (product.id != null) albumRepo.findById(product.id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Album not found.") }
+                    else if (product.name != null) albumRepo.findByName(product.name)
+                    else throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+        if (album != null) {
+            if (album !in artist.albums) {
+                artist.albums = artist.albums.plus(album)
+                val result = artistRepo.save(artist)
+                return if (result is Group) result.toDTO() else (result as Person).toDTO()
+            }
+            else throw ResponseStatusException(HttpStatus.CONFLICT)
+        }
+        else throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    }
+    override fun removeAlbumFromArtist(id: UUID, product: IdNameDTO): ArtistDTO {
+        val artist = artistRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Artist not found.") }
+        val album = if (product.id != null) albumRepo.findById(product.id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Album not found.") }
+                    else if (product.name != null) albumRepo.findByName(product.name)
+                    else throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+        if (album != null) {
+            if (album in artist.albums) {
+                artist.albums = artist.albums.minus(album)
+                val result = artistRepo.save(artist)
+                return if (result is Group) result.toDTO() else (result as Person).toDTO()
+            }
+            else throw ResponseStatusException(HttpStatus.CONFLICT)
+        }
+        else throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    }
+
+    override fun addAssetToArtist(id: UUID, product: IdNameDTO): ArtistDTO {
+        val artist = artistRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Artist not found.") }
+        val asset = if (product.id != null) assetRepo.findById(product.id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Asset not found.") }
+                    else if (product.name != null) assetRepo.findByName(product.name)
+                    else throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+        if (asset != null) {
+            if (asset !in artist.assets) {
+                artist.assets = artist.assets.plus(asset)
+                val result = artistRepo.save(artist)
+                return if (result is Group) result.toDTO() else (result as Person).toDTO()
+            }
+            else throw ResponseStatusException(HttpStatus.CONFLICT)
+        }
+        else throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    }
+    override fun removeAssetFromArtist(id: UUID, product: IdNameDTO): ArtistDTO {
+        val artist = artistRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Artist not found.") }
+        val asset = if (product.id != null) assetRepo.findById(product.id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Asset not found.") }
+                    else if (product.name != null) assetRepo.findByName(product.name)
+                    else throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+        if (asset != null) {
+            if (asset in artist.assets) {
+                artist.assets = artist.assets.minus(asset)
+                val result = artistRepo.save(artist)
+                return if (result is Group) result.toDTO() else (result as Person).toDTO()
+            }
+            else throw ResponseStatusException(HttpStatus.CONFLICT)
+        }
+        else throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    }
 
     override fun deleteArtist(id: UUID): ArtistDTO {
         val artist = artistRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }

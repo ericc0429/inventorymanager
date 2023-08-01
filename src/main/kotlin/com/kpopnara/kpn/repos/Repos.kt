@@ -8,14 +8,17 @@ import org.springframework.stereotype.Repository
 
 @Repository interface ArtistRepo<T : Artist?> : JpaRepository<T, UUID?> {
   fun findByName(name: String) : T?
+  fun findByNameContaining(name: String) : T?
 }
 
 @Repository interface GroupRepo : ArtistRepo<Group> {
   override fun findByName(name: String) : Group?
+  override fun findByNameContaining(name: String) : Group?
 }
 
 @Repository interface PersonRepo : ArtistRepo<Person> {
   override fun findByName(name: String) : Person?
+  override fun findByNameContaining(name: String) : Person?
 }
 
 @Repository interface ProductRepo<T : Product?> : JpaRepository<T, UUID?> {
