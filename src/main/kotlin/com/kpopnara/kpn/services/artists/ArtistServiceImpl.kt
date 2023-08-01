@@ -33,7 +33,7 @@ class ArtistServiceImpl(
     }
 
     override fun addArtist(newArtist: NewArtist): ArtistDTO {
-        if ( newArtist.type == ArtistType.NONE) {
+        if (newArtist.type == ArtistType.NONE) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
         }
         else if ( newArtist.type == ArtistType.ARTIST) {

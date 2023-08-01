@@ -1,6 +1,5 @@
 package com.kpopnara.kpn.models.products
 
-// import org.springframework.data.relational.core.mapping.Table
 import com.kpopnara.kpn.models.artists.*
 import com.kpopnara.kpn.models.stock.*
 import jakarta.persistence.*
@@ -19,46 +18,72 @@ This represents assets that are associated with an artist, but are NOT albums. (
 class Asset(
     // Inherited from Product
     id: UUID?, // Unique identifier
+    type: ProductType,
     name: String,
+    description: String,
     gtin: String,
     price: Double,
     stock: Set<Stock>,
+
+    // Inherited from IAsset
     @ManyToMany(mappedBy = "assets", targetEntity = Artist::class)
-    var artist: Set<Artist>, // Associated artist's UUID
-    version: String,
-    extras: Set<Product>,
-    released: String,
+    override var artist: Set<Artist>, // Associated artist's UUID
+    override var version: String,
+    @ManyToMany(targetEntity = Product::class)
+    @JoinTable(
+        name = "asset_extras_jt",
+        joinColumns = [JoinColumn(name = "asset_id")],
+        inverseJoinColumns = [JoinColumn(name = "product_id")]
+    )
+    override var extras: Set<Product>,
+    override var released: String,
 
     // Asset-Specific Fields
     var brand: String,
-) : ArtistProduct(id, name, gtin, price, stock, version, extras, released) {}
+    
+) : Product(id, type, name, description, gtin, price, stock), IAsset {}
 
 // DTO
 data class AssetDTO(
     val id: UUID?,
-    var name: String,
-    var gtin: String,
-    var price: Double,
-    var stock: Iterable<String>,
-    var artist: Iterable<String>,
-    var version: String,
-    var extras: Iterable<String>,
-    var released: String,
-    var brand: String
+    val type: ProductType,
+    val name: String,
+    val description: String,
+    val gtin: String,
+    val price: Double,
+    val stock: Iterable<String>,
+    val artist: Iterable<String>,
+    val version: String,
+    val extras: Iterable<String>,
+    val released: String,
+    val brand: String
 )
 
-fun Asset.toView() =
+fun Asset.toDTO() =
     AssetDTO(
-        id,
-        name,
-        gtin,
-        price,
-        stock.map { it.location.toString() },
-        artist.map { it.name },
-        version,
-        extras.map { it.name },
-        released,
-        brand
+        id = id,
+        type = type,
+        name = name,
+        description = description,
+        gtin = gtin,
+        price = price,
+        stock = stock.map { it.toString() },
+        artist = artist.map { it.name },
+        version = version,
+        extras = extras.map { it.name },
+        released = released,
+        brand = brand
+    )
+
+fun Asset.toProductDTO() =
+    ProductDTO(
+        id = id,
+        type = type,
+        name = name,
+        description = description,
+        gtin = gtin,
+        price = price,
+        stock = stock.map { it.toString() },
     )
 
 data class NewAsset(var name: String)

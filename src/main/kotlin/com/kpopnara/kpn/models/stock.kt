@@ -1,6 +1,5 @@
 package com.kpopnara.kpn.models.stock
 
-// import org.springframework.data.relational.core.mapping.Table
 import com.kpopnara.kpn.models.products.*
 import jakarta.persistence.*
 import java.util.UUID
@@ -24,7 +23,7 @@ class Stock(
     @Column(name = "id", unique = true, nullable = false)
     val id: UUID?, // Unique identifier
     @Column @Enumerated(EnumType.ORDINAL) val location: LocationType,
-    @ManyToOne @JoinColumn(name = "asset_id") var product: Product,
+    @ManyToOne @JoinColumn(name = "product_id") var product: Product,
     @Column var count: Int,
     @Column var restock_threshold: Int,
     // Last date item went out of stock -- to help prevent accidental double-orders.
@@ -61,6 +60,10 @@ fun Stock.toView() =
         order_date,
         tracking
     )
+
+fun Stock.toString(): String {
+    return location.toString() + ": " + count.toString()
+}
 
 data class NewStock(var location: LocationType, var product: Product)
 

@@ -22,18 +22,14 @@ import org.springframework.stereotype.Repository
   fun findByName(name: String) : T?
 }
 
-@Repository interface AProductRepo<T : ArtistProduct?> : ProductRepo<ArtistProduct> {
-  override fun findByName(name: String) : ArtistProduct?
+@Repository interface AlbumRepo : ProductRepo<Album> {
+  // override fun findByName(name: String) : Album?
 }
 
-@Repository interface AlbumRepo : AProductRepo<Album> {
-  override fun findByName(name: String) : Album?
-}
-
-@Repository interface AssetRepo : AProductRepo<Asset> {
-  override fun findByName(name: String) : Asset?
+@Repository interface AssetRepo : ProductRepo<Asset> {
+  // override fun findByName(name: String) : Asset?
 }
 
 @Repository interface ItemRepo : ProductRepo<Item> {
-  override fun findByName(name: String) : Item?
+  // override fun findByName(name: String) : Item?
 }

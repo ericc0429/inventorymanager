@@ -15,32 +15,49 @@ This represents items that aren't associated with a music group (think facemasks
 @Entity
 @Table(name = "items")
 class Item(
-    // Inherited from IAsset
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
-    override val id: UUID?, // Unique identifier
-    @Column override var name: String,
-    @Column override var gtin: String,
-    @Column override var price: Double,
-    @Column @OneToMany(mappedBy = "item") override var stock: Set<Stock>,
-
-    // Item Specific
-    @Column var description: String,
-) : Product(id, name, gtin, price, stock) {}
+    // Inherited from Product
+    id: UUID?, // Unique identifier
+    type: ProductType,
+    name: String,
+    description: String,
+    gtin: String,
+    price: Double,
+    stock: Set<Stock>,
+) : Product(id, type, name, description, gtin, price, stock) {}
 
 data class ItemDTO(
     val id: UUID?,
-    var name: String,
-    var gtin: String,
-    var price: Double,
-    var stock: Set<Stock>,
-    var description: String,
+    val type: ProductType,
+    val name: String,
+    val description: String,
+    val gtin: String,
+    val price: Double,
+    val stock: Iterable<String>,
 )
 
-fun Item.toView() = ItemDTO(id, name, gtin, price, stock, description)
+fun Item.toDTO() =
+    ProductDTO(
+        id = id,
+        type = type,
+        name = name,
+        description = description,
+        gtin = gtin,
+        price = price,
+        stock = stock.map { it.toString() },
+    )
 
-data class NewItem(var name: String)
+fun Item.toView() =
+    ItemDTO(
+        id = id,
+        type = type,
+        name = name,
+        description = description,
+        gtin = gtin,
+        price = price,
+        stock = stock.map { it.toString() },
+    )
+
+data class NewItem(val name: String)
 
 /* @RestController
 @RequestMapping("/items")
