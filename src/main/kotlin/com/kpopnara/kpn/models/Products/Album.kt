@@ -66,7 +66,7 @@ fun Album.toDTO() =
         name,
         gtin,
         price,
-        stock.map { it.toString() },
+        stock.map { it.toDTOString() },
         artist.map { it.name },
         version,
         extras.map { it.name },
@@ -84,5 +84,5 @@ fun Album.toProductDTO() =
         description = "",
         gtin = gtin,
         price = price,
-        stock = stock.map { it.toString() },
+        stock = stock.map { it.toDTOString() },
     )

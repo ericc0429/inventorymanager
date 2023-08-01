@@ -3,10 +3,6 @@ package com.kpopnara.kpn.models.stock
 import com.kpopnara.kpn.models.products.*
 import jakarta.persistence.*
 import java.util.UUID
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.stereotype.Repository
-import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.*
 
 enum class LocationType {
   SOUTHFIELD_MI,
@@ -16,43 +12,43 @@ enum class LocationType {
   NONE
 }
 
-@Entity(name = "Stock")
+@Entity
 class Stock(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", unique = true, nullable = false)
     val id: UUID?, // Unique identifier
-    @Column @Enumerated(EnumType.ORDINAL) val location: LocationType,
-    @ManyToOne @JoinColumn(name = "product_id") var product: Product,
-    @Column var count: Int,
-    @Column var restock_threshold: Int,
+    @Enumerated(EnumType.ORDINAL) val location: LocationType,
+    @ManyToOne @JoinColumn(name = "product_id") val product: Product,
+    var count: Int,
+    var restock_threshold: Int,
     // Last date item went out of stock -- to help prevent accidental double-orders.
-    @Column var oos_date: String,
+    var oos_date: String,
     // We should have a manual clear button on front-end to set this to false.
-    @Column var ordered: Boolean,
+    var ordered: Boolean,
     // Date last restock shipment was ordered.
-    @Column var order_date: String,
+    var order_date: String,
     // Tracking number
-    @Column var tracking: String?,
+    var tracking: String,
 ) {}
 
 data class StockDTO(
     val id: UUID?,
     val location: LocationType,
-    var product: Product,
-    var count: Int,
-    var restock_threshold: Int,
-    var oos_date: String,
-    var ordered: Boolean,
-    var order_date: String,
-    var tracking: String?,
+    val product: String,
+    val count: Int,
+    val restock_threshold: Int,
+    val oos_date: String,
+    val ordered: Boolean,
+    val order_date: String,
+    val tracking: String,
 )
 
-fun Stock.toView() =
+fun Stock.toDTO() =
     StockDTO(
         id,
         location,
-        product,
+        product.name,
         count,
         restock_threshold,
         oos_date,
@@ -61,41 +57,26 @@ fun Stock.toView() =
         tracking
     )
 
-fun Stock.toString(): String {
+fun Stock.toDTOString(): String {
     return location.toString() + ": " + count.toString()
 }
 
-data class NewStock(var location: LocationType, var product: Product)
+data class NewStock(
+    val location: LocationType,
+    val product: UUID,
+    val count: Int = 0,
+    val restock_threshold: Int = 0,
+    val oos_date: String = "",
+    val ordered: Boolean = false,
+    val order_date: String = "",
+    val tracking: String = "",
+)
 
-@Repository interface StockRepo : JpaRepository<Stock, UUID>
-
-@RestController
-@RequestMapping("/stock")
-class StockController(val service: StockService) {
-  @GetMapping fun stocks(): Iterable<StockDTO> = service.findAll()
-
-  @PostMapping fun addStock(@RequestBody newStock: NewStock) = service.save(newStock)
-}
-
-@Service
-class StockService(val db: StockRepo) {
-  fun findAll(): Iterable<StockDTO> = db.findAll().map { it.toView() }
-
-  fun save(newStock: NewStock): StockDTO =
-      db.save(
-              Stock(
-                  id = null,
-                  location = newStock.location,
-                  product = newStock.product,
-                  count = 0,
-                  restock_threshold = 25,
-                  oos_date = "unknown",
-                  ordered = false,
-                  order_date = "unknown",
-                  tracking = "unknown"
-              )
-          )
-          .toView()
-
-  // fun <T : Any> Optional<out T>.toList(): List<T> = if (isPresent) listOf(get()) else emptyList()
-}
+data class EditStock(
+    val count: Int?,
+    val restock_threshold: Int?,
+    val oos_date: String?,
+    val ordered: Boolean?,
+    val order_date: String?,
+    val tracking: String?,
+)

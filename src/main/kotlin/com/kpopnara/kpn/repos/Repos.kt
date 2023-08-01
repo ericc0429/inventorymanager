@@ -2,6 +2,8 @@ package com.kpopnara.kpn.repos
 
 import com.kpopnara.kpn.models.artists.*
 import com.kpopnara.kpn.models.products.*
+import com.kpopnara.kpn.models.stock.Stock
+import com.kpopnara.kpn.models.stock.LocationType
 import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
@@ -35,4 +37,9 @@ import org.springframework.stereotype.Repository
 
 @Repository interface ItemRepo : ProductRepo<Item> {
   // override fun findByName(name: String) : Item?
+}
+
+@Repository interface StockRepo<T : Stock?> : JpaRepository<T, UUID?> {
+  fun findAllByLocation(location: LocationType) : List<Stock>
+  // fun findAllByProduct(productId: UUID) : Stock?
 }

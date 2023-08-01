@@ -1,6 +1,5 @@
 package com.kpopnara.kpn.models.products
 
-// import org.springframework.data.relational.core.mapping.Table
 import com.kpopnara.kpn.models.artists.*
 import com.kpopnara.kpn.models.stock.*
 import jakarta.persistence.*

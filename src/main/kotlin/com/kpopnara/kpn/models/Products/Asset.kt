@@ -67,7 +67,7 @@ fun Asset.toDTO() =
         description = description,
         gtin = gtin,
         price = price,
-        stock = stock.map { it.toString() },
+        stock = stock.map { it.toDTOString() },
         artist = artist.map { it.name },
         version = version,
         extras = extras.map { it.name },
@@ -83,38 +83,7 @@ fun Asset.toProductDTO() =
         description = description,
         gtin = gtin,
         price = price,
-        stock = stock.map { it.toString() },
+        stock = stock.map { it.toDTOString() },
     )
 
 data class NewAsset(var name: String)
-
-
-/* @RestController
-@RequestMapping("/assets")
-class AssetController(val service: AssetService) {
-  @GetMapping fun assets(): Iterable<AssetDTO> = service.findAll()
-
-  @PostMapping fun addAsset(@RequestBody newAsset: NewAsset) = service.save(newAsset)
-}
-
-@Service
-class AssetService(val db: AssetRepo) {
-  fun findAll(): Iterable<AssetDTO> = db.findAll().map { it.toView() }
-
-  fun save(newAsset: NewAsset): AssetDTO =
-      db.save(
-              Asset(
-                  id = null,
-                  name = newAsset.name,
-                  gtin = "unknown",
-                  price = 0.0,
-                  stock = emptySet(),
-                  artist = emptySet(),
-                  version = "unknown",
-                  extras = emptySet(),
-                  released = "unknown",
-                  brand = "unknown"
-              )
-          )
-          .toView()
-} */

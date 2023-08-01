@@ -43,7 +43,7 @@ fun Item.toDTO() =
         description = description,
         gtin = gtin,
         price = price,
-        stock = stock.map { it.toString() },
+        stock = stock.map { it.toDTOString() },
     )
 
 fun Item.toView() =
@@ -54,7 +54,7 @@ fun Item.toView() =
         description = description,
         gtin = gtin,
         price = price,
-        stock = stock.map { it.toString() },
+        stock = stock.map { it.toDTOString() },
     )
 
 data class NewItem(val name: String)
