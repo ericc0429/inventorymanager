@@ -82,7 +82,10 @@ class ArtistServiceImpl(
         group.name = if (editArtist.name != null) editArtist.name else group.name
         group.debut = if (editArtist.debut != null) editArtist.debut else group.debut
         group.gender = if (editArtist.gender != null) editArtist.gender else group.gender
-        group.type = if (editArtist.type != null) editArtist.type else group.type
+        group.type = if (editArtist.type != null &&
+                            (editArtist.type == ArtistType.SUBUNIT ||
+                            editArtist.type == ArtistType.GROUP)
+                        ) editArtist.type else group.type
 
         return groupRepo.save(group).toDTO()
     }

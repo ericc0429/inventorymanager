@@ -9,5 +9,8 @@ interface AlbumService {
   fun addAlbum(newProduct: NewProduct): AlbumDTO
   fun createAlbum(newProduct: NewProduct): Album
 
+  fun editAlbum(id: UUID, editProduct: EditProduct): AlbumDTO
+  fun updateAlbum(id: UUID, editProduct: EditProduct): Album
+
   // fun updateAlbum(id: UUID, editProduct: EditProduct): ProductDTO
 }

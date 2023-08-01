@@ -8,5 +8,7 @@ interface ItemService {
 
   fun addItem(newProduct: NewProduct): ProductDTO
 
+  fun updateItem(id: UUID, editProduct: EditProduct): ProductDTO
+
   // fun updateItem(id: UUID, editProduct: EditProduct): ProductDTO
 }

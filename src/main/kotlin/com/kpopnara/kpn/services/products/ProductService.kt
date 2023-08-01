@@ -8,5 +8,7 @@ interface ProductService {
 
   fun addProduct(newProduct: NewProduct): ProductDTO
 
-  // fun deleteProduct(id: UUID): ProductDTO
+  fun updateProduct(id: UUID, editProduct: EditProduct): ProductDTO
+
+  fun deleteProduct(id: UUID): ProductDTO
 }

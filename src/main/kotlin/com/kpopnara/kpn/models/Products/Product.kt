@@ -42,7 +42,7 @@ data class ProductDTO(
 )
 
 data class NewProduct(
-    val type: ProductType = ProductType.MISC,
+    val type: ProductType = ProductType.NONE,
     val name: String,
     val description: String = "",
     val gtin: String = "",

@@ -9,5 +9,7 @@ interface AssetService {
   fun addAsset(newProduct: NewProduct): AssetDTO
   fun createAsset(newProduct: NewProduct): Asset
 
-  // fun updateAsset(id: UUID, editProduct: EditProduct): ProductDTO
+  fun editAsset(id: UUID, editProduct: EditProduct): AssetDTO
+  fun updateAsset(id: UUID, editProduct: EditProduct): Asset
+
 }
