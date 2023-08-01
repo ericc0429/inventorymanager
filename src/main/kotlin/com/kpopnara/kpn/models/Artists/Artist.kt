@@ -21,7 +21,7 @@ open class Artist(
     open var gender: GenderType,
     open var debut: String,
     // Albums
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
         name = "artist_album_jt",
         joinColumns = [JoinColumn(name = "artist_id")],
@@ -29,7 +29,7 @@ open class Artist(
     )
     open var albums: Set<Album>,
     // Other Assets
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
         name = "artist_asset_jt",
         joinColumns = [JoinColumn(name = "artist_id")],
@@ -56,9 +56,9 @@ data class ArtistDTO(
 data class NewArtist(
     val name: String,
     val type: ArtistType = ArtistType.ARTIST,
-    val gender: GenderType?,
-    val debut: String?,
-    val birthday: String?,
+    val gender: GenderType = GenderType.NONE,
+    val debut: String = "unknown",
+    val birthday: String = "unknown",
 )
 
 data class EditArtist(

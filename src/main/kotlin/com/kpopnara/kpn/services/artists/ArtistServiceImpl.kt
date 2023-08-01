@@ -48,8 +48,8 @@ class ArtistServiceImpl(
                 id = null,
                 name = newArtist.name,
                 type = newArtist.type,
-                gender = if (newArtist.gender != null) newArtist.gender else GenderType.NONE,
-                debut = if (newArtist.debut != null) newArtist.debut else "unknown",
+                gender = newArtist.gender,
+                debut = newArtist.debut,
                 albums = emptySet<Album>(),
                 assets = emptySet<Asset>(),
                 members = emptySet<Artist>(),
@@ -63,11 +63,11 @@ class ArtistServiceImpl(
             Person(
                 id = null,
                 name = newArtist.name,
-                gender = if (newArtist.gender != null) newArtist.gender else GenderType.NONE,
-                debut = if (newArtist.debut != null) newArtist.debut else "unknown",
+                gender = newArtist.gender,
+                debut = newArtist.debut,
                 albums = emptySet<Album>(),
                 assets = emptySet<Asset>(),
-                birthday = if (newArtist.birthday != null) newArtist.birthday else "unknown",
+                birthday = newArtist.birthday,
                 group = emptySet<Group>(),
             )
         )

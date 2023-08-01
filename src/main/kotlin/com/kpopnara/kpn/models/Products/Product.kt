@@ -42,8 +42,24 @@ data class ProductDTO(
 )
 
 data class NewProduct(
-    val type: ProductType,
+    val type: ProductType = ProductType.MISC,
     val name: String,
+    val description: String = "",
+    val gtin: String = "",
+    val price: Double = 0.0,
+    val artist: Iterable<String>?,
+    val version: String = "",
+    val extras: Iterable<String>?,
+    val released: String = "",
+    val discography: String = "",
+    val format: String = "",
+    val color: String = "",
+    val brand: String = "",
+)
+
+data class EditProduct(
+    val type: ProductType?,
+    val name: String?,
     val description: String?,
     val gtin: String?,
     val price: Double?,
@@ -56,4 +72,3 @@ data class NewProduct(
     val color: String?,
     val brand: String?,
 )
-

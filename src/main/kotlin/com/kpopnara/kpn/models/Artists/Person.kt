@@ -25,7 +25,7 @@ class Person(
     // Artist Specific Fields
     var birthday: String,
     // Use a set in case of person being in a group and its subunits
-    @ManyToMany(mappedBy = "members", fetch = FetchType.EAGER) var group: Set<Group>,
+    @ManyToMany(mappedBy = "members") var group: Set<Group>,
 ) : Artist(id, name, ArtistType.ARTIST, gender, debut, albums, assets) {}
 
 fun Person.toDTO() = 

@@ -18,6 +18,7 @@ class ProductServiceImpl(
     val assetRepo: ProductRepo<Asset>,
     val itemRepo: ProductRepo<Item>
 ) : ProductService, AlbumService, AssetService, ItemService {
+
     override fun getProducts(): Iterable<ProductDTO> {
         return albumRepo.findAll().map() { it.toProductDTO() } +
             assetRepo.findAll().map() { it.toProductDTO() } +
@@ -46,16 +47,16 @@ class ProductServiceImpl(
             Album(
                 id = null,
                 name = newProduct.name,
-                gtin = if (newProduct.gtin != null) newProduct.gtin else "",
-                price = if (newProduct.price != null) newProduct.price else 0.0,
+                gtin = newProduct.gtin,
+                price = newProduct.price,
                 stock = emptySet<Stock>(),
                 artist = emptySet<Artist>(),
-                version = if (newProduct.version != null) newProduct.version else "",
+                version = newProduct.version,
                 extras = emptySet<Product>(),
-                released = if (newProduct.released != null) newProduct.released else "",
-                discography = if (newProduct.discography != null) newProduct.discography else "",
-                format = if (newProduct.format != null) newProduct.format else "",
-                color = if (newProduct.color != null) newProduct.color else "",
+                released = newProduct.released,
+                discography = newProduct.discography,
+                format = newProduct.format,
+                color = newProduct.color,
             )
         )
     }
@@ -68,15 +69,15 @@ class ProductServiceImpl(
                 id = null,
                 type = newProduct.type,
                 name = newProduct.name,
-                description = if (newProduct.description != null) newProduct.description else "",
-                gtin = if (newProduct.gtin != null) newProduct.gtin else "",
-                price = if (newProduct.price != null) newProduct.price else 0.0,
+                description = newProduct.description,
+                gtin = newProduct.gtin,
+                price = newProduct.price,
                 stock = emptySet<Stock>(),
                 artist = emptySet<Artist>(),
-                version = if (newProduct.version != null) newProduct.version else "",
+                version = newProduct.version,
                 extras = emptySet<Product>(),
-                released = if (newProduct.released != null) newProduct.released else "",
-                brand = if (newProduct.brand != null) newProduct.brand else "",
+                released = newProduct.released,
+                brand = newProduct.brand,
             )
         )
     }
@@ -86,11 +87,14 @@ class ProductServiceImpl(
                 id = null,
                 type = newProduct.type,
                 name = newProduct.name,
-                description = if (newProduct.description != null) newProduct.description else "",
-                gtin = if (newProduct.gtin != null) newProduct.gtin else "",
-                price = if (newProduct.price != null) newProduct.price else 0.0,
+                description = newProduct.description,
+                gtin = newProduct.gtin,
+                price = newProduct.price,
                 stock = emptySet<Stock>(),
             )
         ).toDTO()
     }
+
+    // fun updateAlbum()
+    
 }
