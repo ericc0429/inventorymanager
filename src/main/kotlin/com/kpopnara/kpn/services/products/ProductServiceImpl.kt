@@ -20,8 +20,8 @@ class ProductServiceImpl(
 ) : ProductService, AlbumService, AssetService, ItemService {
     override fun getProducts(): Iterable<ProductDTO> {
         return albumRepo.findAll().map() { it.toProductDTO() } +
-                assetRepo.findAll().map() { it.toProductDTO() } +
-                itemRepo.findAll().map() { it.toDTO() }
+            assetRepo.findAll().map() { it.toProductDTO() } +
+            itemRepo.findAll().map() { it.toDTO() }
     }
     override fun getAlbums(): Iterable<AlbumDTO> {
         return albumRepo.findAll().map() { it.toDTO() }

@@ -9,4 +9,8 @@ interface PersonService {
   fun addPerson(newArtist: NewArtist): ArtistDTO
 
   fun updatePerson(id: UUID, editArtist: EditArtist): ArtistDTO
+
+  fun joinGroup(id: UUID, joinGroup: IdNameDTO): ArtistDTO
+
+  fun leaveGroup(id: UUID, leaveGroup: IdNameDTO): ArtistDTO
 }

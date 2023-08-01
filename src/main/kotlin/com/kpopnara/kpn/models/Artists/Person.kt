@@ -42,3 +42,5 @@ fun Person.toDTO() =
         birthday = birthday,
         group = group.map{ it.name },
     )
+
+data class SearchGroup(val id: UUID?, val name: String?)

@@ -98,7 +98,7 @@ class ArtistServiceImpl(
         return personRepo.save(person).toDTO()
     }
 
-    override fun addPersonToGroup(id: UUID, newMember: Member) : ArtistDTO {
+    override fun addPersonToGroup(id: UUID, newMember: IdNameDTO) : ArtistDTO {
         val group = groupRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Group not found.") }
         val member = if (newMember.id != null) personRepo.findById(newMember.id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Artist not found.") }
             else if (newMember.name != null) personRepo.findByName(newMember.name)
@@ -112,10 +112,9 @@ class ArtistServiceImpl(
             else throw ResponseStatusException(HttpStatus.CONFLICT, "Artist already a member of Group.")
         }
         else throw ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Artist not found.")
-
     }
 
-    override fun removePersonFromGroup(id: UUID, removeMember: Member) : ArtistDTO {
+    override fun removePersonFromGroup(id: UUID, removeMember: IdNameDTO) : ArtistDTO {
         val group = groupRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Group not found.") }
         val member = if (removeMember.id != null) personRepo.findById(removeMember.id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Artist not found.") }
             else if (removeMember.name != null) personRepo.findByName(removeMember.name)
@@ -129,6 +128,42 @@ class ArtistServiceImpl(
             else throw ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Artist not found in Group.")
         }
         else throw ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Artist not found.")
+    }
+
+    override fun joinGroup(id: UUID, joinGroup: IdNameDTO): ArtistDTO {
+        val member = personRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Artist not found.") }
+        val group = if (joinGroup.id != null) groupRepo.findById(joinGroup.id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Group not found.") }
+            else if (joinGroup.name != null) groupRepo.findByName(joinGroup.name)
+            else throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Please provide an id or name in request body.")
+
+        if (group != null) {
+            if (member !in group.members) {
+                group.members = group.members.plus(member)
+                groupRepo.save(group)
+                member.group = member.group.plus(group)
+                return member.toDTO()
+            }
+            else throw ResponseStatusException(HttpStatus.CONFLICT, "Artist already a member of Group.")
+        }
+        else throw ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Group not found.")
+    }
+
+    override fun leaveGroup(id: UUID, leaveGroup: IdNameDTO): ArtistDTO {
+        val member = personRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Artist not found.") }
+        val group = if (leaveGroup.id != null) groupRepo.findById(leaveGroup.id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Group not found.") }
+            else if (leaveGroup.name != null) groupRepo.findByName(leaveGroup.name)
+            else throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Please provide an id or name in request body.")
+
+        if (group != null) {
+            if (member in group.members) {
+                group.members = group.members.minus(member)
+                groupRepo.save(group)
+                member.group = member.group.minus(group)
+                return member.toDTO()
+            }
+            else throw ResponseStatusException(HttpStatus.CONFLICT, "Artist not found in specified Group.")
+        }
+        else throw ResponseStatusException(HttpStatus.NOT_FOUND, "Specified Group not found.")
     }
 
     // fun addAssetToGroup(id: UUID, newAsset)

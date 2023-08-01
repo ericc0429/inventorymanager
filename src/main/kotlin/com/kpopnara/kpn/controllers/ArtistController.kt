@@ -24,8 +24,19 @@ class ArtistController(val service: ArtistServiceImpl) {
   fun updatePerson(@PathVariable id: UUID, @RequestBody editArtist: EditArtist) =
   service.updatePerson(id, editArtist)
 
-  @PutMapping("/groups/{id}/addMember") fun addPersonToGroup(@PathVariable id: UUID, @RequestBody newMember: Member) = service.addPersonToGroup(id, newMember)
-  @PutMapping("/groups/{id}/removeMember") fun removePersonFromGroup(@PathVariable id: UUID, @RequestBody removeMember: Member) = service.removePersonFromGroup(id, removeMember)
+  @PutMapping("/groups/{id}/addMember")
+  fun addPersonToGroup(@PathVariable id: UUID, @RequestBody newMember: IdNameDTO) =
+  service.addPersonToGroup(id, newMember)
+  @PutMapping("/groups/{id}/removeMember")
+  fun removePersonFromGroup(@PathVariable id: UUID, @RequestBody removeMember: IdNameDTO) =
+  service.removePersonFromGroup(id, removeMember)
+
+  @PutMapping("/solo/{id}/joinGroup")
+  fun personJoinGroup(@PathVariable id: UUID, @RequestBody joinGroup: IdNameDTO) =
+  service.joinGroup(id, joinGroup)
+  @PutMapping("/solo/{id}/leaveGroup")
+  fun personLeaveGroup(@PathVariable id: UUID, @RequestBody leaveGroup: IdNameDTO) =
+  service.leaveGroup(id, leaveGroup) 
 
   @DeleteMapping("/{id}") fun deleteArtist(@PathVariable id: UUID) = service.deleteArtist(id)
 }

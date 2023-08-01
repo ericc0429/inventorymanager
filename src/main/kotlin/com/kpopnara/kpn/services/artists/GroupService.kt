@@ -10,7 +10,7 @@ interface GroupService {
 
   fun updateGroup(id: UUID, editArtist: EditArtist): ArtistDTO
 
-  fun addPersonToGroup(id: UUID, newMember: Member): ArtistDTO
+  fun addPersonToGroup(id: UUID, newMember: IdNameDTO): ArtistDTO
 
-  fun removePersonFromGroup(id: UUID, removeMember: Member): ArtistDTO
+  fun removePersonFromGroup(id: UUID, removeMember: IdNameDTO): ArtistDTO
 }

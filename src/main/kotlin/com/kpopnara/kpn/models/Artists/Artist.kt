@@ -68,3 +68,5 @@ data class EditArtist(
     val debut: String?,
     val birthday: String?,
 )
+
+data class IdNameDTO(val id: UUID?, val name: String?)
