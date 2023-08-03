@@ -19,8 +19,11 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
         return stockRepo.findAll().map() { it.toDTO() }
     }
 
-    override fun getStockAtLocation(location: LocationType) : Iterable<StockDTO> {
-        return stockRepo.findAllByLocation(location).map() { it.toDTO() }
+    override fun getStockAtLocation(location: String) : Iterable<StockDTO> {
+        for ( loc in LocationType.values() ) {
+            if (loc.label == location.uppercase()) return stockRepo.findAllByLocation(loc).map() { it.toDTO() }
+        }
+        throw ResponseStatusException(HttpStatus.NOT_FOUND)
     }
 
     override fun addStock(newStock: NewStock) : StockDTO {
@@ -35,6 +38,7 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
                 id = null,
                 location = newStock.location,
                 product = product,
+                exclusive = newStock.exclusive,
                 count = newStock.count,
                 restock_threshold = newStock.restock_threshold,
                 oos_date = newStock.oos_date,
@@ -48,8 +52,8 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
 
     override fun updateStock(id: UUID, editStock: EditStock) : StockDTO {
         val stock = stockRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
-        println("editStock: ${editStock.count}")
 
+        stock.exclusive = if (editStock.exclusive != null) editStock.exclusive else stock.exclusive
         stock.count = if (editStock.count != null) editStock.count else stock.count
         stock.restock_threshold = if (editStock.restock_threshold != null) editStock.restock_threshold else stock.restock_threshold
         stock.oos_date = if (editStock.oos_date != null) editStock.oos_date else stock.oos_date

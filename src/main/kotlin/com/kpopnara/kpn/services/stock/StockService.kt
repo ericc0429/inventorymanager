@@ -6,7 +6,7 @@ import java.util.UUID
 interface StockService {
   fun getStocks(): Iterable<StockDTO>
 
-  fun getStockAtLocation(location: LocationType): Iterable<StockDTO>
+  fun getStockAtLocation(location: String): Iterable<StockDTO>
 
   fun addStock(newStock: NewStock): StockDTO
 

@@ -4,12 +4,12 @@ import com.kpopnara.kpn.models.products.*
 import jakarta.persistence.*
 import java.util.UUID
 
-enum class LocationType {
-  SOUTHFIELD_MI,
-  KTOWN_NYC,
-  SOUTHLOOP_CHI,
-  AMERICANDREAM_NJ,
-  NONE
+enum class LocationType(val label: String) {
+  MI_SOUTHFIELD("SOUTHFIELD"),
+  NYC_KTOWN("KTOWN"),
+  CHI_SOUTHLOOP("SOUTHLOOP"),
+  NJ_AMERICANDREAM("AMERICANDREAM"),
+  NONE("NONE")
 }
 
 @Entity
@@ -20,6 +20,7 @@ class Stock(
     val id: UUID?, // Unique identifier
     @Enumerated(EnumType.ORDINAL) val location: LocationType,
     @ManyToOne @JoinColumn(name = "product_id") val product: Product,
+    var exclusive: Boolean,
     var count: Int,
     var restock_threshold: Int,
     // Last date item went out of stock -- to help prevent accidental double-orders.
@@ -36,6 +37,7 @@ data class StockDTO(
     val id: UUID?,
     val location: LocationType,
     val product: String,
+    val exclusive: Boolean,
     val count: Int,
     val restock_threshold: Int,
     val oos_date: String,
@@ -49,6 +51,7 @@ fun Stock.toDTO() =
         id,
         location,
         product.name,
+        exclusive,
         count,
         restock_threshold,
         oos_date,
@@ -64,6 +67,7 @@ fun Stock.toDTOString(): String {
 data class NewStock(
     val location: LocationType,
     val product: UUID,
+    val exclusive: Boolean = false,
     val count: Int = 0,
     val restock_threshold: Int = 0,
     val oos_date: String = "",
@@ -73,6 +77,7 @@ data class NewStock(
 )
 
 data class EditStock(
+    val exclusive: Boolean?,
     val count: Int?,
     val restock_threshold: Int?,
     val oos_date: String?,

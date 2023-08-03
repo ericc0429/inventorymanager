@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.*
 class StockController(val service: StockServiceImpl) {
   @GetMapping fun getStocks(): Iterable<StockDTO> = service.getStocks()
 
-  @GetMapping("/{location}") fun getStockAtLocation(@PathVariable location: LocationType): Iterable<StockDTO> = service.getStockAtLocation(location)
+  @GetMapping("/location/{location}") fun getStockAtLocation(@PathVariable location: String): Iterable<StockDTO> = service.getStockAtLocation(location)
 
   @PostMapping fun addStock(@RequestBody newStock: NewStock) = service.addStock(newStock)
 
-  @PutMapping("/{id}") fun updateStock(@PathVariable id: UUID, editStock: EditStock): StockDTO = service.updateStock(id, editStock)
+  @PutMapping("/{id}") fun updateStock(@PathVariable id: UUID, @RequestBody editStock: EditStock): StockDTO =
+    service.updateStock(id, editStock)
 
   @DeleteMapping("/{id}") fun deleteStock(@PathVariable id: UUID) : StockDTO = service.deleteStock(id)
 }
