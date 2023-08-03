@@ -1,15 +1,19 @@
-// Functions
-import Layout from "components/Layout";
+// Type
+import type { AppProps } from "next/app";
+
+// Imports
+import Page from "components/Page";
+import { SessionProvider } from "next-auth/react";
 
 // Styles
 import "styles/globals.css";
 
-function MyApp({ Component, pageProps }) {
+function App({ Component, pageProps: { session, pageProps } }: AppProps) {
   return (
-    <Layout>
+    <Page>
       <Component {...pageProps} />
-    </Layout>
+    </Page>
   );
 }
 
-export default MyApp;
+export default App;

@@ -7,7 +7,7 @@ import Link from "next/link";
 import Nav from "./Nav";
 
 // Styles
-import styles from "./Layout.module.css";
+import styles from "./Page.module.css";
 import Image from "next/image";
 
 function Header() {

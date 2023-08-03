@@ -3,9 +3,9 @@ import Header from "./Header";
 import Footer from "./Footer";
 
 // Styles
-import styles from "./Layout.module.css";
+import styles from "./Page.module.css";
 
-export default function Layout({ children }: any) {
+export default function Page({ children }: any) {
   return (
     <>
       <Header />
