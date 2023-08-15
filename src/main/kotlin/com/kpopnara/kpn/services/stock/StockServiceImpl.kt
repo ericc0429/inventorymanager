@@ -16,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException
 class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: ProductRepo<Product>) : StockService {
 
     override fun getStocks() : Iterable<StockDTO> {
+println("GET ALL called")
+
         return stockRepo.findAll().map() { it.toDTO() }
     }
 

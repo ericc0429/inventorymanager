@@ -32,7 +32,7 @@ const Stock = () => {
   useEffect(() => {
     setLoading(true);
 
-    fetch("http://localhost:8080/stock")
+    fetch(api_url + "/stock")
       .then((res) => res.json())
       .then((data) => {
         setStocks(data);
@@ -49,7 +49,7 @@ const Stock = () => {
   return (
     <div>
       {stocks.map((stock) => (
-        <div key={stock.id}>{stock.count}</div>
+        <div key={stock.id}>{stock.title}</div>
       ))}
     </div>
   );
