@@ -66,7 +66,7 @@ fun Stock.toDTOString(): String {
 
 data class NewStock(
     val location: LocationType,
-    val product: UUID,
+    val productId: UUID?,
     val exclusive: Boolean = false,
     val count: Int = 0,
     val restock_threshold: Int = 0,

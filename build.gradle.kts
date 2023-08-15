@@ -25,6 +25,8 @@ dependencies {
   implementation("org.mapstruct:mapstruct:1.5.5.Final")
   runtimeOnly("org.postgresql:postgresql")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("io.mockk:mockk:1.9.3")
+  testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
 
 tasks.withType<KotlinCompile> {

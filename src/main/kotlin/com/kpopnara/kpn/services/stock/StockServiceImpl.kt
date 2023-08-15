@@ -15,11 +15,16 @@ import org.springframework.web.server.ResponseStatusException
 @Transactional
 class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: ProductRepo<Product>) : StockService {
 
+    override fun getStock(id : UUID) : StockDTO {
+        val stock = stockRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
+        return stock.toDTO()
+    }
+
     override fun getStocks() : Iterable<StockDTO> {
         return stockRepo.findAll().map() { it.toDTO() }
     }
 
-    override fun getStockAtLocation(location: String) : Iterable<StockDTO> {
+    override fun getStocksAtLocation(location: String) : Iterable<StockDTO> {
         for ( loc in LocationType.values() ) {
             if (loc.label == location.uppercase()) return stockRepo.findAllByLocation(loc).map() { it.toDTO() }
         }
@@ -27,27 +32,31 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
     }
 
     override fun addStock(newStock: NewStock) : StockDTO {
+        if (newStock.productId != null) {
+            val product = productRepo.findById(newStock.productId).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND)}
+            for (existingStock: Stock in product.stock) {
+                if (existingStock.location == newStock.location) throw ResponseStatusException(HttpStatus.CONFLICT)
+            }
 
-        val product = productRepo.findById(newStock.product).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND)}
-        for (existingStock: Stock in product.stock) {
-            if (existingStock.location == newStock.location) throw ResponseStatusException(HttpStatus.CONFLICT)
+            return stockRepo.save(
+                Stock(
+                    id = null,
+                    location = newStock.location,
+                    product = product,
+                    exclusive = newStock.exclusive,
+                    count = newStock.count,
+                    restock_threshold = newStock.restock_threshold,
+                    oos_date = newStock.oos_date,
+                    ordered = newStock.ordered,
+                    order_date = newStock.order_date,
+                    tracking = newStock.tracking,
+                )
+            )
+                .toDTO()
+        } else {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST)
         }
 
-        return stockRepo.save(
-            Stock(
-                id = null,
-                location = newStock.location,
-                product = product,
-                exclusive = newStock.exclusive,
-                count = newStock.count,
-                restock_threshold = newStock.restock_threshold,
-                oos_date = newStock.oos_date,
-                ordered = newStock.ordered,
-                order_date = newStock.order_date,
-                tracking = newStock.tracking,
-            )
-        )
-        .toDTO()
     }
 
     override fun updateStock(id: UUID, editStock: EditStock) : StockDTO {
