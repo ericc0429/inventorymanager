@@ -140,7 +140,7 @@ class ProductServiceImplTest {
         )
 
         assertFailsWith(
-                exceptionClass = ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)::class,
+                exceptionClass = ResponseStatusException(HttpStatus.BAD_REQUEST)::class,
                 block = {
                     productService.addProduct(newProduct)
                 }
