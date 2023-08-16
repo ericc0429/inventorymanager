@@ -1,4 +1,4 @@
-/* export interface IDataListProps {
+export interface IStockListProps {
   stocks: IStock[];
 }
 
@@ -14,4 +14,3 @@ export interface IStock {
   order_date: string;
   tracking: string;
 }
- */

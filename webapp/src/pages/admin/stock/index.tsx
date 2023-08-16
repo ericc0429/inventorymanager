@@ -1,38 +1,39 @@
 import React, { useEffect, useState } from "react";
 
 // Components
-import DataList from "components/DataList/DataList";
+import StockList from "components/StockList/StockList";
 
 // API
 const api_url = process.env.API_URL;
 
-/* export default function Stock({ data }) {
+export default function Stock({ data }: any) {
   console.log(data);
   return (
     <div>
       Stock Data
-      <DataList stocks={data}></DataList>
+      <StockList stocks={data}></StockList>
     </div>
   );
 }
 
 export async function getServerSideProps() {
-  const res = await fetch("http://localhost:8080/stock");
+  const res = await fetch(api_url + "/stock");
   const data = await res.json();
+  //console.log(data);
   return {
     props: { data },
   };
 }
- */
 
-const Stock = () => {
+
+/* const Stock = () => {
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
 
-    fetch(api_url + "/stock")
+    fetch("http://localhost:8080/stock")
       .then((res) => res.json())
       .then((data) => {
         setStocks(data);
@@ -56,3 +57,4 @@ const Stock = () => {
 };
 
 export default Stock;
+*/

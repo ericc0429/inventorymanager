@@ -1,15 +1,15 @@
-/* // Libraries
+// Libraries
 import Link from "next/link";
 
 // Components
-import { IDataListProps } from "./Data.types";
+import { IStockListProps } from "./Stock.types";
 import Card from "components/Card";
 
-export default function DataList({ stocks }: IDataListProps) {
-  //console.log(stocks);
+import styles from "./StockList.module.css";
 
+export default function StockList({ stocks }: IStockListProps) {
   return (
-    <div>
+    <div className={styles.list}>
       {stocks &&
         stocks.map((stock) => (
           <Link href={"/stock/".concat(stock.id.toString())} key={stock.id}>
@@ -18,4 +18,4 @@ export default function DataList({ stocks }: IDataListProps) {
         ))}
     </div>
   );
-} */
+}
