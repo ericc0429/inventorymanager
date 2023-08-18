@@ -1,5 +1,8 @@
-/* export interface IDataListProps {
+export interface IStockListProps {
   stocks: IStock[];
+}
+export interface IArtistListProps {
+  artists: IArtist[];
 }
 
 export interface IStock {
@@ -14,4 +17,15 @@ export interface IStock {
   order_date: string;
   tracking: string;
 }
- */
+export interface IArtist {
+  id: string;
+  name: string;
+  type: string;
+  gender: string;
+  debut: string;
+  albums: string[];
+  assets: string[];
+  members: string[];
+  birthday: string;
+  group: string[];
+}

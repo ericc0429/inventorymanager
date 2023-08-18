@@ -5,9 +5,6 @@ import type { AppProps } from "next/app";
 import Page from "components/Page";
 import { SessionProvider } from "next-auth/react";
 
-/* const express = require("express");
-const app = express(); */
-
 // Styles
 import "styles/globals.css";
 

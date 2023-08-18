@@ -1,0 +1,46 @@
+.list {
+  padding: 0rem;
+  margin: 0rem;
+
+  background-color: inherit;
+
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.card {
+  padding: 0.75rem 0rem;
+  margin: 0.3rem 0rem;
+
+  background-color: inherit;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  border: 1px solid gray;
+  border-radius: 10px;
+}
+
+.property {
+  padding: 0rem 0.5rem;
+  margin: 0rem;
+
+  background-color: inherit;
+
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: 16%;
+}
+
+.property_small {
+  padding: 0rem 0.5rem;
+  margin: 0rem;
+
+  background-color: inherit;
+
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: 5%;
+}
