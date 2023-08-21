@@ -36,3 +36,8 @@ textarea {
 * {
   box-sizing: border-box;
 }
+
+h1, h2, h3 {
+  padding: 0rem;
+  margin: 0rem;
+}

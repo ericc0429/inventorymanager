@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/artists")
 class ArtistController(val service: ArtistServiceImpl) {
   @GetMapping fun getArtists(): Iterable<ArtistDTO> = service.getArtists()
+@GetMapping("/{id}")
+fun getArtistById(@PathVariable id: UUID): ArtistDTO = service.getArtistById(id)
+
   @GetMapping("/groups") fun getGroups(): Iterable<ArtistDTO> = service.getGroups()
   @GetMapping("/solo") fun getPeople(): Iterable<ArtistDTO> = service.getPeople()
 

@@ -1,14 +1,15 @@
 import React from "react";
 
-import { IArtist, IStock } from "components/DataList";
+import { IArtist, IProduct, IStock } from "components/DataList";
 
 import styles from "./Card.module.css";
+import Link from "next/link";
 
 interface ICardProps {
-  data: IStock | IArtist;
+  data: IStock | IArtist | IProduct;
 }
 interface ICardParseProps {
-  data: IStock | IArtist;
+  data: IStock | IArtist | IProduct;
   key: string;
 }
 
@@ -19,7 +20,6 @@ export default function Card({ data }: ICardProps) {
       arr.push(data[key]);
     }
   });
-  console.log(arr);
 
   return (
     <div className={styles.card}>
@@ -31,9 +31,17 @@ export default function Card({ data }: ICardProps) {
 }
 
 function CardParse({ value }: any) {
-  if (typeof value == "number") {
-    return <p className={styles.property_small}>{value}</p>;
+  if (Array.isArray(value)) {
+    var out = "";
+    value.forEach((element) => {
+      out += element + "\n";
+    });
+    return (
+      <p className={styles.property}>{value.length != 0 ? out : "[None]"}</p>
+    );
+  } else if (typeof value == "number") {
+    return <p className={styles.property_small}>{value != null ? value : 0}</p>;
   } else if (typeof value == "boolean") {
     return <p className={styles.property_small}>{value ? "YES" : "NO"}</p>;
-  } else return <p className={styles.property}>{value}</p>;
+  } else return <p className={styles.property}>{value ? value : "N/A"}</p>;
 }

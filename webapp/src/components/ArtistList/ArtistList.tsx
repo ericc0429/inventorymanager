@@ -23,8 +23,13 @@ export default function ArtistList({ artists }: IArtistListProps) {
       </div>
       {artists &&
         artists.map((artist) => (
-          <Link href={"/artist/".concat(artist.id.toString())} key={artist.id}>
-            <Card data={artist} />
+          <Link
+            href={"/admin/artists/".concat(artist.id.toString())}
+            key={artist.id}
+          >
+            <a>
+              <Card data={artist} />
+            </a>
           </Link>
         ))}
     </div>

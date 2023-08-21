@@ -5,6 +5,10 @@ export interface IArtistListProps {
   artists: IArtist[];
 }
 
+export interface IProductListProps {
+  products: IProduct[];
+}
+
 export interface IStock {
   id: string;
   location: string;
@@ -28,4 +32,14 @@ export interface IArtist {
   members: string[];
   birthday: string;
   group: string[];
+}
+
+export interface IProduct {
+  id: string;
+  type: string;
+  name: string;
+  description: string;
+  gtin: string;
+  price: number;
+  stock: string[];
 }

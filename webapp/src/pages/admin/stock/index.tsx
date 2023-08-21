@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 // Components
 import StockList from "components/StockList/StockList";

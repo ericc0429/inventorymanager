@@ -16,7 +16,6 @@ function Header() {
       <Head>
         <title>K-POP NARA</title>
         <meta name="description" content="K-POP Store" />
-        <link rel="icon" href="kpn_logo.svg" />
       </Head>
 
       <div className={styles.headerBar}>

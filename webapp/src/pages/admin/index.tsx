@@ -40,17 +40,6 @@ import styles from "styles/AdminPanel.module.css";
 export default function Admin() {
   return (
     <div className={styles.container}>
-      <div className={styles.list}>
-        <Link href="/admin/artists">
-          <a className={styles.link}>Artists</a>
-        </Link>
-        <Link href="/admin/items">
-          <a className={styles.link}>Items</a>
-        </Link>
-        <Link href="/admin/stock">
-          <a className={styles.link}>Stock</a>
-        </Link>
-      </div>
       <div className={styles.body}>
         This is the homepage of the admin panel. Only visible when logged in.
       </div>
