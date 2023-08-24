@@ -17,7 +17,7 @@ class ProductServiceImpl(
     val productRepo: ProductRepo<Product>,
     val albumRepo: ProductRepo<Album>,
     val assetRepo: ProductRepo<Asset>,
-    val itemRepo: ProductRepo<Item>
+    val itemRepo: ProductRepo<Item>,
 ) : ProductService, AlbumService, AssetService, ItemService {
 
     override fun getProducts(): Iterable<ProductDTO> {
@@ -25,6 +25,21 @@ class ProductServiceImpl(
             assetRepo.findAll().map() { it.toProductDTO() } +
             itemRepo.findAll().map() { it.toDTO() }
     }
+    override fun getProductById(id: UUID): ProductDTO {
+        val product = productRepo.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+        if (product.type == ProductType.ALBUM) return albumRepo.getReferenceById(id).toProductDTO()
+        else if (product.type == ProductType.ASSET) return assetRepo.getReferenceById(id).toProductDTO()
+        else return itemRepo.getReferenceById(id).toDTO()
+    }
+    override fun getProductStock(id: UUID): Iterable<StockDTO> {
+        val product = productRepo.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+        var outArr: Iterable<StockDTO> = emptySet()
+        product.stock.forEach {
+            outArr = outArr.plus( it.toDTO() )
+        }
+        return outArr
+    }
+
     override fun getAlbums(): Iterable<AlbumDTO> {
         return albumRepo.findAll().map() { it.toDTO() }
     }

@@ -25,13 +25,13 @@ class ArtistServiceImpl(
         return groupRepo.findAll().map {it.toDTO()} + personRepo.findAll().map {it.toDTO()}
     }
 
-fun getArtistById(id: UUID): ArtistDTO {
-    val artist =
+    override fun getArtistById(id: UUID): ArtistDTO {
+        val artist =
             artistRepo.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
-    if (artist.type == ArtistType.GROUP || artist.type == ArtistType.SUBUNIT)
+        if (artist.type == ArtistType.GROUP || artist.type == ArtistType.SUBUNIT)
             return groupRepo.getReferenceById(id).toDTO()
-    else return personRepo.getReferenceById(id).toDTO()
-}
+        else return personRepo.getReferenceById(id).toDTO()
+    }
 
     override fun getGroups(): Iterable<ArtistDTO> {
         return groupRepo.findAll().map { it.toDTO() }

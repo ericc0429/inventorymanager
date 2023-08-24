@@ -5,6 +5,7 @@ import java.util.UUID
 
 interface ArtistService {
   fun getArtists(): Iterable<ArtistDTO>
+  fun getArtistById(id: UUID): ArtistDTO
 
   fun addArtist(newArtist: NewArtist): ArtistDTO
 
