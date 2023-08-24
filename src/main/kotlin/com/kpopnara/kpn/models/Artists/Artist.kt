@@ -1,42 +1,25 @@
-package com.kpopnara.kpn
+package com.kpopnara.kpn.models.artists
 
-// import org.springframework.data.relational.core.mapping.Table
+import com.kpopnara.kpn.models.products.Album
+import com.kpopnara.kpn.models.products.Asset
 import jakarta.persistence.*
 import java.util.UUID
 import kotlin.collections.Set
 import org.springframework.web.bind.annotation.*
 
-enum class GenderType {
-  MALE,
-  FEMALE,
-  NONBINARY,
-  NONE
-}
-
-enum class GroupGenderType {
-  GIRL,
-  BOY,
-  COED,
-  NONE
-}
-
-enum class GroupType {
-  GROUPP,
-  SUBUNIT,
-  NONE
-}
-
 @Entity
 @Table(name = "artists")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "artist_type", discriminatorType = DiscriminatorType.STRING)
-abstract class Artist(
+open class Artist(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
-    open val id: UUID, // Unique identifier
-    @Column open var name: String,
-    @Column open var debut: String,
+    open val id: UUID?, // Unique identifier
+    open var name: String,
+    open var type: ArtistType,
+    open var gender: GenderType,
+    open var debut: String,
     // Albums
     @ManyToMany
     @JoinTable(
@@ -54,3 +37,36 @@ abstract class Artist(
     )
     open var assets: Set<Asset>,
 )
+
+data class ArtistDTO(
+    val id: UUID?,
+    val name: String,
+    val type: ArtistType,
+    val gender: GenderType,
+    val debut: String,
+    val albums: Iterable<String?>,
+    val assets: Iterable<String?>,
+    // Group
+    val members: Iterable<String?>?,
+    // Solo Artist
+    val birthday: String?,
+    val group: Iterable<String?>?
+)
+
+data class NewArtist(
+    val name: String,
+    val type: ArtistType = ArtistType.ARTIST,
+    val gender: GenderType = GenderType.NONE,
+    val debut: String = "unknown",
+    val birthday: String = "unknown",
+)
+
+data class EditArtist(
+    val name: String?,
+    val type: ArtistType?,
+    val gender: GenderType?,
+    val debut: String?,
+    val birthday: String?,
+)
+
+data class IdNameDTO(val id: UUID?, val name: String?)
