@@ -24,7 +24,7 @@ export default function Card({ data }: ICardProps) {
   return (
     <div className={styles.card}>
       {arr.map((item) => (
-        <CardParse key={data.id + item} value={item} />
+        <CardParse key={item + "_" + data.id} value={item} />
       ))}
     </div>
   );

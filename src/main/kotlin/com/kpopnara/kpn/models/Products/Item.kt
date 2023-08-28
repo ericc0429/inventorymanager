@@ -25,16 +25,6 @@ class Item(
     stock: Set<Stock>,
 ) : Product(id, type, name, description, gtin, price, stock) {}
 
-data class ItemDTO(
-    val id: UUID?,
-    val type: ProductType,
-    val name: String,
-    val description: String,
-    val gtin: String,
-    val price: Double,
-    val stock: Iterable<String>,
-)
-
 fun Item.toDTO() =
     ProductDTO(
         id = id,
@@ -43,45 +33,7 @@ fun Item.toDTO() =
         description = description,
         gtin = gtin,
         price = price,
-        stock = stock.map { it.toDTOString() },
-    )
-
-fun Item.toView() =
-    ItemDTO(
-        id = id,
-        type = type,
-        name = name,
-        description = description,
-        gtin = gtin,
-        price = price,
-        stock = stock.map { it.toDTOString() },
+        stock = stock.map { it.toDTO() },
     )
 
 data class NewItem(val name: String)
-
-/* @RestController
-@RequestMapping("/items")
-class ItemController(val service: ItemService) {
-  @GetMapping fun items(): Iterable<ItemDTO> = service.findAll()
-
-  @PostMapping fun addItem(@RequestBody newItem: NewItem) = service.save(newItem)
-}
-
-@Service
-class ItemService(val db: ItemRepo) {
-  fun findAll(): Iterable<ItemDTO> = db.findAll().map { it.toView() }
-
-  fun save(newItem: NewItem): ItemDTO =
-      db.save(
-              Item(
-                  id = null,
-                  name = newItem.name,
-                  gtin = "unknown",
-                  price = 0.0,
-                  stock = emptySet(),
-                  description = "Test Item"
-              )
-          )
-          .toView()
-}
- */

@@ -41,5 +41,5 @@ export interface IProduct {
   description: string;
   gtin: string;
   price: number;
-  stock: string[];
+  stock: IStock[];
 }

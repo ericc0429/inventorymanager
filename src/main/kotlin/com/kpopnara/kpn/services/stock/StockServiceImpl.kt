@@ -6,6 +6,8 @@ import com.kpopnara.kpn.repos.ProductRepo
 import com.kpopnara.kpn.repos.StockRepo
 import java.util.Optional
 import java.util.UUID
+import java.util.Date
+import java.text.SimpleDateFormat
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.http.HttpStatus
@@ -19,7 +21,7 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
         return stockRepo.findAll().map() { it.toDTO() }
     }
     override fun getStockById(id: UUID): StockDTO {
-        val stock = stockRepo.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+        stockRepo.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
         return stockRepo.getReferenceById(id).toDTO()
     }
 
@@ -32,6 +34,7 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
 
     override fun addStock(newStock: NewStock) : StockDTO {
 
+        val formatter = SimpleDateFormat("MM-dd-yyyy:HH:mm:ss")
         val product = productRepo.findById(newStock.product).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND)}
         for (existingStock: Stock in product.stock) {
             if (existingStock.location == newStock.location) throw ResponseStatusException(HttpStatus.CONFLICT)
@@ -45,9 +48,9 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
                 exclusive = newStock.exclusive,
                 count = newStock.count,
                 restock_threshold = newStock.restock_threshold,
-                oos_date = newStock.oos_date,
+                oos_date = if (newStock.oos_date != "") formatter.parse(newStock.oos_date) else Date(0),
                 ordered = newStock.ordered,
-                order_date = newStock.order_date,
+                order_date = if (newStock.order_date != "") formatter.parse(newStock.order_date) else Date(0),
                 tracking = newStock.tracking,
             )
         )
@@ -56,13 +59,18 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
 
     override fun updateStock(id: UUID, editStock: EditStock) : StockDTO {
         val stock = stockRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
+        val formatter = SimpleDateFormat("MM-dd-yyyy:HH:mm:ss")
 
         stock.exclusive = if (editStock.exclusive != null) editStock.exclusive else stock.exclusive
-        stock.count = if (editStock.count != null) editStock.count else stock.count
+        if (editStock.count != null) {
+            if (editStock.count == 0 && stock.count > 0) stock.oos_date = Date()
+            stock.count = editStock.count
+        } else stock.count
+
         stock.restock_threshold = if (editStock.restock_threshold != null) editStock.restock_threshold else stock.restock_threshold
-        stock.oos_date = if (editStock.oos_date != null) editStock.oos_date else stock.oos_date
+        stock.oos_date = if (editStock.oos_date != null) formatter.parse(editStock.oos_date) else stock.oos_date
         stock.ordered = if (editStock.ordered != null) editStock.ordered else stock.ordered
-        stock.order_date = if (editStock.order_date != null) editStock.order_date else stock.order_date
+        stock.order_date = if (editStock.order_date != null) formatter.parse(editStock.order_date) else stock.order_date
         stock.tracking = if (editStock.tracking != null) editStock.tracking else stock.tracking
 
         return stockRepo.save(stock).toDTO()

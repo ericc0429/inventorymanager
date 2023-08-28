@@ -20,8 +20,13 @@ export default function StockList({ products }: IProductListProps) {
       </div>
       {products &&
         products.map((product) => (
-          <Link href={"/stock/".concat(product.id.toString())} key={product.id}>
-            <Card data={product} />
+          <Link
+            href={"/admin/items/".concat(product.id.toString())}
+            key={product.id}
+          >
+            <a>
+              <Card data={product} />
+            </a>
           </Link>
         ))}
     </div>

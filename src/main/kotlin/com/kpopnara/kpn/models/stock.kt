@@ -3,6 +3,8 @@ package com.kpopnara.kpn.models.stock
 import com.kpopnara.kpn.models.products.*
 import jakarta.persistence.*
 import java.util.UUID
+import java.util.Date
+import java.text.SimpleDateFormat
 
 enum class LocationType(val label: String) {
   MI_SOUTHFIELD("SOUTHFIELD"),
@@ -24,11 +26,11 @@ class Stock(
     var count: Int,
     var restock_threshold: Int,
     // Last date item went out of stock -- to help prevent accidental double-orders.
-    var oos_date: String,
+    var oos_date: Date,
     // We should have a manual clear button on front-end to set this to false.
     var ordered: Boolean,
     // Date last restock shipment was ordered.
-    var order_date: String,
+    var order_date: Date,
     // Tracking number
     var tracking: String,
 ) {}
@@ -54,9 +56,9 @@ fun Stock.toDTO() =
         exclusive,
         count,
         restock_threshold,
-        oos_date,
+        oos_date = SimpleDateFormat("MM-dd-yyyy:HH:mm:ss").format(oos_date).toString(),
         ordered,
-        order_date,
+        order_date = SimpleDateFormat("MM-dd-yyyy:HH:mm:ss").format(order_date).toString(),
         tracking
     )
 

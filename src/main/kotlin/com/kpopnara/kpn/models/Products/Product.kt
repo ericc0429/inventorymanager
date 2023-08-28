@@ -37,7 +37,7 @@ data class ProductDTO(
     val description: String,
     val gtin: String,
     val price: Double,
-    val stock: Iterable<String>,
+    val stock: Iterable<StockDTO>,
 )
 
 data class NewProduct(

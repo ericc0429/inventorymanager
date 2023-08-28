@@ -51,7 +51,7 @@ data class AssetDTO(
     val description: String,
     val gtin: String,
     val price: Double,
-    val stock: Iterable<String>,
+    val stock: Iterable<StockDTO>,
     val artist: Iterable<String>,
     val version: String,
     val extras: Iterable<String>,
@@ -67,7 +67,7 @@ fun Asset.toDTO() =
         description = description,
         gtin = gtin,
         price = price,
-        stock = stock.map { it.toDTOString() },
+        stock = stock.map { it.toDTO() },
         artist = artist.map { it.name },
         version = version,
         extras = extras.map { it.name },
@@ -83,7 +83,7 @@ fun Asset.toProductDTO() =
         description = description,
         gtin = gtin,
         price = price,
-        stock = stock.map { it.toDTOString() },
+        stock = stock.map { it.toDTO() },
     )
 
 data class NewAsset(var name: String)

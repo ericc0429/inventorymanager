@@ -1,12 +1,12 @@
 import { GetServerSidePropsContext } from "next";
 
-import ArtistDetails from "components/ArtistDetails";
+import ItemDetails from "components/ItemDetails";
 
 const api_url = process.env.API_URL;
-const api_dir = "/artists/";
+const api_dir = "/products/";
 
 export default function Main({ data }: any) {
-  return <ArtistDetails artist={data} />;
+  return <ItemDetails item={data} />;
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
