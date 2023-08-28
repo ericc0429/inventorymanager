@@ -27,6 +27,7 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
     var locationAccessTokenMap : HashMap<LocationType, String> = HashMap<LocationType, String>()
     var parentProductMap: HashMap<String, ParentProduct> = HashMap<String, ParentProduct>()
     var catalogIdProductMap : HashMap<String, Product> = HashMap<String, Product>()
+    var categoryMap = HashMap<String, String>()
 
     init {
         locationAccessTokenMap.put(LocationType.CHI_SOUTHLOOP, "EAAAEAMXjxAjK42SK99tHgpCJDIuqLEt9lP0QCGCiXz81QFWEM3_4e4HqXSDjjld")
@@ -34,9 +35,18 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
     }
 
     fun batchRetrieveInventoryAtAllLocations() {
+
+        println("Syncing with Chicago location Square account inventory...")
+        locationAccessTokenMap.get(LocationType.CHI_SOUTHLOOP)
+            ?.let { connectToSquareClientAtLocation(LocationType.CHI_SOUTHLOOP, it) }
+        batchRetrieveInventory(LocationType.CHI_SOUTHLOOP)
+
         for ((key, value) in locationAccessTokenMap) {
-            connectToSquareClientAtLocation(key, value)
-            batchRetrieveInventory(key)
+            if (key != LocationType.CHI_SOUTHLOOP) {
+                println("Syncing with $key Square account inventory...")
+                connectToSquareClientAtLocation(key, value)
+                batchRetrieveInventory(key)
+            }
         }
     }
 
@@ -110,7 +120,6 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
     }
 
     fun updateItems(itemVariationsToBeCreatedIdList : List<String>, location: LocationType) {
-        var categoryMap = HashMap<String, String>()
         var itemsList = ArrayList<CatalogObject>()
         var itemVariationsList = ArrayList<CatalogObject>()
 
