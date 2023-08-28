@@ -38,7 +38,8 @@ class Stock(
 data class StockDTO(
     val id: UUID?,
     val location: LocationType,
-    val product: String,
+    val product_id: UUID?,
+    val product_name: String,
     val exclusive: Boolean,
     val count: Int,
     val restock_threshold: Int,
@@ -52,6 +53,7 @@ fun Stock.toDTO() =
     StockDTO(
         id,
         location,
+        product.id,
         product.name,
         exclusive,
         count,

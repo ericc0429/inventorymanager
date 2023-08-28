@@ -12,7 +12,8 @@ export interface IProductListProps {
 export interface IStock {
   id: string;
   location: string;
-  product: string;
+  product_id: string;
+  product_name: string;
   exclusive: boolean;
   count: number;
   restock_threshold: number;
@@ -20,6 +21,12 @@ export interface IStock {
   ordered: boolean;
   order_date: string;
   tracking: string;
+}
+export interface IStockGeneral {
+  id: string;
+  location: string;
+  product: string;
+  count: number;
 }
 export interface IArtist {
   id: string;
@@ -42,4 +49,19 @@ export interface IProduct {
   gtin: string;
   price: number;
   stock: IStock[];
+  artist: IArtist[];
+  version: string;
+  extras: IProduct[];
+  released: string;
+  discography: string;
+  format: string;
+  color: string;
+  brand: string;
+}
+export interface IProductGeneral {
+  id: string;
+  name: string;
+  type: string;
+  gtin: string;
+  stock: IStockGeneral[];
 }

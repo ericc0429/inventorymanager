@@ -8,6 +8,7 @@ import Card from "components/Card";
 import styles from "components/DataList/DataList.module.css";
 
 export default function StockList({ stocks }: IStockListProps) {
+  console.log(stocks);
 
   return (
     <div className={styles.list}>
@@ -23,11 +24,18 @@ export default function StockList({ stocks }: IStockListProps) {
         <p className={styles.property}>Tracking No.</p>
       </div>
       {stocks &&
-        stocks.map((stock) => (
-          <Link href={"/stock/".concat(stock.id.toString())} key={stock.id}>
-            <Card data={stock} />
-          </Link>
-        ))}
+        stocks
+          .filter((stock) => stock.count <= stock.restock_threshold)
+          .map((stock) => (
+            <Link
+              href={"/admin/items/".concat(stock.product_id)}
+              key={stock.id}
+            >
+              <a>
+                <Card data={stock} />
+              </a>
+            </Link>
+          ))}
     </div>
   );
 }

@@ -56,7 +56,7 @@ data class AssetDTO(
     val version: String,
     val extras: Iterable<String>,
     val released: String,
-    val brand: String
+    val brand: String,
 )
 
 fun Asset.toDTO() =
@@ -72,7 +72,7 @@ fun Asset.toDTO() =
         version = version,
         extras = extras.map { it.name },
         released = released,
-        brand = brand
+        brand = brand,
     )
 
 fun Asset.toProductDTO() =
@@ -84,6 +84,11 @@ fun Asset.toProductDTO() =
         gtin = gtin,
         price = price,
         stock = stock.map { it.toDTO() },
+        artist = artist.map { it.name },
+        version = version,
+        extras = extras.map { it.name },
+        released = released,
+        brand = brand,
     )
 
 data class NewAsset(var name: String)

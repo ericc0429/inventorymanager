@@ -7,6 +7,15 @@
   display: flex;
   flex-flow: column nowrap;
 }
+.rowlist {
+  padding: 0rem;
+  margin: 0rem;
+
+  background-color: inherit;
+
+  display: flex;
+  flex-flow: row wrap;
+}
 
 .card {
   padding: 0.75rem 0rem;
@@ -21,6 +30,30 @@
 
   border: 1px solid gray;
   border-radius: 10px;
+}
+
+.vertical_card {
+  padding: 0.75rem 0.75rem;
+  margin: 0.3rem 0rem;
+
+  background-color: inherit;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  border: 1px solid gray;
+  border-radius: 10px;
+  transition: border-color 0.5s;
+}
+.vertical_card:hover {
+  border-color: var(--highlight-color);
+}
+
+.nopad {
+  padding: 0rem;
+  margin: 0rem;
 }
 
 .property {

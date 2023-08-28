@@ -38,6 +38,14 @@ data class ProductDTO(
     val gtin: String,
     val price: Double,
     val stock: Iterable<StockDTO>,
+    val artist: Iterable<String> = emptySet(),
+    val version: String = "",
+    val extras: Iterable<String> = emptySet(),
+    val released: String = "",
+    val discography: String = "",
+    val format: String = "",
+    val color: String = "",
+    val brand: String = "",
 )
 
 data class NewProduct(

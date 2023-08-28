@@ -1,4 +1,5 @@
 import { IProduct, IStock } from "components/DataList";
+import styles from "components/DataList/DataList.module.css";
 
 interface IItemPageProps {
   item: IProduct;
@@ -9,7 +10,6 @@ interface IItemStockProps {
 
 export default function ItemDetails({ item }: IItemPageProps) {
   var isAlbum = item.type == "ALBUM";
-  console.log(item);
   return (
     <div>
       <h1>{item.name}</h1>
@@ -17,30 +17,38 @@ export default function ItemDetails({ item }: IItemPageProps) {
       <p>{"GTIN: " + item.gtin + "\n"}</p>
       <p>{"Price: " + item.price + "\n"}</p>
       <p>{"Description: " + item.description + "\n"}</p>
-      <p>{"Stock: \n" + item.stock.map((element) => element)}</p>
       <ItemStock stocks={item.stock} />
     </div>
   );
 }
 
 function ItemStock({ stocks }: IItemStockProps) {
-  console.log(stocks);
   return (
     <div>
       <h2>Stock Data</h2>
-      {stocks &&
-        stocks.map((it) => (
-          <div key={it.id}>
-            <p>{"Location: " + it.location}</p>
-            <p>{"Exclusivity: " + it.exclusive}</p>
-            <p>{"Stock Count: " + it.count}</p>
-            <p>{"Restock Limit: " + it.restock_threshold}</p>
-            <p>{"Out of Stock Since: " + it.oos_date}</p>
-            <p>{"New Stock Ordered: " + it.ordered}</p>
-            <p>{"New Stock Ordered On: " + it.order_date}</p>
-            <p>{"Order Tracking: " + it.tracking}</p>
-          </div>
-        ))}
+      <div className={styles.rowlist}>
+        {stocks &&
+          stocks.map((it) => (
+            <div className={styles.vertical_card} key={it.id}>
+              <h3 className={styles.nopad}>{"Location: " + it.location}</h3>
+              <p className={styles.nopad}>{"Exclusivity: " + it.exclusive}</p>
+              <p className={styles.nopad}>{"Stock Count: " + it.count}</p>
+              <p className={styles.nopad}>
+                {"Restock Limit: " + it.restock_threshold}
+              </p>
+              <p className={styles.nopad}>
+                {"Out of Stock Since: " + it.oos_date}
+              </p>
+              <p className={styles.nopad}>
+                {"New Stock Ordered: " + it.ordered}
+              </p>
+              <p className={styles.nopad}>
+                {"New Stock Ordered On: " + it.order_date}
+              </p>
+              <p className={styles.nopad}>{"Order Tracking: " + it.tracking}</p>
+            </div>
+          ))}
+      </div>
     </div>
   );
 }

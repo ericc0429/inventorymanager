@@ -11,6 +11,10 @@
 
   border: 1px solid gray;
   border-radius: 10px;
+  transition: border-color 0.5s;
+}
+.card:hover {
+  border-color: var(--highlight-color);
 }
 
 .property {

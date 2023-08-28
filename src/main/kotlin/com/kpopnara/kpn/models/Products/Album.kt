@@ -85,4 +85,11 @@ fun Album.toProductDTO() =
         gtin = gtin,
         price = price,
         stock = stock.map { it.toDTO() },
+        artist = artist.map { it.name },
+        version = version,
+        extras = extras.map { it.name },
+        released = released,
+        discography = discography,
+        format = format,
+        color = color,
     )
