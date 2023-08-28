@@ -21,9 +21,10 @@ class Item(
     name: String,
     description: String,
     gtin: String,
+    sku: String?,
     price: Double,
     stock: Set<Stock>,
-) : Product(id, type, name, description, gtin, price, stock) {}
+) : Product(id, type, name, description, gtin, sku, price, stock) {}
 
 data class ItemDTO(
     val id: UUID?,
@@ -31,6 +32,7 @@ data class ItemDTO(
     val name: String,
     val description: String,
     val gtin: String,
+    val sku: String?,
     val price: Double,
     val stock: Iterable<String>,
 )
@@ -42,6 +44,7 @@ fun Item.toDTO() =
         name = name,
         description = description,
         gtin = gtin,
+        sku = sku,
         price = price,
         stock = stock.map { it.toDTOString() },
     )
@@ -53,6 +56,7 @@ fun Item.toView() =
         name = name,
         description = description,
         gtin = gtin,
+        sku = sku,
         price = price,
         stock = stock.map { it.toDTOString() },
     )

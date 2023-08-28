@@ -50,6 +50,7 @@ class ProductServiceImpl(
                 id = null,
                 name = newProduct.name,
                 gtin = newProduct.gtin,
+                sku = newProduct.sku,
                 price = newProduct.price,
                 stock = emptySet<Stock>(),
                 artist = emptySet<Artist>(),
@@ -58,7 +59,7 @@ class ProductServiceImpl(
                 released = newProduct.released,
                 discography = newProduct.discography,
                 format = newProduct.format,
-                color = newProduct.color,
+                color = newProduct.color
             )
         )
     }
@@ -73,13 +74,14 @@ class ProductServiceImpl(
                 name = newProduct.name,
                 description = newProduct.description,
                 gtin = newProduct.gtin,
+                sku = newProduct.sku,
                 price = newProduct.price,
                 stock = emptySet<Stock>(),
                 artist = emptySet<Artist>(),
                 version = newProduct.version,
                 extras = emptySet<Product>(),
                 released = newProduct.released,
-                brand = newProduct.brand,
+                brand = newProduct.brand
             )
         )
     }
@@ -91,8 +93,9 @@ class ProductServiceImpl(
                 name = newProduct.name,
                 description = newProduct.description,
                 gtin = newProduct.gtin,
+                sku = newProduct.sku,
                 price = newProduct.price,
-                stock = emptySet<Stock>(),
+                stock = emptySet<Stock>()
             )
         ).toDTO()
     }
@@ -114,6 +117,7 @@ class ProductServiceImpl(
         album.name = if (editProduct.name != null) editProduct.name else album.name
         album.description = if (editProduct.description != null) editProduct.description else album.description
         album.gtin = if (editProduct.gtin != null) editProduct.gtin else album.gtin
+        album.sku = if (editProduct.sku != null) editProduct.sku else album.sku
         album.price = if (editProduct.price != null) editProduct.price else album.price
         album.version = if (editProduct.version != null) editProduct.version else album.version
         album.released = if (editProduct.released != null) editProduct.released else album.released
@@ -134,6 +138,7 @@ class ProductServiceImpl(
         asset.name = if (editProduct.name != null) editProduct.name else asset.name
         asset.description = if (editProduct.description != null) editProduct.description else asset.description
         asset.gtin = if (editProduct.gtin != null) editProduct.gtin else asset.gtin
+        asset.sku = if (editProduct.sku != null) editProduct.sku else asset.sku
         asset.price = if (editProduct.price != null) editProduct.price else asset.price
         asset.version = if (editProduct.version != null) editProduct.version else asset.version
         asset.released = if (editProduct.released != null) editProduct.released else asset.released
@@ -151,6 +156,7 @@ class ProductServiceImpl(
         item.name = if (editProduct.name != null) editProduct.name else item.name
         item.description = if (editProduct.description != null) editProduct.description else item.description
         item.gtin = if (editProduct.gtin != null) editProduct.gtin else item.gtin
+        item.sku = if (editProduct.sku != null) editProduct.sku else item.sku
         item.price = if (editProduct.price != null) editProduct.price else item.price
 
         return itemRepo.save(item).toDTO()

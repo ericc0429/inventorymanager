@@ -6,6 +6,7 @@ import com.kpopnara.kpn.models.stock.Stock
 import com.kpopnara.kpn.models.stock.LocationType
 import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.lang.Nullable
 import org.springframework.stereotype.Repository
 
 @Repository interface ArtistRepo<T : Artist?> : JpaRepository<T, UUID?> {
@@ -24,22 +25,34 @@ import org.springframework.stereotype.Repository
 }
 
 @Repository interface ProductRepo<T : Product?> : JpaRepository<T, UUID?> {
+  @Nullable
   fun findByName(name: String) : T?
+
+  @Nullable
+  fun findBySku(sku: String) : Product
 }
 
 @Repository interface AlbumRepo : ProductRepo<Album> {
   // override fun findByName(name: String) : Album?
+  override fun findBySku(sku: String) : Album
 }
 
 @Repository interface AssetRepo : ProductRepo<Asset> {
   // override fun findByName(name: String) : Asset?
+  override fun findBySku(sku: String) : Asset
 }
 
 @Repository interface ItemRepo : ProductRepo<Item> {
   // override fun findByName(name: String) : Item?
+  override fun findBySku(sku: String) : Item
 }
 
 @Repository interface StockRepo<T : Stock?> : JpaRepository<T, UUID?> {
+
+  @Nullable
   fun findAllByLocation(location: LocationType) : List<Stock>
   // fun findAllByProduct(productId: UUID) : Stock?
+
+  @Nullable
+  fun findByCatalogIdAndLocation(catalogId: String, location : LocationType) : Stock
 }

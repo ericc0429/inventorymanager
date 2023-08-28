@@ -31,6 +31,7 @@ class Stock(
     var order_date: String,
     // Tracking number
     var tracking: String,
+    var catalogId : String
 ) {}
 
 data class StockDTO(
@@ -44,6 +45,7 @@ data class StockDTO(
     val ordered: Boolean,
     val order_date: String,
     val tracking: String,
+    val catalogId: String
 )
 
 fun Stock.toDTO() =
@@ -57,7 +59,8 @@ fun Stock.toDTO() =
         oos_date,
         ordered,
         order_date,
-        tracking
+        tracking,
+        catalogId
     )
 
 fun Stock.toDTOString(): String {
@@ -74,6 +77,7 @@ data class NewStock(
     val ordered: Boolean = false,
     val order_date: String = "",
     val tracking: String = "",
+    val catalogId: String = ""
 )
 
 data class EditStock(
@@ -84,4 +88,5 @@ data class EditStock(
     val ordered: Boolean?,
     val order_date: String?,
     val tracking: String?,
+    val catalogId: String?
 )

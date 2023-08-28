@@ -50,6 +50,7 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
                     ordered = newStock.ordered,
                     order_date = newStock.order_date,
                     tracking = newStock.tracking,
+                    catalogId = newStock.catalogId
                 )
             )
                 .toDTO()
