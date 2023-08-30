@@ -41,7 +41,16 @@ export default function Admin() {
   return (
     <div className={styles.container}>
       <div className={styles.body}>
-        This is the homepage of the admin panel. Only visible when logged in.
+        <p>Note: Filtering only works on name at the moment</p>
+        <p>
+          Things left to do: <br />
+          Add multifaceted filtering -- filter works but only for name <br />
+          Finish edit functionality <br />
+          Expand functionality to all pages <br />
+        </p>
+        <p>
+          This is the homepage of the admin panel. Only visible when logged in.
+        </p>
       </div>
     </div>
   );

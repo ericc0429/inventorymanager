@@ -1,5 +1,6 @@
 import { IProduct, IStock } from "components/DataList";
 import styles from "components/DataList/DataList.module.css";
+import Link from "next/link";
 
 interface IItemPageProps {
   item: IProduct;
@@ -10,10 +11,14 @@ interface IItemStockProps {
 
 export default function ItemDetails({ item }: IItemPageProps) {
   var isAlbum = item.type == "ALBUM";
+
   return (
     <div>
       <h1>{item.name}</h1>
       <h2>{item.type}</h2>
+      <Link href={"/admin/items/".concat(item.id.toString()).concat("/edit")}>
+        <a>Edit</a>
+      </Link>
       <p>{"GTIN: " + item.gtin + "\n"}</p>
       <p>{"Price: " + item.price + "\n"}</p>
       <p>{"Description: " + item.description + "\n"}</p>

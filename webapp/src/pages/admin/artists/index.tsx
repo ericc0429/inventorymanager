@@ -15,7 +15,7 @@ export default function Artists({ data }: any) {
         List of all artists, with groups listed first and then individual
         artists
       </p>
-      <SearchBar placeholder={"artists"} data={data} />
+      {/* <SearchBar placeholder={"artists"} data={data} /> */}
       <ArtistList artists={data}></ArtistList>
     </div>
   );

@@ -17,7 +17,7 @@ export default function Items({ data }: any) {
         information. Also ignore the alignment issues, working on implementing
         at-a-glance information for the list
       </p>
-      <SearchBar placeholder={"items"} data={data} />
+      {/* <SearchBar placeholder={"items"} data={data} /> */}
       <ItemList products={data}></ItemList>
     </div>
   );

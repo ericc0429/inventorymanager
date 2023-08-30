@@ -1,21 +1,23 @@
-// Libraries
 import React, { useState } from "react";
-import Link from "next/link";
 
-// Components
-import { IArtistListProps } from "components/DataList";
-import Card from "components/Card";
-
+import { IArtist, IArtistListProps } from "components/DataList";
 import styles from "components/DataList/DataList.module.css";
-import ArtistFilter from "./ArtistFilter";
+import Link from "next/link";
+import Card from "components/Card/Card";
 
-export default function ArtistList({ artists }: IArtistListProps) {
+export default function ArtistFilter({ artists }: IArtistListProps) {
   const [expandFilter, setExpandFilter] = useState(false);
   const [name, setName] = useState("");
+  // const [type, setType] = useState();
+  // const [filter, setFilter] = useState<IArtist>();
 
   const expandHandler = () => {
     setExpandFilter((currExpand) => !currExpand);
   };
+  /* const filterHandler = (e: any) => {
+    e.preventDefault();
+    setFilter(e);
+  }; */
 
   return (
     <>
@@ -53,34 +55,21 @@ export default function ArtistList({ artists }: IArtistListProps) {
           </>
         )}
       </div>
-      <div className={styles.list}>
-        <div className={styles.card}>
-          <p className={styles.property}>Name</p>
-          <p className={styles.property}>Type</p>
-          <p className={styles.property}>Gender</p>
-          <p className={styles.property}>Debut Date</p>
-          <p className={styles.property}>Albums</p>
-          <p className={styles.property}>Assets</p>
-          <p className={styles.property}>Members</p>
-          <p className={styles.property}>Birthday</p>
-          <p className={styles.property}>Group</p>
-        </div>
-        {artists &&
-          artists
-            .filter((artist) =>
-              artist.name.toLowerCase().includes(name.toLowerCase())
-            )
-            .map((artist) => (
-              <Link
-                href={"/admin/artists/".concat(artist.id.toString())}
-                key={artist.id}
-              >
-                <a>
-                  <Card data={artist} />
-                </a>
-              </Link>
-            ))}
-      </div>
+      {artists &&
+        artists
+          .filter((artist) =>
+            artist.name.toLowerCase().includes(name.toLowerCase())
+          )
+          .map((artist) => (
+            <Link
+              href={"/admin/artists/".concat(artist.id.toString())}
+              key={artist.id}
+            >
+              <a>
+                <Card data={artist} />
+              </a>
+            </Link>
+          ))}
     </>
   );
 }

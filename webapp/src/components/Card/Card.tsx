@@ -7,7 +7,7 @@ import styles from "./Card.module.css";
 import Link from "next/link";
 
 interface ICardProps {
-  data: IStock | IStockGeneral | IArtist | IProductGeneral;
+  data: IStock | IStockGeneral | IArtist | IProduct;
 }
 interface ICardParseProps {
   data: IStock | IArtist | IProduct;
