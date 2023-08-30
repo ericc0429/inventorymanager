@@ -269,17 +269,17 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
             val product = catalogIdProductMap[inventoryCount.catalogObjectId]
             if (product != null) {
                 val newStock = Stock(
-                    null,
-                    location,
-                    product,
-                    false,
-                    Integer.parseInt(inventoryCount.quantity),
-                    0,
-                    null,
-                    false,
-                    null,
-                    "",
-                    inventoryCount.catalogObjectId
+                    id = null,
+                    location = location,
+                    product = product,
+                    exclusive = false,
+                    count = Integer.parseInt(inventoryCount.quantity),
+                    restock_threshold = 0,
+                    oos_date = Date(0),
+                    ordered = false,
+                    order_date = Date(0),
+                    tracking = "",
+                    catalogId = inventoryCount.catalogObjectId
                     )
                 stockRepository.save(newStock)
             } else {

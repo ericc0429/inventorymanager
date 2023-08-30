@@ -21,6 +21,9 @@ export default function SideNav() {
         <a className={styles.snavcard}>Items</a>
       </Link>
       <Link href="/admin/stock">
+        <a className={styles.snavcard}>Stock Data</a>
+      </Link>
+      <Link href="/admin/lowstock">
         <a className={styles.snavcard}>Stock Alerts</a>
       </Link>
     </div>

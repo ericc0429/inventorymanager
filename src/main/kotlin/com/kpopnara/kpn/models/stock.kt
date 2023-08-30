@@ -26,11 +26,11 @@ class Stock(
     var count: Int,
     var restock_threshold: Int,
     // Last date item went out of stock -- to help prevent accidental double-orders.
-    var oos_date: Date?,
+    var oos_date: Date,
     // We should have a manual clear button on front-end to set this to false.
     var ordered: Boolean,
     // Date last restock shipment was ordered.
-    var order_date: Date?,
+    var order_date: Date,
     // Tracking number
     var tracking: String,
     var catalogId: String
