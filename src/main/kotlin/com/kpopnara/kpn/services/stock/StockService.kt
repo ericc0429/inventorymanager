@@ -4,10 +4,12 @@ import com.kpopnara.kpn.models.stock.*
 import java.util.UUID
 
 interface StockService {
+
   fun getStocks(): Iterable<StockDTO>
+
   fun getStockById(id: UUID): StockDTO
 
-  fun getStockAtLocation(location: String): Iterable<StockDTO>
+  fun getStocksAtLocation(location: String): Iterable<StockDTO>
 
   fun addStock(newStock: NewStock): StockDTO
 

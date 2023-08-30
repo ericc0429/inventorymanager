@@ -7,4 +7,9 @@ import org.springframework.boot.runApplication
 
 fun main(args: Array<String>) {
   runApplication<KpnApplication>(*args)
+//  var squareService = SquareService()
+//  squareService.authorize()
+//  squareService.connectToSquareClient()
+//  squareService.batchRetrieveInventory()
+
 }

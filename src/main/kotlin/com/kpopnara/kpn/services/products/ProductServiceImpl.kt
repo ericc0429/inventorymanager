@@ -16,20 +16,17 @@ import org.springframework.web.server.ResponseStatusException
 class ProductServiceImpl(
     val productRepo: ProductRepo<Product>,
     val albumRepo: ProductRepo<Album>,
-    val assetRepo: ProductRepo<Asset>,
-    val itemRepo: ProductRepo<Item>,
-) : ProductService, AlbumService, AssetService, ItemService {
+    val assetRepo: ProductRepo<Asset>
+) : ProductService, AlbumService, AssetService {
 
     override fun getProducts(): Iterable<ProductDTO> {
         return albumRepo.findAll().map() { it.toProductDTO() } +
-            assetRepo.findAll().map() { it.toProductDTO() } +
-            itemRepo.findAll().map() { it.toDTO() }
+            assetRepo.findAll().map() { it.toProductDTO() }
     }
     override fun getProductById(id: UUID): ProductDTO {
         val product = productRepo.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
         if (product.type == ProductType.ALBUM) return albumRepo.getReferenceById(id).toProductDTO()
-        else if (product.type == ProductType.ASSET) return assetRepo.getReferenceById(id).toProductDTO()
-        else return itemRepo.getReferenceById(id).toDTO()
+        else return assetRepo.getReferenceById(id).toProductDTO()
     }
     override fun getProductStock(id: UUID): Iterable<StockDTO> {
         val product = productRepo.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
@@ -46,15 +43,12 @@ class ProductServiceImpl(
     override fun getAssets(): Iterable<AssetDTO> {
         return assetRepo.findAll().map() { it.toDTO() }
     }
-    override fun getItems(): Iterable<ProductDTO> {
-        return itemRepo.findAll().map() { it.toDTO() }
-    }
     
     override fun addProduct(newProduct: NewProduct): ProductDTO {
         if (newProduct.type == ProductType.NONE) throw ResponseStatusException(HttpStatus.BAD_REQUEST)
         else if (newProduct.type == ProductType.ALBUM) return createAlbum(newProduct).toProductDTO()
         else if (newProduct.type == ProductType.ASSET) return createAsset(newProduct).toProductDTO()
-        else return addItem(newProduct)
+        else throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
     }
     override fun addAlbum(newProduct: NewProduct): AlbumDTO {
         return createAlbum(newProduct).toDTO()
@@ -65,6 +59,7 @@ class ProductServiceImpl(
                 id = null,
                 name = newProduct.name,
                 gtin = newProduct.gtin,
+                sku = newProduct.sku,
                 price = newProduct.price,
                 stock = emptySet<Stock>(),
                 artist = emptySet<Artist>(),
@@ -73,7 +68,7 @@ class ProductServiceImpl(
                 released = newProduct.released,
                 discography = newProduct.discography,
                 format = newProduct.format,
-                color = newProduct.color,
+                color = newProduct.color
             )
         )
     }
@@ -88,35 +83,23 @@ class ProductServiceImpl(
                 name = newProduct.name,
                 description = newProduct.description,
                 gtin = newProduct.gtin,
+                sku = newProduct.sku,
                 price = newProduct.price,
                 stock = emptySet<Stock>(),
                 artist = emptySet<Artist>(),
                 version = newProduct.version,
                 extras = emptySet<Product>(),
                 released = newProduct.released,
-                brand = newProduct.brand,
+                brand = newProduct.brand
             )
         )
-    }
-    override fun addItem(newProduct: NewProduct): ProductDTO {
-        return itemRepo.save(
-            Item(
-                id = null,
-                type = newProduct.type,
-                name = newProduct.name,
-                description = newProduct.description,
-                gtin = newProduct.gtin,
-                price = newProduct.price,
-                stock = emptySet<Stock>(),
-            )
-        ).toDTO()
     }
 
     override fun updateProduct(id: UUID, editProduct: EditProduct): ProductDTO {
         val product = productRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
         if (product is Album) return updateAlbum(id, editProduct).toProductDTO()
         else if (product is Asset) return updateAsset(id, editProduct).toProductDTO()
-        else return updateItem(id, editProduct)
+        else throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
     override fun editAlbum(id: UUID, editProduct: EditProduct): AlbumDTO {
@@ -129,6 +112,7 @@ class ProductServiceImpl(
         album.name = if (editProduct.name != null) editProduct.name else album.name
         album.description = if (editProduct.description != null) editProduct.description else album.description
         album.gtin = if (editProduct.gtin != null) editProduct.gtin else album.gtin
+        album.sku = if (editProduct.sku != null) editProduct.sku else album.sku
         album.price = if (editProduct.price != null) editProduct.price else album.price
         album.version = if (editProduct.version != null) editProduct.version else album.version
         album.released = if (editProduct.released != null) editProduct.released else album.released
@@ -149,6 +133,7 @@ class ProductServiceImpl(
         asset.name = if (editProduct.name != null) editProduct.name else asset.name
         asset.description = if (editProduct.description != null) editProduct.description else asset.description
         asset.gtin = if (editProduct.gtin != null) editProduct.gtin else asset.gtin
+        asset.sku = if (editProduct.sku != null) editProduct.sku else asset.sku
         asset.price = if (editProduct.price != null) editProduct.price else asset.price
         asset.version = if (editProduct.version != null) editProduct.version else asset.version
         asset.released = if (editProduct.released != null) editProduct.released else asset.released
@@ -157,26 +142,12 @@ class ProductServiceImpl(
         return assetRepo.save(asset)
     }
 
-    override fun updateItem(id: UUID, editProduct: EditProduct): ProductDTO {
-        val item = itemRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
-
-        item.type = if (editProduct.type != null && (
-            editProduct.type != ProductType.ALBUM && editProduct.type != ProductType.ASSET))
-            editProduct.type else item.type
-        item.name = if (editProduct.name != null) editProduct.name else item.name
-        item.description = if (editProduct.description != null) editProduct.description else item.description
-        item.gtin = if (editProduct.gtin != null) editProduct.gtin else item.gtin
-        item.price = if (editProduct.price != null) editProduct.price else item.price
-
-        return itemRepo.save(item).toDTO()
-    }
-
     override fun deleteProduct(id: UUID): ProductDTO {
         val product = productRepo.findById(id).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
         productRepo.deleteById(id)
         return if (product is Album) product.toProductDTO()
             else if (product is Asset) product.toProductDTO()
-            else (product as Item).toDTO()
+            else throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
 }

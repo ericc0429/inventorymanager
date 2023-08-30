@@ -26,13 +26,14 @@ class Stock(
     var count: Int,
     var restock_threshold: Int,
     // Last date item went out of stock -- to help prevent accidental double-orders.
-    var oos_date: Date,
+    var oos_date: Date?,
     // We should have a manual clear button on front-end to set this to false.
     var ordered: Boolean,
     // Date last restock shipment was ordered.
-    var order_date: Date,
+    var order_date: Date?,
     // Tracking number
     var tracking: String,
+    var catalogId: String
 ) {}
 
 data class StockDTO(
@@ -47,6 +48,7 @@ data class StockDTO(
     val ordered: Boolean,
     val order_date: String,
     val tracking: String,
+    val catalogId: String
 )
 
 fun Stock.toDTO() =
@@ -61,7 +63,8 @@ fun Stock.toDTO() =
         oos_date = SimpleDateFormat("MM-dd-yyyy:HH:mm:ss").format(oos_date).toString(),
         ordered,
         order_date = SimpleDateFormat("MM-dd-yyyy:HH:mm:ss").format(order_date).toString(),
-        tracking
+        tracking,
+        catalogId
     )
 
 fun Stock.toDTOString(): String {
@@ -70,7 +73,7 @@ fun Stock.toDTOString(): String {
 
 data class NewStock(
     val location: LocationType,
-    val product: UUID,
+    val productId: UUID,
     val exclusive: Boolean = false,
     val count: Int = 0,
     val restock_threshold: Int = 0,
@@ -78,6 +81,7 @@ data class NewStock(
     val ordered: Boolean = false,
     val order_date: String = "",
     val tracking: String = "",
+    val catalogId: String = ""
 )
 
 data class EditStock(
@@ -88,4 +92,5 @@ data class EditStock(
     val ordered: Boolean?,
     val order_date: String?,
     val tracking: String?,
+    val catalogId: String?
 )

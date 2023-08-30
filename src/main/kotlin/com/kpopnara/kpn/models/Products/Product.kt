@@ -19,6 +19,8 @@ open class Product(
     open var name: String,
     open var description: String,
     open var gtin: String,
+    @Column(unique=true)
+    open var sku: String?,
     open var price: Double,
     @OneToMany(mappedBy = "product") open var stock: Set<Stock>,
 )
@@ -36,6 +38,7 @@ data class ProductDTO(
     val name: String,
     val description: String,
     val gtin: String,
+    val sku: String?,
     val price: Double,
     val stock: Iterable<StockDTO>,
     val artist: Iterable<String> = emptySet(),
@@ -53,6 +56,7 @@ data class NewProduct(
     val name: String,
     val description: String = "",
     val gtin: String = "",
+    val sku: String = "",
     val price: Double = 0.0,
     val artist: Iterable<String>?,
     val version: String = "",
@@ -61,7 +65,7 @@ data class NewProduct(
     val discography: String = "",
     val format: String = "",
     val color: String = "",
-    val brand: String = "",
+    val brand: String = ""
 )
 
 data class EditProduct(
@@ -69,6 +73,7 @@ data class EditProduct(
     val name: String?,
     val description: String?,
     val gtin: String?,
+    val sku: String?,
     val price: Double?,
     val artist: Iterable<String>?,
     val version: String?,
@@ -77,10 +82,16 @@ data class EditProduct(
     val discography: String?,
     val format: String?,
     val color: String?,
-    val brand: String?,
+    val brand: String?
 )
 
 data class ProductSearchDTO(
     val id: UUID?,
     val name: String?,
+)
+
+class ParentProduct(
+    val catalogId: String,
+    val name: String,
+    val categoryName: String
 )

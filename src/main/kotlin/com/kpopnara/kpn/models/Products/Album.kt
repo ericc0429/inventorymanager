@@ -20,6 +20,7 @@ class Album(
     id: UUID?, // Unique identifier
     name: String,
     gtin: String,
+    sku: String?,
     price: Double,
     stock: Set<Stock>,
 
@@ -39,14 +40,15 @@ class Album(
     // Album-Specific Fields
     var discography: String,
     var format: String,
-    var color: String,
-) : Product(id, ProductType.ALBUM, name, "", gtin, price, stock), IAsset {}
+    var color: String
+) : Product(id, ProductType.ALBUM, name, "", gtin, sku, price, stock), IAsset {}
 
 data class AlbumDTO(
     val id: UUID?,
     val type: ProductType,
     val name: String,
     val gtin: String,
+    val sku: String?,
     val price: Double,
     val stock: Iterable<StockDTO>,
     val artist: Iterable<String>,
@@ -65,6 +67,7 @@ fun Album.toDTO() =
         ProductType.ALBUM,
         name,
         gtin,
+        sku,
         price,
         stock.map { it.toDTO() },
         artist.map { it.name },
@@ -83,6 +86,7 @@ fun Album.toProductDTO() =
         name = name,
         description = "",
         gtin = gtin,
+        sku = sku,
         price = price,
         stock = stock.map { it.toDTO() },
         artist = artist.map { it.name },

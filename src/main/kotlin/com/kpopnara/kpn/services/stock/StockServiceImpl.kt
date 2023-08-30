@@ -4,7 +4,6 @@ import com.kpopnara.kpn.models.stock.*
 import com.kpopnara.kpn.models.products.*
 import com.kpopnara.kpn.repos.ProductRepo
 import com.kpopnara.kpn.repos.StockRepo
-import java.util.Optional
 import java.util.UUID
 import java.util.Date
 import java.text.SimpleDateFormat
@@ -25,7 +24,7 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
         return stockRepo.getReferenceById(id).toDTO()
     }
 
-    override fun getStockAtLocation(location: String) : Iterable<StockDTO> {
+    override fun getStocksAtLocation(location: String) : Iterable<StockDTO> {
         for ( loc in LocationType.values() ) {
             if (loc.label == location.uppercase()) return stockRepo.findAllByLocation(loc).map() { it.toDTO() }
         }
@@ -35,7 +34,7 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
     override fun addStock(newStock: NewStock) : StockDTO {
 
         val formatter = SimpleDateFormat("MM-dd-yyyy:HH:mm:ss")
-        val product = productRepo.findById(newStock.product).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND)}
+        val product = productRepo.findById(newStock.productId).orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND)}
         for (existingStock: Stock in product.stock) {
             if (existingStock.location == newStock.location) throw ResponseStatusException(HttpStatus.CONFLICT)
         }
@@ -52,6 +51,7 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
                 ordered = newStock.ordered,
                 order_date = if (newStock.order_date != "") formatter.parse(newStock.order_date) else Date(0),
                 tracking = newStock.tracking,
+                catalogId = newStock.catalogId
             )
         )
         .toDTO()

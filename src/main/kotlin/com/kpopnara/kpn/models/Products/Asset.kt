@@ -22,6 +22,7 @@ class Asset(
     name: String,
     description: String,
     gtin: String,
+    sku: String?,
     price: Double,
     stock: Set<Stock>,
 
@@ -39,9 +40,8 @@ class Asset(
     override var released: String,
 
     // Asset-Specific Fields
-    var brand: String,
-    
-) : Product(id, type, name, description, gtin, price, stock), IAsset {}
+    var brand: String
+) : Product(id, type, name, description, gtin, sku, price, stock), IAsset {}
 
 // DTO
 data class AssetDTO(
@@ -50,6 +50,7 @@ data class AssetDTO(
     val name: String,
     val description: String,
     val gtin: String,
+    val sku: String?,
     val price: Double,
     val stock: Iterable<StockDTO>,
     val artist: Iterable<String>,
@@ -66,6 +67,7 @@ fun Asset.toDTO() =
         name = name,
         description = description,
         gtin = gtin,
+        sku = sku,
         price = price,
         stock = stock.map { it.toDTO() },
         artist = artist.map { it.name },
@@ -82,6 +84,7 @@ fun Asset.toProductDTO() =
         name = name,
         description = description,
         gtin = gtin,
+        sku = sku,
         price = price,
         stock = stock.map { it.toDTO() },
         artist = artist.map { it.name },
