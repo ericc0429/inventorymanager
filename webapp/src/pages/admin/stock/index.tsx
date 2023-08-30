@@ -10,7 +10,7 @@ const api_url = process.env.API_URL;
 export default function Stock({ data }: any) {
   return (
     <div>
-      <h2>Low Stock</h2>
+      <h2>Stock</h2>
       <p>Items with stock count less than or equal to its restock threshold</p>
       {/* <SearchBar placeholder={"stock"} data={data} /> */}
       <StockList stocks={data}></StockList>
