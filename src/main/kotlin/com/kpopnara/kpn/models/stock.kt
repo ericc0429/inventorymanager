@@ -24,6 +24,11 @@ class Stock(
     @ManyToOne @JoinColumn(name = "product_id") val product: Product,
     var exclusive: Boolean,
     var count: Int,
+    var updated: Date,
+    var old_count: Int,
+    var old_updated: Date,
+    var sales_velocity: Double,
+    // var sell_through: Double,
     var restock_threshold: Int,
     // Last date item went out of stock -- to help prevent accidental double-orders.
     var oos_date: Date,
@@ -33,7 +38,7 @@ class Stock(
     var order_date: Date,
     // Tracking number
     var tracking: String,
-    var catalogId: String
+    var catalogId: String,
 ) {}
 
 data class StockDTO(
@@ -43,6 +48,10 @@ data class StockDTO(
     val product_name: String,
     val exclusive: Boolean,
     val count: Int,
+    val updated: String,
+    val old_count: Int,
+    val old_updated: String,
+    val sales_velocity: Double,
     val restock_threshold: Int,
     val oos_date: String,
     val ordered: Boolean,
@@ -59,10 +68,14 @@ fun Stock.toDTO() =
         product.name,
         exclusive,
         count,
+        updated = SimpleDateFormat("MM-dd-yyyy:HH:mm:ss").format(updated).toString(),
+        old_count,
+        old_updated = SimpleDateFormat("MM-dd-yyyy:HH:mm:ss").format(old_updated).toString(),
+        sales_velocity,
         restock_threshold,
-        oos_date = SimpleDateFormat("MM-dd-yyyy:HH:mm:ss").format(oos_date).toString(),
+        oos_date = if (oos_date >= Date(1)) SimpleDateFormat("MM-dd-yyyy:HH:mm:ss").format(oos_date).toString() else "",
         ordered,
-        order_date = SimpleDateFormat("MM-dd-yyyy:HH:mm:ss").format(order_date).toString(),
+        order_date = if (order_date >= Date(1)) SimpleDateFormat("MM-dd-yyyy:HH:mm:ss").format(order_date).toString() else "",
         tracking,
         catalogId
     )
@@ -87,6 +100,9 @@ data class NewStock(
 data class EditStock(
     val exclusive: Boolean?,
     val count: Int?,
+    val updated: String?,
+    val old_count: Int?,
+    val old_updated: String?,
     val restock_threshold: Int?,
     val oos_date: String?,
     val ordered: Boolean?,
