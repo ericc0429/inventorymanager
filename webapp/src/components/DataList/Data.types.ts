@@ -8,6 +8,9 @@ export interface IArtistListProps {
 export interface IProductListProps {
   products: IProduct[];
 }
+export interface IProductListPropsDTO {
+  products: IProductDTO[];
+}
 
 export interface IStock {
   id: string;
@@ -52,6 +55,23 @@ export interface IProduct {
   artist: IArtist[];
   version: string;
   extras: IProduct[];
+  released: string;
+  discography: string;
+  format: string;
+  color: string;
+  brand: string;
+}
+export interface IProductDTO {
+  id: string;
+  type: string;
+  name: string;
+  description: string;
+  gtin: string;
+  price: number;
+  stock: number;
+  artist: string;
+  version: string;
+  extras: string;
   released: string;
   discography: string;
   format: string;

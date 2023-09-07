@@ -30,6 +30,12 @@ function CardParse({keyval}: any) {
   if (keyval[0] == "id" || keyval[0] == "product_id") {
     return null;
   }
+  else if (keyval[0] == "stock") {
+    var stocks: IStock[] = keyval[1];
+    var counts: Number[] = [];
+    stocks.forEach((stock: IStock) => counts.push(stock.count));
+    return counts;
+  }
   else if (Array.isArray(keyval[1])) {
     var out = "";
     keyval[1].forEach((element) => {
