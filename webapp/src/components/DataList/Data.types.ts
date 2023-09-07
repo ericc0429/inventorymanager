@@ -50,6 +50,7 @@ export interface IProduct {
   name: string;
   description: string;
   gtin: string;
+  sku: string;
   price: number;
   stock: IStock[];
   artist: IArtist[];

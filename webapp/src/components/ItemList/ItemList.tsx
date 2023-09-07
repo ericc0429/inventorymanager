@@ -11,19 +11,38 @@ import styles from "components/DataList/DataList.module.css";
 
 export default function StockList({ products }: IProductListProps) {
   const [expandFilter, setExpandFilter] = useState(false);
-  const [name, setName] = useState("");
-  const [maxPrice, setMaxPrice] = useState(100000);
-  const [minPrice, setMinPrice] = useState(0);
+  const [name, setName] = useState("le sserafim");
+  const [maxPrice, setMaxPrice] = useState(3500);
+  const [minPrice, setMinPrice] = useState(2200);
 
   const expandHandler = () => {
     setExpandFilter((currExpand) => !currExpand);
   };
+
+  var headers = [
+    {label: "DB ID", key: "id"},
+    {label: "TYPE", key: "type"},
+    {label: "NAME", key: "name"},
+    {label: "GTIN", key: "gtin"},
+    {label: "SKU", key: "sku"},
+    {label: "PRICE", key: "price"},
+    {label: "CHI STOCK", key: "stock[0].count"},
+    {label: "ARTIST", key: "artist[0].name"},
+    {label: "VERSION", key: "version"},
+    {label: "EXTRAS", key: "extras.forEach((extra) => return extra.name)"},
+    {label: "RELEASED", key: "released"},
+    {label: "DISCOGRAPHY", key: "discography"},
+    {label: "FORMAT", key: "format"},
+    {label: "COLOR", key: "color"},
+    {label: "BRAND", key: "brand"},
+  ]
 
   var prodArr: IProduct[] =
   products.filter((product) =>
     (product.name.toLowerCase().includes(name.toLowerCase())) &&
     (product.price >= minPrice) && (product.price <= maxPrice)
   )
+  console.log(prodArr[0].stock[0].count)
 
   return (
     <>
@@ -57,7 +76,7 @@ export default function StockList({ products }: IProductListProps) {
           </>
         )}
       </div>
-      <CSVLink data={prodArr}>Export</CSVLink>
+      <CSVLink data={prodArr} headers={headers}>Export</CSVLink>
       <div className={styles.list}>
         <div className={styles.card}>
           <p className={styles.property}>Type</p>
