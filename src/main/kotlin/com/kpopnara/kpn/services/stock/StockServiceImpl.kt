@@ -50,10 +50,12 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
                 exclusive = newStock.exclusive,
                 count = newStock.count,
                 updated = Date(),
-                old_count = newStock.count,
-                old_updated = Date(),
+                count_a = newStock.count,
+                updated_a = Date(),
+                count_b = newStock.count,
+                updated_b = Date(),
                 sales_velocity = 0.0,
-                // sell_through = 0.0,
+                sell_through = 0.0,
                 restock_threshold = newStock.restock_threshold,
                 oos_date = if (newStock.oos_date != "") formatter.parse(newStock.oos_date) else Date(0),
                 ordered = newStock.ordered,
@@ -76,18 +78,38 @@ class StockServiceImpl(val stockRepo: StockRepo<Stock>, val productRepo: Product
         } else stock.count */
 
         if (editStock.count != null) {
-            stock.old_count = stock.count
             stock.count = editStock.count
-        }
-        stock.old_count = if (editStock.old_count != null) editStock.old_count else stock.old_count
+            stock.updated = if (editStock.updated != null) formatter.parse(editStock.updated) else Date()
 
-        stock.old_updated = if (editStock.old_updated != null) formatter.parse(editStock.old_updated) else stock.updated
-        stock.updated = if (editStock.updated != null) formatter.parse(editStock.updated) else Date()
+            // Update count/updated for A & B if previous updated was older than a week
+            val updateTimeDiff = TimeUnit.DAYS.convert(Math.abs(stock.updated.getTime() - stock.updated_a.getTime()), TimeUnit.MILLISECONDS)
+            if (updateTimeDiff >= 7) {
+                stock.count_b = stock.count_a
+                stock.updated_b = stock.updated_a
 
-        if (stock.count < stock.old_count) {
-            val timeDiff = TimeUnit.DAYS.convert(Math.abs(stock.updated.getTime() - stock.old_updated.getTime()), TimeUnit.MILLISECONDS)
-            if (timeDiff > 2) stock.sales_velocity = (stock.old_count - stock.count)/(1.0 * timeDiff)
+                stock.count_a = stock.count
+                stock.updated_a = stock.updated
+            }
+            
         }
+        
+        if (editStock.count_a != null) {
+            stock.count_a = editStock.count_a
+        }
+        if (editStock.count_b != null) {
+            stock.count_b = editStock.count_b
+        }
+        if (editStock.updated_a != null && formatter.parse(editStock.updated_a) > stock.updated_b) {
+            stock.updated_a = formatter.parse(editStock.updated_a)
+        }
+        if (editStock.updated_b != null && formatter.parse(editStock.updated_b) < stock.updated_a) {
+            stock.updated_b = formatter.parse(editStock.updated_b)
+        }
+
+        // Calculating velocity & sell-through
+        val timeDiff = TimeUnit.DAYS.convert(Math.abs(stock.updated_a.getTime() - stock.updated_b.getTime()), TimeUnit.MILLISECONDS)
+        stock.sales_velocity = (stock.count_b - stock.count_a)/(1.0 * timeDiff)
+        stock.sell_through = (stock.count_b - stock.count_a)/(1.0 * stock.count_b)
 
         stock.restock_threshold = if (editStock.restock_threshold != null) editStock.restock_threshold else (4 * ceil(stock.sales_velocity).roundToInt())
         stock.oos_date = if (editStock.oos_date != null) formatter.parse(editStock.oos_date) else stock.oos_date
