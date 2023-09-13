@@ -19,7 +19,7 @@ class Stock(
     @Column(name = "id", unique = true, nullable = false)
     val id: UUID?, // Unique identifier
     @Enumerated(EnumType.ORDINAL) val location: LocationType,
-    @ManyToOne @JoinColumn(name = "product_id") val product: Product,
+    @ManyToOne @JoinColumn(name = "product_id") var product: Product,
     var exclusive: Boolean,
     var count: Int,
     var restock_threshold: Int,

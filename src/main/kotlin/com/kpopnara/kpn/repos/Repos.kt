@@ -34,11 +34,13 @@ import org.springframework.stereotype.Repository
 
 @Repository interface AlbumRepo : ProductRepo<Album> {
   // override fun findByName(name: String) : Album?
+  @Nullable
   override fun findBySku(sku: String) : Album
 }
 
 @Repository interface AssetRepo : ProductRepo<Asset> {
   // override fun findByName(name: String) : Asset?
+  @Nullable
   override fun findBySku(sku: String) : Asset
 }
 

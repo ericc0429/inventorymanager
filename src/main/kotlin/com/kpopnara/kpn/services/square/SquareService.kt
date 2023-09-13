@@ -4,6 +4,8 @@ import com.google.common.collect.Lists
 import com.kpopnara.kpn.models.products.*
 import com.kpopnara.kpn.models.stock.LocationType
 import com.kpopnara.kpn.models.stock.Stock
+import com.kpopnara.kpn.repos.AlbumRepo
+import com.kpopnara.kpn.repos.AssetRepo
 import com.kpopnara.kpn.repos.ProductRepo
 import com.kpopnara.kpn.repos.StockRepo
 import com.squareup.square.Environment
@@ -11,14 +13,16 @@ import com.squareup.square.SquareClient
 import com.squareup.square.exceptions.ApiException
 import com.squareup.square.models.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import java.io.IOException
 import java.util.*
 
 @Service
 class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
-                    @Autowired private val assetRepository : ProductRepo<Asset>,
-                    @Autowired private val albumRepository : ProductRepo<Album>,
+                    @Autowired private val assetRepository : AssetRepo,
+                    @Autowired private val albumRepository : AlbumRepo,
                     @Autowired private val productRepository : ProductRepo<Product>
 ) {
     var client: SquareClient? = null
@@ -120,6 +124,8 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
     }
 
     fun updateItems(itemVariationsToBeCreatedIdList : List<String>, location: LocationType) {
+        catalogIdProductMap.clear()
+
         var itemsList = ArrayList<CatalogObject>()
         var itemVariationsList = ArrayList<CatalogObject>()
 
@@ -142,7 +148,7 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
                         } else {
                             pricingAmount = 0
                         }
-                        println("#" + count + " Item variation name: " + catalogObject.itemVariationData.name + " Pricing: " + pricingAmount + ", CatalogId: " + catalogObject.id + ", SKU: " + catalogObject.itemVariationData.sku)
+//                        println("#" + count + " Item variation name: " + catalogObject.itemVariationData.name + " Pricing: " + pricingAmount + ", CatalogId: " + catalogObject.id + ", SKU: " + catalogObject.itemVariationData.sku)
                         itemVariationsList.add(catalogObject)
                     }
                     for (relatedObject in result.relatedObjects) {
@@ -170,7 +176,7 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
                 if (result != null) {
                     for (catalogObject in result.objects) {
                         count++
-                        println("#" + count + " Item name: " + catalogObject.itemData.name + "     |   categoryID: " + catalogObject.itemData.categoryId + ", CatalogId: " + catalogObject.id + ", Product type: " + catalogObject.itemData.productType)
+//                        println("#" + count + " Item name: " + catalogObject.itemData.name + "     |   categoryID: " + catalogObject.itemData.categoryId + ", CatalogId: " + catalogObject.id + ", Product type: " + catalogObject.itemData.productType)
                         itemsList.add(catalogObject)
                     }
                     for (relatedObject in result.relatedObjects) {
@@ -186,6 +192,7 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
             }
         }
 
+        // Get categories
         for (item in itemsList) {
             val itemData = item.itemData
             val categoryName = categoryMap[itemData.categoryId]
@@ -200,9 +207,19 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
             }
         }
 
+
+        // Create item variations w item details
         for (itemVariation in itemVariationsList) {
             val itemVariationData = itemVariation.itemVariationData
             val parentItemId = itemVariationData.itemId
+            if (itemVariationData.sku == null) {
+                println("NO SKU --- name: " + (parentProductMap.get(parentItemId)?.name ?: "no parent name") + " version: " + itemVariationData.name)
+                continue
+            }
+            val existingProductInDB : Product? = productRepository.findBySku(itemVariationData.sku)
+            val existingAlbumInDB : Album? = albumRepository.findBySku(itemVariationData.sku)
+            val existingAssetInDB : Asset? = assetRepository.findBySku(itemVariationData.sku)
+
             val parentProduct = parentProductMap.get(parentItemId)
             if (parentProduct != null) {
                 val pricingAmount : Long
@@ -211,54 +228,90 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
                 } else {
                     pricingAmount = 0
                 }
-                 if (parentProduct.categoryName.equals("ALBUM")) {
-                     val newAlbum = Album(
-                         null,
-                         parentProduct.name,
-                         "",
-                         itemVariationData.sku,
-                         pricingAmount.toDouble(),
-                         emptySet(),
-                         emptySet(),
-                        itemVariationData.name,
-                         emptySet(),
-                         "",
-                         "",
-                         "",
-                         ""
-                     )
-                     if (catalogIdProductMap.contains(itemVariation.id)) {
-                         println("catalogId already exists!")
-                         System.exit(-1)
-                     }
-                     catalogIdProductMap[itemVariation.id] = newAlbum
-                     albumRepository.save(newAlbum)
-                 } else {
-                     val newAsset = Asset(
-                         null,
-                         ProductType.ASSET,
-                         parentProduct.name,
-                         "",
-                         "",
-                         itemVariationData.sku,
-                         pricingAmount.toDouble(),
-                         emptySet(),
-                         emptySet(),
-                         itemVariationData.name,
-                         emptySet(),
-                         "",
-                         ""
-                     )
-                     if (catalogIdProductMap.contains(itemVariation.id)) {
-                         println("catalogId already exists!")
-                         System.exit(-1)
-                     }
-                     catalogIdProductMap[itemVariation.id] = newAsset
-                     assetRepository.save(newAsset)
-                 }
+                if (parentProduct.categoryName.equals("ALBUM")) {
+                    if (existingProductInDB != null && existingAlbumInDB != null) {
+                        if (!existingAlbumInDB.name.equals(parentProduct.name)) {
+                            println("Updated item sku" + itemVariationData.sku + " name from " +  existingAlbumInDB.name + " to " + parentProduct.name)
+                            existingAlbumInDB.name = parentProduct.name
+                        }
+                        if (existingAlbumInDB.price != pricingAmount.toDouble()) {
+                            println("Updated item sku" + itemVariationData.sku + " price from " +  existingAlbumInDB.price + " to " + pricingAmount.toDouble())
+                            existingAlbumInDB.price = pricingAmount.toDouble()
+                        }
+                        if (!existingAlbumInDB.version.equals(itemVariationData.name)) {
+                            println("Updated item sku" + itemVariationData.sku + " version from " +  existingAlbumInDB.version + " to " + itemVariationData.name)
+                            existingAlbumInDB.version = itemVariationData.name
+                        }
+                        catalogIdProductMap[itemVariation.id] = existingAlbumInDB
+                        albumRepository.save(existingAlbumInDB)
+                    } else {
+                        val newAlbum = Album(
+                            null,
+                            parentProduct.name,
+                            "",
+                            itemVariationData.sku,
+                            pricingAmount.toDouble(),
+                            emptySet(),
+                            emptySet(),
+                            itemVariationData.name,
+                            emptySet(),
+                            "",
+                            "",
+                            "",
+                            ""
+                        )
+                        if (catalogIdProductMap.contains(itemVariation.id)) {
+                            println("catalogId already exists!")
+                            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
+                        }
+                        catalogIdProductMap[itemVariation.id] = newAlbum
+                        println("Created album sku " + itemVariationData.sku)
+                        albumRepository.save(newAlbum)
+                    }
+                } else {
+                    if (existingProductInDB != null && existingAssetInDB != null) {
+                        if (!existingAssetInDB.name.equals(parentProduct.name)) {
+                            println("Updated item sku " + itemVariationData.sku + " name from " +  existingAssetInDB.name + " to " + parentProduct.name)
+                            existingAssetInDB.name = parentProduct.name
+                        }
+                        if (existingAssetInDB.price != pricingAmount.toDouble()) {
+                            println("Updated item sku " + itemVariationData.sku + " price from " +  existingAssetInDB.price + " to " + pricingAmount.toDouble())
+                            existingAssetInDB.price = pricingAmount.toDouble()
+                        }
+                        if (!existingAssetInDB.version.equals(itemVariationData.name)) {
+                            println("Updated item sku " + itemVariationData.sku + " version from " +  existingAssetInDB.version + " to " + itemVariationData.name)
+                            existingAssetInDB.version = itemVariationData.name
+                        }
+                        catalogIdProductMap[itemVariation.id] = existingAssetInDB
+                        assetRepository.save(existingAssetInDB)
+                    } else {
+                        val newAsset = Asset(
+                            null,
+                            ProductType.ASSET,
+                            parentProduct.name,
+                            "",
+                            "",
+                            itemVariationData.sku,
+                            pricingAmount.toDouble(),
+                            emptySet(),
+                            emptySet(),
+                            itemVariationData.name,
+                            emptySet(),
+                            "",
+                            ""
+                        )
+                        if (catalogIdProductMap.contains(itemVariation.id)) {
+                            println("catalogId already exists!")
+                            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
+                        }
+                        catalogIdProductMap[itemVariation.id] = newAsset
+                        println("Created asset sku " + itemVariationData.sku)
+                        assetRepository.save(newAsset)
+                    }
+                }
             } else {
                 println("No parent product")
-                System.exit(-1)
+                throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
             }
         }
     }
@@ -267,24 +320,40 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
         println("InventoryCountList size: " + inventoryCountList.size)
         for (inventoryCount in inventoryCountList) {
             val product = catalogIdProductMap[inventoryCount.catalogObjectId]
+            var existingStockInDB = stockRepository.findByCatalogIdAndLocation(inventoryCount.catalogObjectId, location)
             if (product != null) {
-                val newStock = Stock(
-                    null,
-                    location,
-                    product,
-                    false,
-                    Integer.parseInt(inventoryCount.quantity),
-                    0,
-                    "",
-                    false,
-                    "",
-                    "",
-                    inventoryCount.catalogObjectId
+                if (existingStockInDB != null) {
+                    if (existingStockInDB.product.id != product.id) {
+                        println("Updated stock catalogId" + inventoryCount.catalogObjectId + " product from id " +  existingStockInDB.product.id + " to id " + product.id)
+                        existingStockInDB.product = product
+                    }
+                    if (existingStockInDB.count != Integer.parseInt(inventoryCount.quantity)) {
+                        println("Updated stock catalogId" + inventoryCount.catalogObjectId + " count from " +  existingStockInDB.count + " to " + Integer.parseInt(inventoryCount.quantity))
+                        existingStockInDB.count = Integer.parseInt(inventoryCount.quantity)
+                    }
+                    stockRepository.save(existingStockInDB)
+                } else {
+                    val newStock = Stock(
+                        null,
+                        location,
+                        product,
+                        false,
+                        Integer.parseInt(inventoryCount.quantity),
+                        0,
+                        "",
+                        false,
+                        "",
+                        "",
+                        inventoryCount.catalogObjectId
                     )
-                stockRepository.save(newStock)
+                    println("Created stock catalogId " + inventoryCount.catalogObjectId)
+                    stockRepository.save(newStock)
+                }
             } else {
-                println("No associated product for the stock")
-                System.exit(-1)
+                // No product because of no SKU set possibly
+                println("No associated product for the stock " + inventoryCount.catalogObjectId)
+                continue
+//                throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
             }
         }
     }
