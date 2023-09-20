@@ -7,7 +7,7 @@ import Link from "next/link";
 import Nav from "./Nav";
 
 // Styles
-import styles from "./Layout.module.css";
+import styles from "./Page.module.css";
 import Image from "next/image";
 
 function Header() {
@@ -16,7 +16,6 @@ function Header() {
       <Head>
         <title>K-POP NARA</title>
         <meta name="description" content="K-POP Store" />
-        <link rel="icon" href="kpn_logo.svg" />
       </Head>
 
       <div className={styles.headerBar}>
