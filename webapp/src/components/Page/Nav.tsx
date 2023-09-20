@@ -6,7 +6,7 @@ import Link from "next/link";
 // import { SearchButton } from "components/Searchbar";
 
 // Styles
-import styles from "./Layout.module.css";
+import styles from "./Page.module.css";
 
 export default function Nav() {
   return (

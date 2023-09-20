@@ -44,11 +44,6 @@ import org.springframework.stereotype.Repository
   override fun findBySku(sku: String) : Asset
 }
 
-@Repository interface ItemRepo : ProductRepo<Item> {
-  // override fun findByName(name: String) : Item?
-  override fun findBySku(sku: String) : Item
-}
-
 @Repository interface StockRepo<T : Stock?> : JpaRepository<T, UUID?> {
 
   @Nullable

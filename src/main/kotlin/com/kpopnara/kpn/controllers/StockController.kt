@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/stock")
 class StockController(val service: StockServiceImpl) {
   @GetMapping fun getStocks(): Iterable<StockDTO> = service.getStocks()
+  @GetMapping("/{id}") fun getStockById(@PathVariable id: UUID): StockDTO = service.getStockById(id)
 
   @GetMapping("/location/{location}") fun getStockAtLocation(@PathVariable location: String): Iterable<StockDTO> = service.getStocksAtLocation(location)
 

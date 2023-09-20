@@ -7,10 +7,8 @@ import com.kpopnara.kpn.repos.ProductRepo
 import com.kpopnara.kpn.repos.StockRepo
 import com.kpopnara.kpn.services.StockServiceImpl
 import io.mockk.*
-import org.junit.Ignore
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 import java.util.*

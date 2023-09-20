@@ -8,6 +8,9 @@ import com.kpopnara.kpn.repos.AlbumRepo
 import com.kpopnara.kpn.repos.AssetRepo
 import com.kpopnara.kpn.repos.ProductRepo
 import com.kpopnara.kpn.repos.StockRepo
+import com.kpopnara.kpn.repos.ArtistRepo
+import com.kpopnara.kpn.services.ProductServiceImpl
+import com.kpopnara.kpn.services.ArtistServiceImpl
 import com.squareup.square.Environment
 import com.squareup.square.SquareClient
 import com.squareup.square.exceptions.ApiException
@@ -24,6 +27,7 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
                     @Autowired private val assetRepository : AssetRepo,
                     @Autowired private val albumRepository : AlbumRepo,
                     @Autowired private val productRepository : ProductRepo<Product>
+
 ) {
     var client: SquareClient? = null
 
@@ -123,6 +127,23 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
         updateStocks(inventoryCountList, location)
     }
 
+    /* fun parseArtist(artistString : String) : Set<Artist> {
+        var artistList: Set<Artist> = emptySet<Artist>()
+        var artist = artistRepository.findByName(artistString)
+        if (artist == null) {
+            artistService.addArtist(
+                NewArtist(name = artistString)
+            )
+            artist = artistRepository.findByName(artistString)
+            artistList.plus(artist)
+        }
+        else {
+            artistList = artistList.plus(artist)
+        }
+        println(artistList)
+        return artistList
+    } */
+
     fun updateItems(itemVariationsToBeCreatedIdList : List<String>, location: LocationType) {
         catalogIdProductMap.clear()
 
@@ -163,7 +184,6 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
                 }
             }
         }
-
 
         // Update Items
         val itemPartition: List<List<String>> = Lists.partition(itemsIdList, 1000)
@@ -223,6 +243,8 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
             val parentProduct = parentProductMap.get(parentItemId)
             if (parentProduct != null) {
                 val pricingAmount : Long
+                /* val productInfo =  parentProduct.name.split(" - ", limit = 2)
+                val artist = if (productInfo.size > 1) parseArtist(productInfo[0]) else null */
                 if (itemVariationData.priceMoney != null) {
                     pricingAmount = itemVariationData.priceMoney.amount
                 } else {
@@ -334,17 +356,24 @@ class SquareService(@Autowired private val stockRepository : StockRepo<Stock>,
                     stockRepository.save(existingStockInDB)
                 } else {
                     val newStock = Stock(
-                        null,
-                        location,
-                        product,
-                        false,
-                        Integer.parseInt(inventoryCount.quantity),
-                        0,
-                        "",
-                        false,
-                        "",
-                        "",
-                        inventoryCount.catalogObjectId
+                      id = null,
+                      location = location,
+                      product = product,
+                      exclusive = false,
+                      count = Integer.parseInt(inventoryCount.quantity),
+                      updated = Date(),
+                      count_a = Integer.parseInt(inventoryCount.quantity),
+                      updated_a = Date(),
+                      count_b = Integer.parseInt(inventoryCount.quantity),
+                      updated_b = Date(),
+                      sales_velocity = 0.0,
+                      sell_through = 0.0,
+                      restock_threshold = 0,
+                      oos_date = Date(0),
+                      ordered = false,
+                      order_date = Date(0),
+                      tracking = "",
+                      catalogId = inventoryCount.catalogObjectId
                     )
                     println("Created stock catalogId " + inventoryCount.catalogObjectId)
                     stockRepository.save(newStock)
