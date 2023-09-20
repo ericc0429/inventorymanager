@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("org.springframework.boot") version "3.1.1"
   id("io.spring.dependency-management") version "1.1.0"
+  id("com.github.johnrengelman.shadow") version "6.0.0"
   kotlin("jvm") version "1.8.22"
   kotlin("plugin.spring") version "1.8.22"
   kotlin("plugin.jpa") version "1.8.22"
@@ -30,6 +31,11 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.mockk:mockk:1.9.3")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+}
+
+// Shadow task depends on Jar task, so these will be reflected for Shadow as well
+tasks.jar {
+  manifest.attributes["Main-Class"] = "com.kpopnara.kpn.KpnApplication"
 }
 
 tasks.withType<KotlinCompile> {
