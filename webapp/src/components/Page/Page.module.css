@@ -1,5 +1,23 @@
 .container {
   padding: 1rem 2rem;
+
+  flex: 0 1 85%;
+}
+
+.row {
+  padding: 0rem;
+  margin: 0rem;
+
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.col {
+  padding: 0rem;
+  margin: 0rem;
+
+  display: flex;
+  flex-flow: column nowrap;
 }
 
 /* ===== HEADER ===== */
@@ -62,7 +80,7 @@
 }
 
 .navcard {
-  padding: 0.1rem 1rem;
+  padding: 0.2rem 1rem;
   margin: 0rem;
 
   font-size: 1.2rem;
@@ -80,6 +98,50 @@
 .navcard:hover,
 .navcard:focus,
 .navcard:active {
+  color: var(--highlight-color);
+}
+
+/* ===== SIDE NAV ===== */
+
+.snavbar {
+  padding: 0rem 1rem;
+  margin: 0rem;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  flex: 0 1 15%;
+  align-self: stretch;
+  order: -1;
+
+  border-right: 2px solid #7c7c7c;
+
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.snavcard {
+  padding: 0.5rem 1rem;
+  margin: 0rem;
+
+  font-size: 1.2rem;
+  text-align: center;
+  color: inherit;
+  white-space: nowrap;
+  text-decoration: none;
+
+  border: 1px hidden #7c7c7c;
+  border-radius: 10px;
+  transition: color 0.3s;
+  max-width: 300px;
+}
+
+.snavcard:hover,
+.snavcard:focus,
+.snavcard:active {
   color: var(--highlight-color);
 }
 

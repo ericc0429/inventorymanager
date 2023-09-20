@@ -2,7 +2,7 @@
 import React from "react";
 
 // Styles
-import styles from "./Layout.module.css";
+import styles from "./Page.module.css";
 
 function Footer() {
   return (
