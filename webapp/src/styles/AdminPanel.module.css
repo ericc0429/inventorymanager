@@ -1,0 +1,50 @@
+.container {
+  padding: 0rem 0rem;
+  margin: 0rem;
+
+  background-color: inherit;
+
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.list {
+  padding: 0rem;
+
+  background-color: inherit;
+
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.main {
+  min-height: 100vh;
+  padding: 2rem 0.2rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.body {
+  padding: 0.5rem 2rem;
+  margin: 0rem;
+}
+
+.link {
+  padding: 0.5rem 1rem;
+  margin: 0;
+
+  flex: 1;
+
+  font-size: 1rem;
+  font-weight: normal;
+  color: var(--alt-highlight-color);
+  transition: font-size 0.5s, color 0.5s, font-weight 0.5s;
+}
+.link:hover {
+  /* font-size: 1.2rem;
+  font-weight: bold; */
+  color: var(--highlight-color);
+}
