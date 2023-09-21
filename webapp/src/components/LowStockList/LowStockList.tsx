@@ -3,9 +3,10 @@ import Link from "next/link";
 
 // Components
 import { IStock, IStockListProps } from "components/DataList";
-import Card from "components/Card";
+import StockCard from "components/StockList/StockCard";
 
 import styles from "components/DataList/DataList.module.css";
+
 
 export default function LowStockList({ stocks }: IStockListProps) {
   console.log(stocks);
@@ -32,7 +33,7 @@ export default function LowStockList({ stocks }: IStockListProps) {
               key={stock.id}
             >
               <a>
-                <Card data={stock} />
+                <StockCard data={stock} />
               </a>
             </Link>
           ))}

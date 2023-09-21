@@ -1,2 +1,2 @@
-export { default } from "./Searchbar";
-export { default as SearchButton } from "./SearchButton";
+export { default } from "./SearchBar";
+/* export { default as SearchButton } from "./SearchButton"; */

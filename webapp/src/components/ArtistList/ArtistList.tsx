@@ -8,7 +8,6 @@ import Card from "components/Card";
 import ArtistCard from "./ArtistCard"
 
 import styles from "components/DataList/DataList.module.css";
-import ArtistFilter from "./ArtistFilter";
 
 export default function ArtistList({ artists }: IArtistListProps) {
   const [expandFilter, setExpandFilter] = useState(false);
