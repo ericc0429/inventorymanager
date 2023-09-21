@@ -6,6 +6,7 @@ import Link from "next/link";
 // Components
 import { IProduct, IProductDTO, IProductListProps, IProductListPropsDTO } from "components/DataList";
 import Card from "components/Card";
+import ItemCard from "./ItemCard";
 
 import styles from "components/DataList/DataList.module.css";
 
@@ -42,7 +43,6 @@ export default function StockList({ products }: IProductListProps) {
     (product.name.toLowerCase().includes(name.toLowerCase())) &&
     (product.price >= minPrice) && (product.price <= maxPrice)
   )
-  console.log(prodArr[0].stock[0].count)
 
   return (
     <>
@@ -81,8 +81,13 @@ export default function StockList({ products }: IProductListProps) {
         <div className={styles.card}>
           <p className={styles.property}>Type</p>
           <p className={styles.property}>Name</p>
-          <p className={styles.property}>Description</p>
+          <p className={styles.property}>Version</p>
+          <p className={styles.property}>Discography</p>
+          <p className={styles.property}>Format</p>
+          <p className={styles.property}>Color</p>
+          <p className={styles.property}>Brand</p>
           <p className={styles.property}>GTIN</p>
+          <p className={styles.property}>SKU</p>
           <p className={styles.property}>Price</p>
           <p className={styles.property}>Stock</p>
         </div>
@@ -98,7 +103,7 @@ export default function StockList({ products }: IProductListProps) {
                 key={product.id}
               >
                 <a>
-                  <Card data={product} />
+                  <ItemCard data={product} />
                 </a>
               </Link>
             ))}

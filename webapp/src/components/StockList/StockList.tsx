@@ -4,6 +4,7 @@ import Link from "next/link";
 // Components
 import { IStock, IStockListProps } from "components/DataList";
 import Card from "components/Card";
+import StockCard from "./StockCard"
 
 import styles from "components/DataList/DataList.module.css";
 
@@ -27,7 +28,7 @@ export default function StockList({ stocks }: IStockListProps) {
         stocks.map((stock) => (
           <Link href={"/admin/items/".concat(stock.product_id)} key={stock.id}>
             <a>
-              <Card data={stock} />
+              <StockCard data={stock} />
             </a>
           </Link>
         ))}

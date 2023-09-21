@@ -15,7 +15,7 @@ interface ICardParseProps {
 }
 
 export default function Card({ data }: ICardProps) {
-  var arr = Object.keys(data).map((key) => [key, data[key]]);
+  /* var arr = Object.keys(data).map((key) => [key, data[key]]);
 
   return (
     <div className={styles.card}>
@@ -23,7 +23,7 @@ export default function Card({ data }: ICardProps) {
         <CardParse key={item + "_" + data.id} keyval={item} />
       ))}
     </div>
-  );
+  ); */
 }
 
 function CardParse({keyval}: any) {
@@ -50,19 +50,3 @@ function CardParse({keyval}: any) {
     return <p className={styles.property_small}>{keyval[1] ? "YES" : "NO"}</p>;
   } else return <p className={styles.property}>{keyval[1] ? keyval[1] : "N/A"}</p>;
 }
-
-/* function CardParse({ value }: any) {
-  if (Array.isArray(value)) {
-    var out = "";
-    value.forEach((element) => {
-      out += element + "\n";
-    });
-    return (
-      <p className={styles.property}>{value.length != 0 ? out : "[None]"}</p>
-    );
-  } else if (typeof value == "number") {
-    return <p className={styles.property_small}>{value != null ? value : 0}</p>;
-  } else if (typeof value == "boolean") {
-    return <p className={styles.property_small}>{value ? "YES" : "NO"}</p>;
-  } else return <p className={styles.property}>{value ? value : "N/A"}</p>;
-} */
