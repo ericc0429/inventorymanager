@@ -5,9 +5,9 @@ import Link from "next/link";
 // Components
 import { IArtistListProps } from "components/DataList";
 import Card from "components/Card";
+import ArtistCard from "./ArtistCard"
 
 import styles from "components/DataList/DataList.module.css";
-import ArtistFilter from "./ArtistFilter";
 
 export default function ArtistList({ artists }: IArtistListProps) {
   const [expandFilter, setExpandFilter] = useState(false);
@@ -55,15 +55,14 @@ export default function ArtistList({ artists }: IArtistListProps) {
       </div>
       <div className={styles.list}>
         <div className={styles.card}>
-          <p className={styles.property}>Name</p>
           <p className={styles.property}>Type</p>
+          <p className={styles.property}>Name</p>
           <p className={styles.property}>Gender</p>
           <p className={styles.property}>Debut Date</p>
           <p className={styles.property}>Albums</p>
           <p className={styles.property}>Assets</p>
-          <p className={styles.property}>Members</p>
+          <p className={styles.property}>Group/Members</p>
           <p className={styles.property}>Birthday</p>
-          <p className={styles.property}>Group</p>
         </div>
         {artists &&
           artists
@@ -76,7 +75,7 @@ export default function ArtistList({ artists }: IArtistListProps) {
                 key={artist.id}
               >
                 <a>
-                  <Card data={artist} />
+                  <ArtistCard data={artist} />
                 </a>
               </Link>
             ))}

@@ -63,7 +63,7 @@ export default function EditItem({ item }: IEditItemProps) {
             className={styles.input_text}
             type="number"
             value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={(e) => setPrice(Number(e.target.value))}
           />
         </div>
         <div className={styles.flexRow}>
