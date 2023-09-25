@@ -27,9 +27,7 @@ export default function StockList({ stocks }: IStockListProps) {
       {stocks &&
         stocks.map((stock) => (
           <Link href={"/admin/items/".concat(stock.product_id)} key={stock.id}>
-            <a>
-              <StockCard data={stock} />
-            </a>
+            <StockCard data={stock} />
           </Link>
         ))}
     </div>

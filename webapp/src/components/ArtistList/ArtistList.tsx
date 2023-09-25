@@ -74,9 +74,7 @@ export default function ArtistList({ artists }: IArtistListProps) {
                 href={"/admin/artists/".concat(artist.id.toString())}
                 key={artist.id}
               >
-                <a>
-                  <ArtistCard data={artist} />
-                </a>
+                <ArtistCard data={artist} />
               </Link>
             ))}
       </div>

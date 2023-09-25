@@ -32,9 +32,7 @@ export default function LowStockList({ stocks }: IStockListProps) {
               href={"/admin/items/".concat(stock.product_id)}
               key={stock.id}
             >
-              <a>
-                <StockCard data={stock} />
-              </a>
+              <StockCard data={stock} />
             </Link>
           ))}
     </div>

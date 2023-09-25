@@ -102,9 +102,7 @@ export default function StockList({ products }: IProductListProps) {
                 href={"/admin/items/".concat(product.id.toString())}
                 key={product.id}
               >
-                <a>
-                  <ItemCard data={product} />
-                </a>
+                <ItemCard data={product} />
               </Link>
             ))}
       </div>

@@ -11,8 +11,8 @@ import styles from "./Page.module.css";
 export default function Nav() {
   return (
     <div className={styles.navbar}>
-      <Link href="/admin">
-        <a className={styles.navcard}>Admin</a>
+      <Link className={styles.navcard} href="/admin">
+        Admin
       </Link>
     </div>
   ); // End return

@@ -19,8 +19,8 @@ export default function ItemDetails({ item }: IItemPageProps) {
         <h2>{item.type}</h2>
       </div>
       <p></p>
-      <Link href={"/admin/items/".concat(item.id.toString()).concat("/edit")}>
-        <a className={styles.button}>Edit</a>
+      <Link className={styles.button} href={"/admin/items/".concat(item.id.toString()).concat("/edit")}>
+        Edit
       </Link>
       <p>{"GTIN: " + item.gtin + "\n"}</p>
       <p>{"Price: " + item.price + "\n"}</p>

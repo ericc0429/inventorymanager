@@ -11,20 +11,20 @@ import styles from "./Page.module.css";
 export default function SideNav() {
   return (
     <div className={styles.snavbar}>
-      <Link href="/admin">
-        <a className={styles.snavcard}>Admin Home</a>
+      <Link className={styles.snavcard} href="/admin">
+        Admin Home
       </Link>
-      <Link href="/admin/artists">
-        <a className={styles.snavcard}>Artists</a>
+      <Link className={styles.snavcard} href="/admin/artists">
+        Artists
       </Link>
-      <Link href="/admin/items">
-        <a className={styles.snavcard}>Items</a>
+      <Link className={styles.snavcard} href="/admin/items">
+        Items
       </Link>
-      <Link href="/admin/stock">
-        <a className={styles.snavcard}>Stock Data</a>
+      <Link className={styles.snavcard} href="/admin/stock">
+        Stock Dat
       </Link>
-      <Link href="/admin/lowstock">
-        <a className={styles.snavcard}>Stock Alerts</a>
+      <Link className={styles.snavcard} href="/admin/lowstock">
+        Stock Alerts
       </Link>
     </div>
   ); // End return

@@ -20,8 +20,8 @@ function Header() {
 
       <div className={styles.headerBar}>
         <div className={styles.header}>
-          <Link href="/">
-            <a className={styles.headerText}>K-POP NARA</a>
+          <Link className={styles.headerText} href="/">
+            K-POP NARA
           </Link>
         </div>
 
