@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from "react";
 
 // Components
@@ -8,35 +10,6 @@ import Link from "next/link";
 // Styles
 import styles from "styles/AdminPanel.module.css";
 
-/* export default function Admin() {
-  const [groups, setGroups] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-
-    fetch("api/group")
-      .then((response) => response.json())
-      .then((data) => {
-        setGroups(data);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  return (
-    <Layout>
-      <AdminPanel />
-      <h2>Groups</h2>
-      {groups.map((group) => (
-        <div key={group.id}>{group.name}</div>
-      ))}
-    </Layout>
-  );
-} */
 const api_url = process.env.API_URL;
 
 export default function Admin() {

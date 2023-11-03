@@ -1,13 +1,17 @@
+'use client'
 import React from "react";
 
 // Components
 import ArtistList from "components/ArtistList";
 import SearchBar from "components/Search/SearchBar";
+import { IArtist } from "components/DataList";
 
 // API
 const api_url = process.env.API_URL;
 
-export default function Artists({ data }: any) {
+export default async function Artists() {
+    const data = await getArtists();
+
   return (
     <div>
       <h2>Artists</h2>
@@ -21,10 +25,10 @@ export default function Artists({ data }: any) {
   );
 }
 
-export async function getServerSideProps() {
+export async function getArtists() {
   const res = await fetch(api_url + "/artists");
-  const data = await res.json();
-  return {
-    props: { data },
-  };
+  if (!res.ok) {
+    throw new Error('Failed to fetch data')
+  }
+  return res.json();
 }

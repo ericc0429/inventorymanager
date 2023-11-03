@@ -21,7 +21,7 @@ export default function SideNav() {
         Items
       </Link>
       <Link className={styles.snavcard} href="/admin/stock">
-        Stock Dat
+        Stock Data
       </Link>
       <Link className={styles.snavcard} href="/admin/lowstock">
         Stock Alerts

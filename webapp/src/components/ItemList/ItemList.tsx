@@ -1,6 +1,7 @@
+'use client'
 // Libraries
 import React, { useState } from "react";
-import { CSVLink } from "react-csv";
+/* import { CSVLink } from "react-csv"; */
 import Link from "next/link";
 
 // Components
@@ -76,7 +77,7 @@ export default function StockList({ products }: IProductListProps) {
           </>
         )}
       </div>
-      <CSVLink data={prodArr} headers={headers}>Export</CSVLink>
+      {/* <CSVLink data={prodArr} headers={headers}>Export</CSVLink> */}
       <div className={styles.list}>
         <div className={styles.card}>
           <p className={styles.property}>Type</p>

@@ -3,11 +3,13 @@ import React from "react";
 // Components
 import LowStockList from "components/LowStockList/LowStockList";
 import SearchBar from "components/Search/SearchBar";
+import { getStock } from "@/utils/getStock";
 
 // API
 const api_url = process.env.API_URL;
 
-export default function Stock({ data }: any) {
+export default async function Stock() {
+  const data = await getStock()
   return (
     <div>
       <h2>Low Stock</h2>
@@ -16,12 +18,4 @@ export default function Stock({ data }: any) {
       <LowStockList stocks={data}></LowStockList>
     </div>
   );
-}
-
-export async function getServerSideProps() {
-  const res = await fetch(api_url + "/stock");
-  const data = await res.json();
-  return {
-    props: { data },
-  };
 }

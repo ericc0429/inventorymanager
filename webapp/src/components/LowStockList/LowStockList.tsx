@@ -9,7 +9,6 @@ import styles from "components/DataList/DataList.module.css";
 
 
 export default function LowStockList({ stocks }: IStockListProps) {
-  console.log(stocks);
 
   return (
     <div className={styles.list}>

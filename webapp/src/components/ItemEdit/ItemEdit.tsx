@@ -1,3 +1,5 @@
+'use client'
+
 import { IProduct } from "components/DataList";
 import { useState } from "react";
 

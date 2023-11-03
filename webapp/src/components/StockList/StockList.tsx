@@ -9,7 +9,6 @@ import StockCard from "./StockCard"
 import styles from "components/DataList/DataList.module.css";
 
 export default function StockList({ stocks }: IStockListProps) {
-  console.log(stocks);
 
   return (
     <div className={styles.list}>
