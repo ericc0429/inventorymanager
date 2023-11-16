@@ -1,0 +1,11 @@
+.assetlist {
+  padding: 0rem;
+  margin: 0rem;
+
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.assetlist__list {
+  flex-flow: column nowrap;
+}
